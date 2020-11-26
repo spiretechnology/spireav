@@ -534,8 +534,12 @@ func initFilters() {
 		}
 
 		if codecType == C.AVMEDIA_TYPE_VIDEO {
-			filterSpec = "null"
-			// filterSpec = "[in]scale=iw/2:-1[out]"
+			// filterSpec = "null"
+			filterSpec = fmt.Sprintf(
+				"nullsrc=size=%dx%d[bg]; [in]scale=iw/2:-1[scaled_in]; [bg][scaled_in]overlay=shortest=1[out]",
+				inStream.codecpar.width,
+				inStream.codecpar.height,
+			)
 		} else {
 			filterSpec = "anull"
 		}
@@ -559,18 +563,19 @@ func encodeWriteFrame(filtFrame *C.struct_AVFrame, streamIndex uint) {
 
 	stream := streamCtx[streamIndex]
 	var ret int
-	var encPkt C.struct_AVPacket
 
 	fmt.Println("Encoding frame")
 
-	encPkt.data = nil
-	encPkt.size = 0
-	C.av_init_packet(&encPkt)
-
 	ret = int(C.avcodec_send_frame(stream.encCtx, filtFrame))
 	if ret < 0 {
-		log.Fatalln("Failed to send filtered frame to file")
+		log.Fatalln("Failed to send filtered frame to encoder")
 	}
+
+	encPkt := C.struct_AVPacket{
+		data: nil,
+		size: 0,
+	}
+	C.av_init_packet(&encPkt)
 
 	outStream := *(**C.struct_AVStream)(unsafe.Pointer(uintptr(unsafe.Pointer(ofmtCtx.streams)) + uintptr(streamIndex)*unsafe.Sizeof(*ofmtCtx.streams)))
 
