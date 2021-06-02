@@ -12,6 +12,7 @@ const (
 	AvErrorEAGAIN = -35
 )
 
+// ErrorFromCode gets a formatted error instance from the libav error code
 func ErrorFromCode(code int) error {
 	if code >= 0 {
 		return nil

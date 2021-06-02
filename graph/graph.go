@@ -1,9 +1,27 @@
-package spireav
+package graph
 
+//#cgo LDFLAGS: -lavformat -lavcodec -lavutil -lavfilter
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <inttypes.h>
+//#include <stdint.h>
+//#include <string.h>
+//#include <libavformat/avformat.h>
+//#include <libavcodec/avcodec.h>
+//#include <libavutil/avutil.h>
+//#include <libavutil/opt.h>
+//#include <libavdevice/avdevice.h>
+//#include <libavfilter/buffersink.h>
+//#include <libavfilter/buffersrc.h>
+//#include <libavutil/pixdesc.h>
+import "C"
 import (
 	"fmt"
 	"sort"
 	"strings"
+	"unsafe"
+
+	"github.com/spiretechnology/spireav"
 )
 
 type Link struct {
@@ -108,13 +126,13 @@ func (graph *Graph) getLinksToNode(node *GraphNode) []Link {
 
 }
 
-func (graph *Graph) getInputTypes(node *GraphNode) ([]StreamType, error) {
+func (graph *Graph) getInputTypes(node *GraphNode) ([]spireav.StreamType, error) {
 
 	// Get the links into this node
 	linksIn := graph.getLinksToNode(node)
 
 	// Get the input types
-	var inputTypes []StreamType
+	var inputTypes []spireav.StreamType
 	for i := range linksIn {
 		prevOutputIndex := linksIn[i].fromOutputIndex
 		prevOutputTypes, err := linksIn[i].fromNode.node.GetOutputTypes()
@@ -130,6 +148,14 @@ func (graph *Graph) getInputTypes(node *GraphNode) ([]StreamType, error) {
 	// Return the types
 	return inputTypes, nil
 
+}
+
+func (graph *Graph) formatNodeOutputNameClean(nodeid uint, nodeOutputIndex uint) string {
+	return fmt.Sprintf("node%d_%d", nodeid, nodeOutputIndex)
+}
+
+func (graph *Graph) formatNodeOutputName(nodeid uint, nodeOutputIndex uint) string {
+	return fmt.Sprintf("[%s]", graph.formatNodeOutputNameClean(nodeid, nodeOutputIndex))
 }
 
 func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
@@ -156,7 +182,7 @@ func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 	inputNames := ""
 	for i := range linksIn {
 		link := linksIn[i]
-		inputNames += fmt.Sprintf("[node%d_%d]", link.fromNode.nodeid, link.fromOutputIndex)
+		inputNames += graph.formatNodeOutputName(link.fromNode.nodeid, link.fromOutputIndex)
 	}
 
 	// Get the output types
@@ -168,7 +194,7 @@ func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 	// Create the output names
 	outputNames := ""
 	for i := range outputTypes {
-		outputNames += fmt.Sprintf("[node%d_%d]", node.nodeid, i)
+		outputNames += graph.formatNodeOutputName(node.nodeid, uint(i))
 	}
 
 	// Create the full filters string
@@ -217,6 +243,27 @@ func (graph *Graph) recursiveGenerateFiltersString(node *GraphNode, nodeids *[]u
 
 }
 
+func (graph *Graph) generateOverallFiltersString() (string, error) {
+
+	// Create the slice of filters strings
+	filtersStrs := []string{}
+
+	// Loop through the output nodes
+	for _, node := range graph.nodes {
+		if _, ok := node.node.(OutputNode); ok {
+			filtersStr, err := graph.generateFiltersStringForOutput(node)
+			if err != nil {
+				return "", err
+			}
+			filtersStrs = append(filtersStrs, filtersStr)
+		}
+	}
+
+	// Join the filters string
+	return strings.Join(filtersStrs, ";"), nil
+
+}
+
 func (graph *Graph) generateFiltersStringForOutput(outputNode *GraphNode) (string, error) {
 
 	// Keep track of the node ids already added to the filter string
@@ -233,16 +280,93 @@ func (graph *Graph) generateFiltersStringForOutput(outputNode *GraphNode) (strin
 
 }
 
-func (graph *Graph) ProduceOutput(outputNode *GraphNode) error {
+func (graph *Graph) getStreamTypesIntoOutput(outputNode *GraphNode) []spireav.StreamType {
 
-	// Create the filters string
-	filters, err := graph.generateFiltersStringForOutput(outputNode)
-	if err != nil {
-		return err
+	// Slice of stream types in the output
+	outputStreamTypes := []spireav.StreamType{}
+
+	// Get the links leading into this node
+	linksIntoOutput := graph.getLinksToNode(outputNode)
+
+	// Loop through the links into the node
+	for _, link := range linksIntoOutput {
+
+		// Get the output types on the FROM node
+		fromTypes, err := link.fromNode.node.GetOutputTypes()
+		if err != nil {
+			fmt.Println("Error getting node output types: ", err)
+			continue
+		}
+
+		// Get the type at the index
+		fromType := fromTypes[link.fromOutputIndex]
+
+		// Add the type to the slice
+		outputStreamTypes = append(outputStreamTypes, fromType)
+
 	}
 
-	fmt.Println(filters)
+	// Return the slice of types
+	return outputStreamTypes
 
-	return nil
+}
+
+// getInputNodes gets the input nodes to this transcoding graph
+func (graph *Graph) getInputNodes() []InputNode {
+	inputNodes := []InputNode{}
+	for _, node := range graph.nodes {
+		inputNode, ok := node.node.(InputNode)
+		if ok {
+			inputNodes = append(inputNodes, inputNode)
+		}
+	}
+	return inputNodes
+}
+
+// getOutputNodes gets the output nodes from this transcoding graph
+func (graph *Graph) getOutputNodes() []OutputNode {
+	outputNodes := []OutputNode{}
+	for _, node := range graph.nodes {
+		outputNode, ok := node.node.(OutputNode)
+		if ok {
+			outputNodes = append(outputNodes, outputNode)
+		}
+	}
+	return outputNodes
+}
+
+func (graph *Graph) NewJob() *GraphJob {
+	return &GraphJob{
+		graph: graph,
+	}
+}
+
+func CopyStreamSettings(from *InputStream, to *OutputStream) {
+
+	// If it's a video
+	if from.decCtx.codec_type == C.AVMEDIA_TYPE_VIDEO {
+		to.encCtx.width = from.decCtx.width
+		to.encCtx.height = from.decCtx.height
+		to.encCtx.sample_aspect_ratio = from.decCtx.sample_aspect_ratio
+		if to.encoder.avCodec.pix_fmts != nil {
+			to.encCtx.pix_fmt = *(*int32)(unsafe.Pointer(uintptr(unsafe.Pointer(to.encoder.avCodec.pix_fmts))))
+		} else {
+			to.encCtx.pix_fmt = from.decCtx.pix_fmt
+		}
+		to.encCtx.framerate = from.decCtx.framerate
+		to.encCtx.time_base = C.av_inv_q(to.encCtx.framerate)
+		to.avStream.time_base = to.encCtx.time_base
+	} else {
+		to.encCtx.sample_rate = from.decCtx.sample_rate
+		to.encCtx.channel_layout = from.decCtx.channel_layout
+		to.encCtx.channels = C.av_get_channel_layout_nb_channels(to.encCtx.channel_layout)
+
+		// encCtx.sample_fmt = encoder.sample_fmts[0]
+		to.encCtx.sample_fmt = from.decCtx.sample_fmt
+		to.encCtx.time_base = C.struct_AVRational{
+			num: 1,
+			den: to.encCtx.sample_rate,
+		}
+	}
 
 }

@@ -19,7 +19,8 @@ import (
 
 // FormatContext is a context representing a multimedia file
 type FormatContext struct {
-	handle *C.struct_AVFormatContext
+	handle           *C.struct_AVFormatContext
+	streamInfoLoaded bool
 }
 
 // OpenFileContext opens a format context from a file
@@ -60,6 +61,19 @@ func (ctx *FormatContext) Close() {
 
 }
 
+// loadStreamInfo analyzes the format context and pulls in information about the streams in the format
+func (ctx *FormatContext) loadStreamInfo() error {
+	if ctx.streamInfoLoaded {
+		return nil
+	}
+	ctx.streamInfoLoaded = true
+	ret := int(C.avformat_find_stream_info(ctx.handle, nil))
+	if ret < 0 {
+		return errors.New("cannot find stream information")
+	}
+	return nil
+}
+
 // Metadata gets the metadata from the format context
 func (ctx *FormatContext) Metadata() (map[string]string, error) {
 
@@ -95,5 +109,45 @@ func (ctx *FormatContext) Metadata() (map[string]string, error) {
 
 	// Return the metadata
 	return meta, nil
+
+}
+
+// StreamsCount gets the number of streams in the format context
+func (ctx *FormatContext) StreamsCount() uint {
+	return uint(ctx.handle.nb_streams)
+}
+
+// Streams gets the slice of streams in the format context
+func (ctx *FormatContext) Streams() ([]*Stream, error) {
+
+	// Load the stream information
+	if err := ctx.loadStreamInfo(); err != nil {
+		return nil, err
+	}
+
+	// Count the number of streams
+	count := ctx.StreamsCount()
+
+	// Create the slice of streams to be returned
+	streams := make([]*Stream, count)
+
+	// Get an unsafe pointer to the streams array on the format context
+	streamsPtr := uintptr(unsafe.Pointer(ctx.handle.streams))
+
+	// Loop through the streams count
+	for i := uint(0); i < count; i++ {
+
+		// Dereference the stream at the offset
+		streamHandle := *(**C.struct_AVStream)(unsafe.Pointer(streamsPtr + uintptr(i)*unsafe.Sizeof(*ctx.handle.streams)))
+
+		// Create the stream wrapper instance
+		streams[i] = &Stream{
+			handle: streamHandle,
+		}
+
+	}
+
+	// Return the streams
+	return streams, nil
 
 }

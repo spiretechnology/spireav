@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	filename := "./sample.mp4"
+	filename := "./cmd/example-metadata/sample.mp4"
 
 	// Open the file
 	ctx, err := spireav.OpenFileContext(filename)

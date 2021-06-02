@@ -1,19 +1,21 @@
-package spireav
+package graph
 
 import (
 	"fmt"
 	"strings"
+
+	"github.com/spiretechnology/spireav"
 )
 
 type TextOverlayNode struct {
 	Text string
 }
 
-func (node TextOverlayNode) GetOutputTypes() ([]StreamType, error) {
-	return []StreamType{StreamTypeVideo}, nil
+func (node TextOverlayNode) GetOutputTypes() ([]spireav.StreamType, error) {
+	return []spireav.StreamType{spireav.StreamTypeVideo}, nil
 }
 
-func (node TextOverlayNode) FilterString(inputs []StreamType) string {
+func (node TextOverlayNode) FilterString(inputs []spireav.StreamType) string {
 	config := make(map[string]string)
 	config["text"] = node.Text
 	configParts := []string{}

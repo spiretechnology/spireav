@@ -109,6 +109,8 @@ func openInputFile(filename string) int {
 				}
 			}
 
+			fmt.Println("open_decCtx", codecCtx.time_base)
+
 			// Open the decoder
 			ret = int(C.avcodec_open2(codecCtx, dec, nil))
 			if ret < 0 {
@@ -221,6 +223,8 @@ func openOutputFile(filename string) {
 			if ofmtCtx.oformat.flags&C.AVFMT_GLOBALHEADER > 0 {
 				encCtx.flags |= C.AV_CODEC_FLAG_GLOBAL_HEADER
 			}
+
+			fmt.Println("open_encCtx", encCtx.time_base)
 
 			// Open the encoder
 			ret = int(C.avcodec_open2(encCtx, encoder, (**C.struct_AVDictionary)(nil))) // third parameter passes settings
@@ -591,6 +595,9 @@ func encodeWriteFrame(filtFrame *C.struct_AVFrame, streamIndex uint) {
 			stream.encCtx.time_base,
 			outStream.time_base,
 		)
+		fmt.Println("A", stream.encCtx.time_base)
+		fmt.Println("B", outStream.time_base)
+		fmt.Println(encPkt.pts)
 		// fmt.Println("Muxing frame")
 		ret = int(C.av_interleaved_write_frame(ofmtCtx, &encPkt))
 
