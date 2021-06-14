@@ -13,16 +13,13 @@ type Node interface {
 
 type InputNode interface {
 	Node
-	// io.ReadCloser
-	Open() (*C.struct_AVFormatContext, error)
+	GetContext() *C.struct_AVFormatContext
 	GetStream(streamIndex int) (*InputStream, error)
 }
 
 type OutputNode interface {
 	Node
-	// io.WriteCloser
-	Open() (*C.struct_AVFormatContext, error)
-	AddStream(encoder *Encoder) (*OutputStream, error)
+	GetContext() *C.struct_AVFormatContext
 	GetStream(streamIndex int) (*OutputStream, error)
 }
 

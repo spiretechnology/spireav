@@ -29,27 +29,25 @@ type GraphJob struct {
 }
 
 type JobOutputStream struct {
-	stream        *C.struct_AVStream
-	encCtx        *C.struct_AVCodecContext
+	stream        *OutputStream
 	filterOut     *C.struct_AVFilterInOut
 	buffersinkCtx *C.struct_AVFilterContext
 }
 
 type JobOutput struct {
-	ofmtCtx *C.struct_AVFormatContext
+	output  OutputNode
 	streams []*JobOutputStream
 	done    bool
 }
 
 type JobInputStream struct {
-	stream       *C.struct_AVStream
-	decCtx       *C.struct_AVCodecContext
+	stream       *InputStream
 	filterIn     *C.struct_AVFilterInOut
 	buffersrcCtx *C.struct_AVFilterContext
 }
 
 type JobInput struct {
-	ifmtCtx *C.struct_AVFormatContext
+	input   InputNode
 	streams []*JobInputStream
 	done    bool
 }
@@ -89,7 +87,7 @@ func (job *GraphJob) Run() error {
 		}
 
 		// Read a frame from the video
-		ret := int(C.av_read_frame(input.ifmtCtx, &packet))
+		ret := int(C.av_read_frame(input.input.GetContext(), &packet))
 		if ret < 0 {
 			input.done = true
 			doneInputs++
@@ -99,7 +97,7 @@ func (job *GraphJob) Run() error {
 		// Get the stream index the packet/frame was read from
 		var stream *JobInputStream
 		for _, s := range input.streams {
-			if s.stream.index == packet.stream_index {
+			if s.stream.avStream.index == packet.stream_index {
 				stream = s
 				break
 			}
@@ -112,14 +110,14 @@ func (job *GraphJob) Run() error {
 		// Rescale the timestamp on the packet
 		C.av_packet_rescale_ts(
 			&packet,
-			stream.decCtx.time_base,
+			stream.stream.decCtx.time_base,
 			filtersNativeTimeBase,
 		)
-		fmt.Println("X: ", stream.decCtx.time_base)
+		fmt.Println("X: ", stream.stream.decCtx.time_base)
 		fmt.Println("Y: ", filtersNativeTimeBase)
 
 		// Send the packet into the decoder
-		ret = int(C.avcodec_send_packet(stream.decCtx, &packet))
+		ret = int(C.avcodec_send_packet(stream.stream.decCtx, &packet))
 		if ret < 0 {
 			log.Fatalln("Decoding failed", ret)
 		}
@@ -130,7 +128,7 @@ func (job *GraphJob) Run() error {
 			// Receive a single frame
 			decFrame := C.av_frame_alloc()
 			ret = int(C.avcodec_receive_frame(
-				stream.decCtx,
+				stream.stream.decCtx,
 				(*C.struct_AVFrame)(unsafe.Pointer(decFrame)),
 			))
 
@@ -170,7 +168,7 @@ func (job *GraphJob) Run() error {
 		for _, stream := range output.streams {
 
 			// Flush the encoder
-			fmt.Printf("Flushing stream #%d encoder\n", stream.stream.index)
+			fmt.Printf("Flushing stream #%d encoder\n", stream.stream.avStream.index)
 			// filterEncodeWriteFrame(nil)
 			// flushEncoder(stream)
 
@@ -180,7 +178,7 @@ func (job *GraphJob) Run() error {
 		}
 
 		// Write metadata to the output file
-		C.av_write_trailer(output.ofmtCtx)
+		C.av_write_trailer(output.output.GetContext())
 
 	}
 
@@ -191,20 +189,20 @@ func (job *GraphJob) Run() error {
 
 	// Close all of the input files
 	for _, input := range context.inputs {
-		C.avformat_close_input(&input.ifmtCtx)
+		// C.avformat_close_input(&input.ifmtCtx)
 		for _, stream := range input.streams {
-			C.avcodec_free_context(&stream.decCtx)
+			stream.stream.Close()
 		}
 	}
 
 	// Close all of the output files
 	for _, output := range context.outputs {
-		if output.ofmtCtx.oformat.flags&C.AVFMT_NOFILE == 0 {
-			C.avio_closep(&output.ofmtCtx.pb)
-		}
-		C.avformat_free_context(output.ofmtCtx)
+		// if output.ofmtCtx.oformat.flags&C.AVFMT_NOFILE == 0 {
+		// 	C.avio_closep(&output.ofmtCtx.pb)
+		// }
+		// C.avformat_free_context(output.ofmtCtx)
 		for _, stream := range output.streams {
-			C.avcodec_free_context(&stream.encCtx)
+			stream.stream.Close()
 		}
 	}
 
@@ -257,7 +255,7 @@ func (job *GraphJob) encodeWriteFrame(
 ) {
 
 	// Send a frame into the output stream encoder
-	ret := int(C.avcodec_send_frame(stream.encCtx, filteredFrame))
+	ret := int(C.avcodec_send_frame(stream.stream.encCtx, filteredFrame))
 	if ret < 0 {
 		log.Fatalln("Failed to send filtered frame to encoder")
 	}
@@ -273,25 +271,25 @@ func (job *GraphJob) encodeWriteFrame(
 	for ret >= 0 {
 
 		// Receive a single packet
-		ret = int(C.avcodec_receive_packet(stream.encCtx, &encodedPacket))
+		ret = int(C.avcodec_receive_packet(stream.stream.encCtx, &encodedPacket))
 		if ret == spireav.AvErrorEAGAIN || ret == spireav.AvErrorEOF {
 			break
 		}
 
 		// Update the data in the packet
-		encodedPacket.stream_index = stream.stream.index
+		encodedPacket.stream_index = stream.stream.avStream.index
 		C.av_packet_rescale_ts(
 			&encodedPacket,
 			filtersNativeTimeBase,
-			stream.encCtx.time_base,
+			stream.stream.encCtx.time_base,
 		)
 		fmt.Println("A: ", filtersNativeTimeBase)
-		fmt.Println("B: ", stream.encCtx.time_base)
-		encodedPacket.pos *= 2
-		encodedPacket.pts *= 2
+		fmt.Println("B: ", stream.stream.encCtx.time_base)
+		// encodedPacket.pos *= 2
+		// encodedPacket.pts *= 2
 
 		// Write the frame into the output
-		ret = int(C.av_interleaved_write_frame(output.ofmtCtx, &encodedPacket))
+		ret = int(C.av_interleaved_write_frame(output.output.GetContext(), &encodedPacket))
 
 	}
 
@@ -374,18 +372,12 @@ func (job *GraphJob) createOutputs(
 			return nil, err
 		}
 
-		// Open the output format context
-		ofmtCtx, err := outputNode.Open()
-		if err != nil {
-			return nil, err
-		}
-
 		// Get the links out of this node
 		linksTo := job.graph.getLinksToNode(node)
 
 		// Create the job output
 		jobOutput := &JobOutput{
-			ofmtCtx: ofmtCtx,
+			output:  outputNode,
 			streams: []*JobOutputStream{},
 		}
 
@@ -409,38 +401,17 @@ func (job *GraphJob) createOutputs(
 				return nil, err
 			}
 
-			// Open the encoder context for the stream
-			encCtx, err := stream.OpenEncoderContext()
-			if err != nil {
-				return nil, err
-			}
-
-			// Open the encoder
-			ret := int(C.avcodec_open2(encCtx, stream.encoder.avCodec, (**C.struct_AVDictionary)(nil))) // third parameter passes settings
-			if ret < 0 {
-				return nil, errors.New("failed to open video encoder for stream")
-			}
-
-			// Copy encoder parameters to the output stream
-			ret = int(C.avcodec_parameters_from_context(stream.avStream.codecpar, encCtx))
-			if ret < 0 {
-				return nil, errors.New("failed to copy encoder parameters to output stream")
-			}
-
-			// Set the time base for the stream
-			stream.avStream.time_base = encCtx.time_base
-
 			// If the codec type is video
 			if streamTypes[link.toInputIndex] == spireav.StreamTypeVideo {
 				buffersinkCtx, err = createOutputVideoContext(
 					filterGraph,
-					encCtx,
+					stream.encCtx,
 					name,
 				)
 			} else if streamTypes[link.toInputIndex] == spireav.StreamTypeAudio {
 				buffersinkCtx, err = createOutputAudioContext(
 					filterGraph,
-					encCtx,
+					stream.encCtx,
 					name,
 				)
 			} else {
@@ -463,8 +434,7 @@ func (job *GraphJob) createOutputs(
 
 			// Add the output to the slice
 			jobOutput.streams = append(jobOutput.streams, &JobOutputStream{
-				stream:        stream.avStream,
-				encCtx:        encCtx,
+				stream:        stream,
 				filterOut:     filterOut,
 				buffersinkCtx: buffersinkCtx,
 			})
@@ -477,31 +447,13 @@ func (job *GraphJob) createOutputs(
 		// Dump the output format
 		if fileOutputNode, ok := node.(*FileOutputNode); ok {
 
-			// Get the filename for the node
-			cFilename := C.CString(fileOutputNode.filename)
-			defer C.free(unsafe.Pointer(cFilename))
+			// // Get the filename for the node
+			// cFilename := C.CString(fileOutputNode.filename)
+			// defer C.free(unsafe.Pointer(cFilename))
 
 			// Dump the format information
-			C.av_dump_format(ofmtCtx, 0, cFilename, 1)
+			C.av_dump_format(fileOutputNode.GetContext(), 0 /*cFilename*/, nil, 1)
 
-			// If the output format is a file (it will be), open the output file
-			if ofmtCtx.oformat.flags&C.AVFMT_NOFILE == 0 {
-				ret := int(C.avio_open(
-					(**C.struct_AVIOContext)(unsafe.Pointer(&ofmtCtx.pb)),
-					cFilename,
-					C.AVIO_FLAG_WRITE,
-				))
-				if ret < 0 {
-					return nil, errors.New("failed to open output file")
-				}
-			}
-
-		}
-
-		// Write the file header
-		ret := int(C.avformat_write_header(ofmtCtx, nil))
-		if ret < 0 {
-			return nil, errors.New("error occurred while opening output file")
 		}
 
 	}
@@ -547,15 +499,9 @@ func (job *GraphJob) createInputs(
 			continue
 		}
 
-		// Open the input format context
-		ifmtCtx, err := inputNode.Open()
-		if err != nil {
-			return nil, err
-		}
-
 		// Create the job input
 		jobInput := &JobInput{
-			ifmtCtx: ifmtCtx,
+			input:   inputNode,
 			streams: []*JobInputStream{},
 		}
 
@@ -594,29 +540,17 @@ func (job *GraphJob) createInputs(
 				return nil, err
 			}
 
-			// Open the decoder context for the stream
-			decCtx, err := stream.OpenDecoderContext()
-			if err != nil {
-				return nil, err
-			}
-
-			// Open the encoder
-			ret := int(C.avcodec_open2(decCtx, stream.decCtx.codec, nil))
-			if ret < 0 {
-				return nil, errors.New("failed to open video decoder for stream")
-			}
-
 			// If the codec type is video
 			if streamTypes[fromOutputIndex] == spireav.StreamTypeVideo {
 				buffersrcCtx, err = createInputVideoContext(
 					filterGraph,
-					decCtx,
+					stream.decCtx,
 					name,
 				)
 			} else if streamTypes[fromOutputIndex] == spireav.StreamTypeAudio {
 				buffersrcCtx, err = createInputAudioContext(
 					filterGraph,
-					decCtx,
+					stream.decCtx,
 					name,
 				)
 			} else {
@@ -639,8 +573,7 @@ func (job *GraphJob) createInputs(
 
 			// Add the input to the slice
 			jobInput.streams = append(jobInput.streams, &JobInputStream{
-				stream:       stream.avStream,
-				decCtx:       decCtx,
+				stream:       stream,
 				filterIn:     filterIn,
 				buffersrcCtx: buffersrcCtx,
 			})

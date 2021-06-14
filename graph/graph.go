@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"unsafe"
 
 	"github.com/spiretechnology/spireav"
 )
@@ -340,32 +339,32 @@ func (graph *Graph) NewJob() *GraphJob {
 	}
 }
 
-func CopyStreamSettings(from *InputStream, to *OutputStream) {
+// func CopyStreamSettings(from *InputStream, to *OutputStream) {
 
-	// If it's a video
-	if from.decCtx.codec_type == C.AVMEDIA_TYPE_VIDEO {
-		to.encCtx.width = from.decCtx.width
-		to.encCtx.height = from.decCtx.height
-		to.encCtx.sample_aspect_ratio = from.decCtx.sample_aspect_ratio
-		if to.encoder.avCodec.pix_fmts != nil {
-			to.encCtx.pix_fmt = *(*int32)(unsafe.Pointer(uintptr(unsafe.Pointer(to.encoder.avCodec.pix_fmts))))
-		} else {
-			to.encCtx.pix_fmt = from.decCtx.pix_fmt
-		}
-		to.encCtx.framerate = from.decCtx.framerate
-		to.encCtx.time_base = C.av_inv_q(to.encCtx.framerate)
-		to.avStream.time_base = to.encCtx.time_base
-	} else {
-		to.encCtx.sample_rate = from.decCtx.sample_rate
-		to.encCtx.channel_layout = from.decCtx.channel_layout
-		to.encCtx.channels = C.av_get_channel_layout_nb_channels(to.encCtx.channel_layout)
+// 	// If it's a video
+// 	if from.decCtx.codec_type == C.AVMEDIA_TYPE_VIDEO {
+// 		to.encCtx.width = from.decCtx.width
+// 		to.encCtx.height = from.decCtx.height
+// 		to.encCtx.sample_aspect_ratio = from.decCtx.sample_aspect_ratio
+// 		if to.encoder.avCodec.pix_fmts != nil {
+// 			to.encCtx.pix_fmt = *(*int32)(unsafe.Pointer(uintptr(unsafe.Pointer(to.encoder.avCodec.pix_fmts))))
+// 		} else {
+// 			to.encCtx.pix_fmt = from.decCtx.pix_fmt
+// 		}
+// 		to.encCtx.framerate = from.decCtx.framerate
+// 		to.encCtx.time_base = C.av_inv_q(to.encCtx.framerate)
+// 		to.avStream.time_base = to.encCtx.time_base
+// 	} else {
+// 		to.encCtx.sample_rate = from.decCtx.sample_rate
+// 		to.encCtx.channel_layout = from.decCtx.channel_layout
+// 		to.encCtx.channels = C.av_get_channel_layout_nb_channels(to.encCtx.channel_layout)
 
-		// encCtx.sample_fmt = encoder.sample_fmts[0]
-		to.encCtx.sample_fmt = from.decCtx.sample_fmt
-		to.encCtx.time_base = C.struct_AVRational{
-			num: 1,
-			den: to.encCtx.sample_rate,
-		}
-	}
+// 		// encCtx.sample_fmt = encoder.sample_fmts[0]
+// 		to.encCtx.sample_fmt = from.decCtx.sample_fmt
+// 		to.encCtx.time_base = C.struct_AVRational{
+// 			num: 1,
+// 			den: to.encCtx.sample_rate,
+// 		}
+// 	}
 
-}
+// }
