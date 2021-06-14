@@ -15,6 +15,7 @@ import (
 
 // FileInputNode is a node that represents an input to a graph
 type FileInputNode struct {
+	InputNode
 	filename string
 	ctx      *C.struct_AVFormatContext
 	isOpen   bool
@@ -115,14 +116,6 @@ func (gfi *FileInputNode) GetOutputTypes() ([]spireav.StreamType, error) {
 	// Return the slice of types
 	return types, nil
 
-}
-
-func (gfi *FileInputNode) FilterString(inputs []spireav.StreamType) string {
-	return ""
-}
-
-func (gfi *FileInputNode) Type() NodeType {
-	return NodeTypeInput
 }
 
 func (gfi *FileInputNode) GetStream(streamIndex int) (*InputStream, error) {

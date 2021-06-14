@@ -5,27 +5,24 @@ package graph
 import "C"
 import "github.com/spiretechnology/spireav"
 
-type NodeType uint
-
-const (
-	NodeTypeInput     NodeType = 0
-	NodeTypeOutput    NodeType = 1
-	NodeTypeTransform NodeType = 2
-)
-
 type Node interface {
-	FilterString(inputs []spireav.StreamType) string
 	GetOutputTypes() ([]spireav.StreamType, error)
-	Type() NodeType
 }
 
 type InputNode interface {
+	Node
 	Open() (*C.struct_AVFormatContext, error)
 	GetStream(streamIndex int) (*InputStream, error)
 }
 
 type OutputNode interface {
+	Node
 	Open() (*C.struct_AVFormatContext, error)
 	AddStream(encoder *Encoder) (*OutputStream, error)
 	GetStream(streamIndex int) (*OutputStream, error)
+}
+
+type TransformNode interface {
+	Node
+	FilterString(inputs []spireav.StreamType) string
 }

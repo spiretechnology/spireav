@@ -63,11 +63,10 @@ func (graph *Graph) AddNode(node Node) *GraphNode {
 		inputIndex:  -1,
 		outputIndex: -1,
 	}
-	nodeType := node.Type()
-	if nodeType == NodeTypeInput {
+	if _, ok := node.(InputNode); ok {
 		graphNode.inputIndex = int(graph.inputsCount)
 		graph.inputsCount++
-	} else if nodeType == NodeTypeOutput {
+	} else if _, ok := node.(OutputNode); ok {
 		graphNode.outputIndex = int(graph.outputsCount)
 		graph.outputsCount++
 	}
@@ -160,9 +159,9 @@ func (graph *Graph) formatNodeOutputName(nodeid uint, nodeOutputIndex uint) stri
 
 func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 
-	// If the node is an output or an input
-	nodeType := node.node.Type()
-	if nodeType == NodeTypeInput || nodeType == NodeTypeOutput {
+	// If the node is not a transform node
+	transformNode, ok := node.node.(TransformNode)
+	if !ok {
 		return "", nil
 	}
 
@@ -173,7 +172,7 @@ func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 	}
 
 	// Create the filter string for the node
-	filterStr := node.node.FilterString(inputTypes)
+	filterStr := transformNode.FilterString(inputTypes)
 
 	// Get the links into the node
 	linksIn := graph.getLinksToNode(node)
@@ -186,7 +185,7 @@ func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 	}
 
 	// Get the output types
-	outputTypes, err := node.node.GetOutputTypes()
+	outputTypes, err := transformNode.GetOutputTypes()
 	if err != nil {
 		return "", err
 	}

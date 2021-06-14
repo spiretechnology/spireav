@@ -60,7 +60,7 @@ type JobContext struct {
 	outputs     []*JobOutput
 }
 
-var filtersNativeTimeBase = C.struct_AVRational{num: 1, den: 90000}
+var filtersNativeTimeBase = C.struct_AVRational{num: 1, den: 44100}
 
 func (job *GraphJob) Run() error {
 
@@ -115,8 +115,8 @@ func (job *GraphJob) Run() error {
 			stream.decCtx.time_base,
 			filtersNativeTimeBase,
 		)
-
-		fmt.Println(packet.pos)
+		fmt.Println("X: ", stream.decCtx.time_base)
+		fmt.Println("Y: ", filtersNativeTimeBase)
 
 		// Send the packet into the decoder
 		ret = int(C.avcodec_send_packet(stream.decCtx, &packet))
@@ -285,6 +285,10 @@ func (job *GraphJob) encodeWriteFrame(
 			filtersNativeTimeBase,
 			stream.encCtx.time_base,
 		)
+		fmt.Println("A: ", filtersNativeTimeBase)
+		fmt.Println("B: ", stream.encCtx.time_base)
+		encodedPacket.pos *= 2
+		encodedPacket.pts *= 2
 
 		// Write the frame into the output
 		ret = int(C.av_interleaved_write_frame(output.ofmtCtx, &encodedPacket))

@@ -12,6 +12,7 @@ import (
 )
 
 type FileOutputNode struct {
+	OutputNode
 	filename string
 	ctx      *C.struct_AVFormatContext
 	isOpen   bool
@@ -82,14 +83,6 @@ func (gfo *FileOutputNode) GetOutputTypes() ([]spireav.StreamType, error) {
 		}
 	}
 	return types, nil
-}
-
-func (gfo *FileOutputNode) FilterString(inputs []spireav.StreamType) string {
-	return ""
-}
-
-func (gfo *FileOutputNode) Type() NodeType {
-	return NodeTypeOutput
 }
 
 func (gfo *FileOutputNode) AddStream(encoder *Encoder) (*OutputStream, error) {

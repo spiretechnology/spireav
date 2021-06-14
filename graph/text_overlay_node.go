@@ -8,6 +8,7 @@ import (
 )
 
 type TextOverlayNode struct {
+	TransformNode
 	Text string
 }
 
@@ -23,8 +24,4 @@ func (node TextOverlayNode) FilterString(inputs []spireav.StreamType) string {
 		configParts = append(configParts, fmt.Sprintf("%s=%s", k, v))
 	}
 	return fmt.Sprintf("drawtext=%s", strings.Join(configParts, ":"))
-}
-
-func (node TextOverlayNode) Type() NodeType {
-	return NodeTypeTransform
 }

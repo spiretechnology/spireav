@@ -595,9 +595,9 @@ func encodeWriteFrame(filtFrame *C.struct_AVFrame, streamIndex uint) {
 			stream.encCtx.time_base,
 			outStream.time_base,
 		)
-		fmt.Println("A", stream.encCtx.time_base)
-		fmt.Println("B", outStream.time_base)
-		fmt.Println(encPkt.pts)
+		fmt.Println("A: ", stream.encCtx.time_base)
+		fmt.Println("B: ", outStream.time_base)
+
 		// fmt.Println("Muxing frame")
 		ret = int(C.av_interleaved_write_frame(ofmtCtx, &encPkt))
 
@@ -687,6 +687,8 @@ func main() {
 				inStream.time_base,
 				stream.decCtx.time_base,
 			)
+			fmt.Println("X: ", inStream.time_base)
+			fmt.Println("Y: ", stream.decCtx.time_base)
 
 			// send_packet sometimes adjusts the timebase if the supplied timebase is insufficiently precise
 			ret = int(C.avcodec_send_packet(stream.decCtx, &packet))
