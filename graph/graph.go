@@ -32,10 +32,10 @@ type Link struct {
 }
 
 type GraphNode struct {
-	nodeid      uint
-	node        Node
-	inputIndex  int
-	outputIndex int
+	nodeid uint
+	node   Node
+	// inputIndex  int
+	// outputIndex int
 }
 
 type Graph struct {
@@ -58,18 +58,18 @@ func NewGraph() Graph {
 // AddNode adds a node to the graph
 func (graph *Graph) AddNode(node Node) *GraphNode {
 	graphNode := &GraphNode{
-		nodeid:      uint(len(graph.nodes)),
-		node:        node,
-		inputIndex:  -1,
-		outputIndex: -1,
+		nodeid: uint(len(graph.nodes)),
+		node:   node,
+		// inputIndex:  -1,
+		// outputIndex: -1,
 	}
-	if _, ok := node.(InputNode); ok {
-		graphNode.inputIndex = int(graph.inputsCount)
-		graph.inputsCount++
-	} else if _, ok := node.(OutputNode); ok {
-		graphNode.outputIndex = int(graph.outputsCount)
-		graph.outputsCount++
-	}
+	// if _, ok := node.(InputNode); ok {
+	// 	graphNode.inputIndex = int(graph.inputsCount)
+	// 	graph.inputsCount++
+	// } else if _, ok := node.(OutputNode); ok {
+	// 	graphNode.outputIndex = int(graph.outputsCount)
+	// 	graph.outputsCount++
+	// }
 	graph.nodes = append(graph.nodes, graphNode)
 	return graphNode
 }
