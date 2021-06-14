@@ -25,57 +25,54 @@ import (
 )
 
 type Link struct {
-	fromNode        *GraphNode
+	fromNode        Node
 	fromOutputIndex uint
-	toNode          *GraphNode
+	toNode          Node
 	toInputIndex    uint
 }
 
-type GraphNode struct {
-	nodeid uint
-	node   Node
-	// inputIndex  int
-	// outputIndex int
-}
-
 type Graph struct {
-	nodes        []*GraphNode
-	links        []Link
-	inputsCount  uint
-	outputsCount uint
+	nodes map[uint]Node
+	links []Link
 }
 
 // NewGraph allocates a new graph
 func NewGraph() Graph {
 	return Graph{
-		nodes:        []*GraphNode{},
-		links:        []Link{},
-		inputsCount:  0,
-		outputsCount: 0,
+		nodes: map[uint]Node{},
+		links: []Link{},
 	}
+}
+
+func (graph *Graph) getNodeID(node Node) uint {
+	for k, v := range graph.nodes {
+		if v == node {
+			return k
+		}
+	}
+	return 0
+}
+
+func (graph *Graph) getUnusedNodeID() uint {
+	return uint(len(graph.nodes))
 }
 
 // AddNode adds a node to the graph
-func (graph *Graph) AddNode(node Node) *GraphNode {
-	graphNode := &GraphNode{
-		nodeid: uint(len(graph.nodes)),
-		node:   node,
-		// inputIndex:  -1,
-		// outputIndex: -1,
-	}
-	// if _, ok := node.(InputNode); ok {
-	// 	graphNode.inputIndex = int(graph.inputsCount)
-	// 	graph.inputsCount++
-	// } else if _, ok := node.(OutputNode); ok {
-	// 	graphNode.outputIndex = int(graph.outputsCount)
-	// 	graph.outputsCount++
-	// }
-	graph.nodes = append(graph.nodes, graphNode)
-	return graphNode
+func (graph *Graph) AddNode(node Node) Node {
+
+	// Create a key for the node
+	nodeID := graph.getUnusedNodeID()
+
+	// Add the node to the map of nodes
+	graph.nodes[nodeID] = node
+
+	// Return the input node (for chaining)
+	return node
+
 }
 
 // AddLink adds a link between nodes in the graph
-func (graph *Graph) AddLink(fromNode *GraphNode, fromOutputIndex uint, toNode *GraphNode, toInputIndex uint) {
+func (graph *Graph) AddLink(fromNode Node, fromOutputIndex uint, toNode Node, toInputIndex uint) {
 	link := Link{
 		fromNode,
 		fromOutputIndex,
@@ -85,7 +82,7 @@ func (graph *Graph) AddLink(fromNode *GraphNode, fromOutputIndex uint, toNode *G
 	graph.links = append(graph.links, link)
 }
 
-func (graph *Graph) getLinksFromNode(node *GraphNode) []Link {
+func (graph *Graph) getLinksFromNode(node Node) []Link {
 
 	// Get the links
 	var links []Link
@@ -105,7 +102,7 @@ func (graph *Graph) getLinksFromNode(node *GraphNode) []Link {
 
 }
 
-func (graph *Graph) getLinksToNode(node *GraphNode) []Link {
+func (graph *Graph) getLinksToNode(node Node) []Link {
 
 	// Get the links
 	var links []Link
@@ -125,7 +122,7 @@ func (graph *Graph) getLinksToNode(node *GraphNode) []Link {
 
 }
 
-func (graph *Graph) getInputTypes(node *GraphNode) ([]spireav.StreamType, error) {
+func (graph *Graph) getInputTypes(node Node) ([]spireav.StreamType, error) {
 
 	// Get the links into this node
 	linksIn := graph.getLinksToNode(node)
@@ -134,7 +131,7 @@ func (graph *Graph) getInputTypes(node *GraphNode) ([]spireav.StreamType, error)
 	var inputTypes []spireav.StreamType
 	for i := range linksIn {
 		prevOutputIndex := linksIn[i].fromOutputIndex
-		prevOutputTypes, err := linksIn[i].fromNode.node.GetOutputTypes()
+		prevOutputTypes, err := linksIn[i].fromNode.GetOutputTypes()
 		if err != nil {
 			return nil, err
 		}
@@ -149,18 +146,18 @@ func (graph *Graph) getInputTypes(node *GraphNode) ([]spireav.StreamType, error)
 
 }
 
-func (graph *Graph) formatNodeOutputNameClean(nodeid uint, nodeOutputIndex uint) string {
-	return fmt.Sprintf("node%d_%d", nodeid, nodeOutputIndex)
+func (graph *Graph) formatNodeOutputNameClean(node Node, nodeOutputIndex uint) string {
+	return fmt.Sprintf("node%d_%d", graph.getNodeID(node), nodeOutputIndex)
 }
 
-func (graph *Graph) formatNodeOutputName(nodeid uint, nodeOutputIndex uint) string {
-	return fmt.Sprintf("[%s]", graph.formatNodeOutputNameClean(nodeid, nodeOutputIndex))
+func (graph *Graph) formatNodeOutputName(node Node, nodeOutputIndex uint) string {
+	return fmt.Sprintf("[%s]", graph.formatNodeOutputNameClean(node, nodeOutputIndex))
 }
 
-func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
+func (graph *Graph) generateFiltersString(node Node) (string, error) {
 
 	// If the node is not a transform node
-	transformNode, ok := node.node.(TransformNode)
+	transformNode, ok := node.(TransformNode)
 	if !ok {
 		return "", nil
 	}
@@ -181,7 +178,7 @@ func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 	inputNames := ""
 	for i := range linksIn {
 		link := linksIn[i]
-		inputNames += graph.formatNodeOutputName(link.fromNode.nodeid, link.fromOutputIndex)
+		inputNames += graph.formatNodeOutputName(link.fromNode, link.fromOutputIndex)
 	}
 
 	// Get the output types
@@ -193,7 +190,7 @@ func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 	// Create the output names
 	outputNames := ""
 	for i := range outputTypes {
-		outputNames += graph.formatNodeOutputName(node.nodeid, uint(i))
+		outputNames += graph.formatNodeOutputName(node, uint(i))
 	}
 
 	// Create the full filters string
@@ -201,17 +198,20 @@ func (graph *Graph) generateFiltersString(node *GraphNode) (string, error) {
 
 }
 
-func (graph *Graph) recursiveGenerateFiltersString(node *GraphNode, nodeids *[]uint) ([]string, error) {
+func (graph *Graph) recursiveGenerateFiltersString(node Node, nodeids *[]uint) ([]string, error) {
+
+	// Get the node's identifier
+	nodeID := graph.getNodeID(node)
 
 	// If the node identifier is already in the list
 	for i := range *nodeids {
-		if (*nodeids)[i] == node.nodeid {
+		if (*nodeids)[i] == nodeID {
 			return []string{}, nil
 		}
 	}
 
 	// Add the node id to the slice
-	*nodeids = append(*nodeids, node.nodeid)
+	*nodeids = append(*nodeids, nodeID)
 
 	// Add the string for the output
 	filterStr, err := graph.generateFiltersString(node)
@@ -249,7 +249,7 @@ func (graph *Graph) generateOverallFiltersString() (string, error) {
 
 	// Loop through the output nodes
 	for _, node := range graph.nodes {
-		if _, ok := node.node.(OutputNode); ok {
+		if _, ok := node.(OutputNode); ok {
 			filtersStr, err := graph.generateFiltersStringForOutput(node)
 			if err != nil {
 				return "", err
@@ -263,7 +263,7 @@ func (graph *Graph) generateOverallFiltersString() (string, error) {
 
 }
 
-func (graph *Graph) generateFiltersStringForOutput(outputNode *GraphNode) (string, error) {
+func (graph *Graph) generateFiltersStringForOutput(outputNode Node) (string, error) {
 
 	// Keep track of the node ids already added to the filter string
 	var nodeids []uint
@@ -279,7 +279,7 @@ func (graph *Graph) generateFiltersStringForOutput(outputNode *GraphNode) (strin
 
 }
 
-func (graph *Graph) getStreamTypesIntoOutput(outputNode *GraphNode) []spireav.StreamType {
+func (graph *Graph) getStreamTypesIntoOutput(outputNode Node) []spireav.StreamType {
 
 	// Slice of stream types in the output
 	outputStreamTypes := []spireav.StreamType{}
@@ -291,7 +291,7 @@ func (graph *Graph) getStreamTypesIntoOutput(outputNode *GraphNode) []spireav.St
 	for _, link := range linksIntoOutput {
 
 		// Get the output types on the FROM node
-		fromTypes, err := link.fromNode.node.GetOutputTypes()
+		fromTypes, err := link.fromNode.GetOutputTypes()
 		if err != nil {
 			fmt.Println("Error getting node output types: ", err)
 			continue
@@ -314,7 +314,7 @@ func (graph *Graph) getStreamTypesIntoOutput(outputNode *GraphNode) []spireav.St
 func (graph *Graph) getInputNodes() []InputNode {
 	inputNodes := []InputNode{}
 	for _, node := range graph.nodes {
-		inputNode, ok := node.node.(InputNode)
+		inputNode, ok := node.(InputNode)
 		if ok {
 			inputNodes = append(inputNodes, inputNode)
 		}
@@ -326,7 +326,7 @@ func (graph *Graph) getInputNodes() []InputNode {
 func (graph *Graph) getOutputNodes() []OutputNode {
 	outputNodes := []OutputNode{}
 	for _, node := range graph.nodes {
-		outputNode, ok := node.node.(OutputNode)
+		outputNode, ok := node.(OutputNode)
 		if ok {
 			outputNodes = append(outputNodes, outputNode)
 		}

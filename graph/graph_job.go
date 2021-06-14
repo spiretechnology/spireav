@@ -363,13 +363,13 @@ func (job *GraphJob) createOutputs(
 
 	// Loop through all the outputs
 	for _, node := range job.graph.nodes {
-		outputNode, ok := node.node.(OutputNode)
+		outputNode, ok := node.(OutputNode)
 		if !ok {
 			continue
 		}
 
 		// Get the stream types on this input node
-		streamTypes, err := node.node.GetOutputTypes()
+		streamTypes, err := node.GetOutputTypes()
 		if err != nil {
 			return nil, err
 		}
@@ -394,7 +394,7 @@ func (job *GraphJob) createOutputs(
 
 			// Get the name of the output in the graph we're pulling from to this buffersink
 			name := job.graph.formatNodeOutputNameClean(
-				link.fromNode.nodeid,
+				link.fromNode,
 				link.fromOutputIndex,
 			)
 			outCStr := C.CString(name)
@@ -475,7 +475,7 @@ func (job *GraphJob) createOutputs(
 		outputs = append(outputs, jobOutput)
 
 		// Dump the output format
-		if fileOutputNode, ok := node.node.(*FileOutputNode); ok {
+		if fileOutputNode, ok := node.(*FileOutputNode); ok {
 
 			// Get the filename for the node
 			cFilename := C.CString(fileOutputNode.filename)
@@ -530,13 +530,13 @@ func (job *GraphJob) createInputs(
 
 	// Loop through all the inputs
 	for _, node := range job.graph.nodes {
-		inputNode, ok := node.node.(InputNode)
+		inputNode, ok := node.(InputNode)
 		if !ok {
 			continue
 		}
 
 		// Get the stream types on this input node
-		streamTypes, err := node.node.GetOutputTypes()
+		streamTypes, err := node.GetOutputTypes()
 		if err != nil {
 			return nil, err
 		}
@@ -579,7 +579,7 @@ func (job *GraphJob) createInputs(
 
 			// Create the name for the output
 			name := job.graph.formatNodeOutputNameClean(
-				node.nodeid,
+				node,
 				fromOutputIndex,
 			)
 			inCStr := C.CString(name)
