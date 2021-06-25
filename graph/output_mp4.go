@@ -1,9 +1,10 @@
 package graph
 
 type OutputNodeMP4 struct {
-	Filename string
-	Width    int
-	Height   int
+	Filename  string
+	Width     int
+	Height    int
+	FrameRate string
 }
 
 func (o *OutputNodeMP4) GetFilename() string {
@@ -16,6 +17,9 @@ func (o *OutputNodeMP4) GetOptions() []string {
 		"-pix_fmt", "yuv420p",
 		"-movflags", "+faststart",
 		"-f", "mp4",
+	}
+	if len(o.FrameRate) > 0 {
+		opts = append(opts, "-r", o.FrameRate)
 	}
 	return opts
 }

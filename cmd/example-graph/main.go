@@ -17,6 +17,7 @@ func main() {
 	})
 	outputNode := g.AddOutput(&graph.OutputNodeMP4{
 		Filename: "/Users/conner/Desktop/graph-out-new.mp4",
+		// FrameRate: "0.5",
 	})
 
 	// Create a text overlay node
