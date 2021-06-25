@@ -44,7 +44,7 @@ func main() {
 				stream.SetAspectRatio(16, 9)
 				stream.SetFrameRate(24, 1)
 				stream.SetPixFmt(stream.GetEncoder().GetDefaultPixFmt())
-				stream.SetTimeBase(1, 1200)
+				stream.SetTimeBase(1, 90000)
 			}),
 		},
 	)

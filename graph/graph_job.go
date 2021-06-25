@@ -58,7 +58,7 @@ type JobContext struct {
 	outputs     []*JobOutput
 }
 
-var filtersNativeTimeBase = C.struct_AVRational{num: 1, den: 44100}
+var filtersNativeTimeBase = C.struct_AVRational{num: 1, den: 90000}
 
 func (job *GraphJob) Run() error {
 
@@ -283,8 +283,8 @@ func (job *GraphJob) encodeWriteFrame(
 			filtersNativeTimeBase,
 			stream.stream.encCtx.time_base,
 		)
-		fmt.Println("A: ", filtersNativeTimeBase)
-		fmt.Println("B: ", stream.stream.encCtx.time_base)
+		// fmt.Println("A: ", filtersNativeTimeBase)
+		// fmt.Println("B: ", stream.stream.encCtx.time_base)
 		// encodedPacket.pos *= 2
 		// encodedPacket.pts *= 2
 
