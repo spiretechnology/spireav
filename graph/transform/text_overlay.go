@@ -1,0 +1,50 @@
+package transform
+
+import "fmt"
+
+type TextOverlay struct {
+	Text           string
+	X              string
+	Y              string
+	FontColor      string
+	FontFile       string
+	Box            bool
+	BoxColor       string
+	BoxBorderWidth int
+}
+
+func (node *TextOverlay) GetOutputsCount() int {
+	return 1
+}
+
+func (node *TextOverlay) getFilterOptions() map[string]string {
+	opts := map[string]string{
+		"text": node.Text,
+	}
+	if len(node.X) > 0 {
+		opts["x"] = node.X
+	}
+	if len(node.Y) > 0 {
+		opts["y"] = node.Y
+	}
+	if len(node.FontFile) > 0 {
+		opts["fontfile"] = node.FontFile
+	}
+	if len(node.FontColor) > 0 {
+		opts["fontcolor"] = node.FontColor
+	}
+	if node.Box {
+		opts["box"] = "1"
+		if len(node.BoxColor) > 0 {
+			opts["boxcolor"] = node.BoxColor
+		}
+		if node.BoxBorderWidth > 0 {
+			opts["boxborderw"] = fmt.Sprintf("%d", node.BoxBorderWidth)
+		}
+	}
+	return opts
+}
+
+func (node *TextOverlay) FilterString() string {
+	return FormatTransform("drawtext", node.getFilterOptions())
+}

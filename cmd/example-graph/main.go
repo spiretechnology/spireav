@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spiretechnology/spireav/graph"
+	"github.com/spiretechnology/spireav/graph/transform"
 	"github.com/spiretechnology/spireav/proc"
 )
 
@@ -19,12 +20,19 @@ func main() {
 	})
 
 	// Create a text overlay node
-	textOverlay := g.AddTransform(&graph.TextOverlayNode{
+	textOverlay := g.AddTransform(&transform.TextOverlay{
 		Text: "SpireAV Test",
 	})
 
+	// Create a text overlay node
+	scale := g.AddTransform(&transform.Scale{
+		Width:  200,
+		Height: 200,
+	})
+
 	// Link together the nodes to create a video processing pipeline
-	g.AddLink(inputNode, 0, textOverlay, 0)
+	g.AddLink(inputNode, 0, scale, 0)
+	g.AddLink(scale, 0, textOverlay, 0)
 	g.AddLink(textOverlay, 0, outputNode, 0)
 
 	// Create the process

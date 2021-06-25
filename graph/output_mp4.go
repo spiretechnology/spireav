@@ -11,6 +11,11 @@ func (o *OutputNodeMP4) GetFilename() string {
 }
 
 func (o *OutputNodeMP4) GetOptions() []string {
-	opts := []string{}
+	opts := []string{
+		"-movflags", "use_metadata_tags",
+		"-pix_fmt", "yuv420p",
+		"-movflags", "+faststart",
+		"-f", "mp4",
+	}
 	return opts
 }
