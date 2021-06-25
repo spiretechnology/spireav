@@ -35,6 +35,7 @@ func main() {
 	g.AddLink(inputNode, 0, scale, 0)
 	g.AddLink(scale, 0, textOverlay, 0)
 	g.AddLink(textOverlay, 0, outputNode, 0)
+	g.AddLink(inputNode, 1, outputNode, 1)
 
 	// Create the process
 	p := proc.Proc{

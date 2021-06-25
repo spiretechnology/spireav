@@ -94,7 +94,7 @@ func (graph *Graph) GetOutputMappings(node OutputNode) []string {
 	// Collect the output names
 	outputNames := []string{}
 	for _, link := range links {
-		outputNames = append(outputNames, graph.formatNodeOutputName(link.fromNode, link.fromOutputIndex))
+		outputNames = append(outputNames, graph.formatNodeOutputName(link.fromNode, link.fromOutputIndex, true))
 	}
 
 	// Return the names
@@ -122,17 +122,21 @@ func (graph *Graph) getLinksToNode(node Node) []Link {
 
 }
 
-func (graph *Graph) formatNodeOutputNameClean(node Node, nodeOutputIndex uint) string {
+func (graph *Graph) formatNodeOutputName(
+	node Node,
+	nodeOutputIndex uint,
+	mapping bool,
+) string {
 	if in, ok := node.(InputNode); ok {
-		return fmt.Sprintf("%d:%d", graph.getInputIndex(in), nodeOutputIndex)
+		if mapping {
+			return fmt.Sprintf("%d:%d", graph.getInputIndex(in), nodeOutputIndex)
+		} else {
+			return fmt.Sprintf("[%d:%d]", graph.getInputIndex(in), nodeOutputIndex)
+		}
 	} else if tn, ok := node.(TransformNode); ok {
-		return fmt.Sprintf("%s%d_%d", nodeNamePrefix, graph.getTransformIndex(tn), nodeOutputIndex)
+		return fmt.Sprintf("[%s%d_%d]", nodeNamePrefix, graph.getTransformIndex(tn), nodeOutputIndex)
 	}
 	return ""
-}
-
-func (graph *Graph) formatNodeOutputName(node Node, nodeOutputIndex uint) string {
-	return fmt.Sprintf("[%s]", graph.formatNodeOutputNameClean(node, nodeOutputIndex))
 }
 
 func (graph *Graph) generateFiltersString(node TransformNode) string {
@@ -147,13 +151,13 @@ func (graph *Graph) generateFiltersString(node TransformNode) string {
 	inputNames := ""
 	for i := range linksIn {
 		link := linksIn[i]
-		inputNames += graph.formatNodeOutputName(link.fromNode, link.fromOutputIndex)
+		inputNames += graph.formatNodeOutputName(link.fromNode, link.fromOutputIndex, false)
 	}
 
 	// Create the output names
 	outputNames := []string{}
 	for i := 0; i < node.GetOutputsCount(); i++ {
-		outputNames = append(outputNames, graph.formatNodeOutputName(node, uint(i)))
+		outputNames = append(outputNames, graph.formatNodeOutputName(node, uint(i), false))
 	}
 
 	// Create the full filters string
