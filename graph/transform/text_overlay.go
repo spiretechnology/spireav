@@ -2,6 +2,7 @@ package transform
 
 import "fmt"
 
+// TextOverlay is a transform that takes in a single video stream and draws static text on top of it
 type TextOverlay struct {
 	Text           string
 	X              string

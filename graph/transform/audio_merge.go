@@ -2,6 +2,8 @@ package transform
 
 import "fmt"
 
+// AudioMerge is a transform that takes in N number of discrete audio streams and merges them into
+// a single output stream with N channels.
 type AudioMerge struct {
 	Inputs int
 }

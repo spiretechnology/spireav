@@ -2,6 +2,8 @@ package transform
 
 import "fmt"
 
+// Scale is a transform that takes in a picture stream (video or photo) and outputs a scaled version
+// of the stream.
 type Scale struct {
 	Width  int
 	Height int

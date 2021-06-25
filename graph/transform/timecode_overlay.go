@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// TimecodeOverlay is a transform that takes in a single video stream and draws live timecode text on top of it
 type TimecodeOverlay struct {
 	StartTimecode  string
 	FrameRate      float64

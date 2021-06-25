@@ -2,6 +2,8 @@ package transform
 
 import "fmt"
 
+// Opacity is a transform that takes in a picture stream (video or photo) and outputs a stream
+// with the opacity multiplied by the give floating point value
 type Opacity struct {
 	Opacity float64
 }
