@@ -3,8 +3,6 @@ package graph
 import (
 	"fmt"
 	"strings"
-
-	"github.com/spiretechnology/spireav"
 )
 
 type TextOverlayNode struct {
@@ -12,11 +10,11 @@ type TextOverlayNode struct {
 	Text string
 }
 
-func (node TextOverlayNode) GetOutputTypes() ([]spireav.StreamType, error) {
-	return []spireav.StreamType{spireav.StreamTypeVideo}, nil
+func (node *TextOverlayNode) GetOutputsCount() int {
+	return 1
 }
 
-func (node TextOverlayNode) FilterString(inputs []spireav.StreamType) string {
+func (node *TextOverlayNode) FilterString() string {
 	config := make(map[string]string)
 	config["text"] = node.Text
 	configParts := []string{}
