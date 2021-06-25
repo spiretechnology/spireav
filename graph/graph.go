@@ -6,6 +6,9 @@ import (
 	"strings"
 )
 
+// nodeNamePrefix is a prefix string added to the generated FFmpeg command to make filter outputs unique
+const nodeNamePrefix = "spire"
+
 type Node interface{}
 
 type InputNode interface {
@@ -123,7 +126,7 @@ func (graph *Graph) formatNodeOutputNameClean(node Node, nodeOutputIndex uint) s
 	if in, ok := node.(InputNode); ok {
 		return fmt.Sprintf("%d:%d", graph.getInputIndex(in), nodeOutputIndex)
 	} else if tn, ok := node.(TransformNode); ok {
-		return fmt.Sprintf("node%d_%d", graph.getTransformIndex(tn), nodeOutputIndex)
+		return fmt.Sprintf("%s%d_%d", nodeNamePrefix, graph.getTransformIndex(tn), nodeOutputIndex)
 	}
 	return ""
 }
