@@ -2,10 +2,12 @@ package avid
 
 import (
 	"errors"
+	"path"
 
 	"github.com/spiretechnology/spireav/graph"
 	"github.com/spiretechnology/spireav/graph/transform"
 	"github.com/spiretechnology/spireav/meta"
+	"github.com/spiretechnology/spireav/proc"
 )
 
 type proxyMP4RemuxerInput struct {
@@ -63,7 +65,23 @@ func proxyMP4LoadInput(filename string) (*proxyMP4RemuxerInput, error) {
 
 }
 
-func (r *ProxyMP4Remuxer) GenerateGraph() (*graph.Graph, error) {
+func (r *ProxyMP4Remuxer) GenerateProc(outDir string) (*proc.Proc, error) {
+
+	// Generate the graph
+	g, err := r.GenerateGraph(outDir)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the process
+	return &proc.Proc{
+		Graph:                 g,
+		EstimatedLengthFrames: r.EstimateLengthFrames(),
+	}, nil
+
+}
+
+func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 
 	// Create a graph
 	g := graph.Graph{}
@@ -98,7 +116,13 @@ func (r *ProxyMP4Remuxer) GenerateGraph() (*graph.Graph, error) {
 
 	// Create the MP4 output
 	output := g.AddOutput(&graph.OutputNodeMP4{
-		Filename: "/Users/conner/Desktop/remux.mp4",
+		Filename: path.Join(outDir, "240.mp4"),
+	})
+
+	// Create the thumbnail output
+	outputThumb := g.AddOutput(&graph.OutputNodeMP4{
+		Filename:  path.Join(outDir, "thumb.mp4"),
+		FrameRate: "0.5",
 	})
 
 	// Create a scale node for the video
@@ -107,14 +131,22 @@ func (r *ProxyMP4Remuxer) GenerateGraph() (*graph.Graph, error) {
 		Height: 240,
 	})
 
+	// Create a scale node for the thumbnail
+	scaleThumb := g.AddTransform(&transform.Scale{
+		Width:  214,
+		Height: 120,
+	})
+
 	// Create a merge node for the audio
 	amerge := g.AddTransform(&transform.AudioMerge{
 		Inputs: len(audioInputs),
 	})
 
-	// Link everything together
-	g.AddLink(videoInput, videoInput.avidMeta.EssenceStream.Index, scale, 0)
+	// Link everything together for the primary output
+	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scale, 0)
+	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scaleThumb, 0)
 	g.AddLink(scale, 0, output, 0)
+	g.AddLink(scaleThumb, 0, outputThumb, 0)
 	for i, audio := range audioInputs {
 		g.AddLink(audio.node, audio.avidMeta.EssenceStream.Index, amerge, i)
 	}

@@ -148,10 +148,9 @@ func (graph *Graph) generateFiltersString(node TransformNode) string {
 	linksIn := graph.getLinksToNode(node)
 
 	// Create the input names
-	inputNames := ""
-	for i := range linksIn {
-		link := linksIn[i]
-		inputNames += graph.formatNodeOutputName(link.fromNode, link.fromOutputIndex, false)
+	inputNames := []string{}
+	for _, link := range linksIn {
+		inputNames = append(inputNames, graph.formatNodeOutputName(link.fromNode, link.fromOutputIndex, false))
 	}
 
 	// Create the output names
@@ -161,7 +160,7 @@ func (graph *Graph) generateFiltersString(node TransformNode) string {
 	}
 
 	// Create the full filters string
-	return inputNames + filterStr + strings.Join(outputNames, "")
+	return strings.Join(inputNames, "") + filterStr + strings.Join(outputNames, "")
 
 }
 

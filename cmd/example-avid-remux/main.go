@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spiretechnology/spireav/proc"
 	"github.com/spiretechnology/spireav/routines/avid"
@@ -25,21 +26,24 @@ func main() {
 		panic(err)
 	}
 
-	// Generate the graph
-	g, err := remux.GenerateGraph()
-	if err != nil {
+	// Create the output directory
+	outDir := "/Users/conner/Desktop/avid-proxy"
+	if err := os.MkdirAll(outDir, 0700); err != nil {
 		panic(err)
 	}
 
 	// Create the process
-	p := proc.Proc{
-		Graph:                 g,
-		EstimatedLengthFrames: remux.EstimateLengthFrames(),
+	p, err := remux.GenerateProc(outDir)
+	if err != nil {
+		panic(err)
 	}
+
+	// Print the FFmpeg command string
+	fmt.Println(p.GetCommandString())
 
 	// Create a progress handler function
 	progressFunc := func(progress proc.Progress) {
-		fmt.Printf("P: %+v\n", progress)
+		// fmt.Printf("P: %+v\n", progress)
 		fmt.Printf("E: %+v\n", progress.Estimate)
 	}
 
