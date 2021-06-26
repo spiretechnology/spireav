@@ -12,11 +12,15 @@ import (
 // Reel is the equivalent of Spire's "tape"
 // Material Package is the equivalent of Spire's "clip"
 type AvidMxfMeta struct {
-	ReelName            string
-	ReelUmid            string
-	MaterialPackageName string
-	MaterialPackageUmid string
-	EssenceStream       *meta.StreamMeta
+	ReelName             string
+	ReelUmid             string
+	MaterialPackageName  string
+	MaterialPackageUmid  string
+	MediaComposerVersion string
+	CameraManufacturer   string
+	CameraModel          string
+	CameraSerialNum      string
+	EssenceStream        *meta.StreamMeta
 }
 
 // ParseAvidMxfOpAtomMeta parses a single op-atom file's metadata and returns the Avid-specific identifiers
@@ -31,11 +35,15 @@ func ParseAvidMxfOpAtomMeta(metadata *meta.Meta) (*AvidMxfMeta, error) {
 
 	// Create the starting point for the metadata
 	avidMeta := AvidMxfMeta{
-		ReelName:            stream.Tags["reel_name"],
-		ReelUmid:            stream.Tags["reel_umid"],
-		MaterialPackageName: metadata.Format.Tags["material_package_name"],
-		MaterialPackageUmid: metadata.Format.Tags["material_package_umid"],
-		EssenceStream:       stream,
+		ReelName:             stream.Tags["reel_name"],
+		ReelUmid:             stream.Tags["reel_umid"],
+		MaterialPackageName:  metadata.Format.Tags["material_package_name"],
+		MaterialPackageUmid:  metadata.Format.Tags["material_package_umid"],
+		MediaComposerVersion: metadata.Format.Tags["product_name"],
+		CameraManufacturer:   metadata.Format.Tags["comment_manufacturer"],
+		CameraModel:          metadata.Format.Tags["comment_modelName"],
+		CameraSerialNum:      metadata.Format.Tags["comment_serialNo"],
+		EssenceStream:        stream,
 	}
 
 	// Return the metadata
