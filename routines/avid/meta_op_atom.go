@@ -2,6 +2,8 @@ package avid
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/spiretechnology/spireav/meta"
 )
@@ -22,6 +24,7 @@ type AvidMxfMeta struct {
 	CameraSerialNum      string
 	LensModelName        string
 	Timecode             string
+	CreationDate         *time.Time
 	EssenceStream        *meta.StreamMeta
 }
 
@@ -48,6 +51,16 @@ func ParseAvidMxfOpAtomMeta(metadata *meta.Meta) (*AvidMxfMeta, error) {
 		LensModelName:        metadata.Format.Tags["comment_LensModelName"],
 		Timecode:             stream.Tags["timecode"],
 		EssenceStream:        stream,
+	}
+
+	// Parse the creation date of the MXF file
+	if creationDate, ok := metadata.Format.Tags["comment_CreationDate"]; ok {
+		creation, err := time.Parse("2006-01-02T15:04:05-07:00", creationDate)
+		if err != nil {
+			fmt.Println("warning: could not parse MXF creation date: ", creationDate)
+		} else {
+			avidMeta.CreationDate = &creation
+		}
 	}
 
 	// Return the metadata

@@ -10,7 +10,7 @@ import (
 func main() {
 
 	// Get the metadata for a file
-	metadata, err := meta.GetMetadata("/Users/conner/Desktop/Sample Transcodes/SS0815KB.01/SS0815KBV01.D97B84568C1FF8V.mxf", "")
+	metadata, err := meta.GetMetadata("/Users/conner/Desktop/Sample Transcodes/SC0808GB.01/SC0808GB_AV01.D9722BAE086DV.mxf", "")
 	if err != nil {
 		panic(err)
 	}
