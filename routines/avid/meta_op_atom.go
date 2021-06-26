@@ -20,6 +20,8 @@ type AvidMxfMeta struct {
 	CameraManufacturer   string
 	CameraModel          string
 	CameraSerialNum      string
+	LensModelName        string
+	Timecode             string
 	EssenceStream        *meta.StreamMeta
 }
 
@@ -43,6 +45,8 @@ func ParseAvidMxfOpAtomMeta(metadata *meta.Meta) (*AvidMxfMeta, error) {
 		CameraManufacturer:   metadata.Format.Tags["comment_manufacturer"],
 		CameraModel:          metadata.Format.Tags["comment_modelName"],
 		CameraSerialNum:      metadata.Format.Tags["comment_serialNo"],
+		LensModelName:        metadata.Format.Tags["comment_LensModelName"],
+		Timecode:             stream.Tags["timecode"],
 		EssenceStream:        stream,
 	}
 
