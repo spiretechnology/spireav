@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/spiretechnology/spireav/graph"
 )
@@ -140,8 +141,11 @@ func (p *Proc) RunWithProgress(progressFunc func(Progress)) error {
 
 func (p *Proc) reportFFmpegProgress(chanProgress chan<- Progress, processOutput io.Reader) {
 
+	// Calculate the start time
+	startTime := time.Now()
+
 	// Initialize the progress to empty
-	progress := EmptyProgress()
+	progress := EmptyProgress(startTime)
 	chanProgress <- *progress
 
 	// Create a scanner for the standard output
@@ -154,7 +158,11 @@ func (p *Proc) reportFFmpegProgress(chanProgress chan<- Progress, processOutput 
 		line = strings.ReplaceAll(line, "\r", "\n")
 
 		// Read a new progress value
-		newProgress := ParseProgressLine(line, p.EstimatedLengthFrames)
+		newProgress := ParseProgressLine(
+			line,
+			p.EstimatedLengthFrames,
+			startTime,
+		)
 		if newProgress != nil {
 			progress = newProgress
 			chanProgress <- *progress

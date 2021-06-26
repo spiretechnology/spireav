@@ -6,11 +6,12 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type ProgressEstimate struct {
-	Percent          float64
-	SecondsRemaining float64
+	Percent   float64
+	Remaining time.Duration
 }
 
 type Progress struct {
@@ -20,11 +21,13 @@ type Progress struct {
 	Time     string
 	Bitrate  int
 	Speed    float64
+	Started  time.Time
+	Elapsed  time.Duration
 	Done     bool
 	Estimate *ProgressEstimate
 }
 
-func EmptyProgress() *Progress {
+func EmptyProgress(started time.Time) *Progress {
 	return &Progress{
 		Frame:   0,
 		FPS:     0,
@@ -32,6 +35,8 @@ func EmptyProgress() *Progress {
 		Time:    "00:00:00.00",
 		Bitrate: 0,
 		Speed:   0,
+		Started: started,
+		Elapsed: time.Duration(0),
 		Done:    false,
 	}
 }
@@ -39,6 +44,7 @@ func EmptyProgress() *Progress {
 func ParseProgressLine(
 	line string,
 	estimatedLengthFrames int,
+	started time.Time,
 ) *Progress {
 
 	// If the line doesn't start with frame=, it's not a progress line
@@ -67,14 +73,16 @@ func ParseProgressLine(
 		Time:    values["time"],
 		Bitrate: int(parseProgressValue(values, "bitrate", "kbits/s", 0) * 1000),
 		Speed:   parseProgressValue(values, "speed", "x", 0),
+		Started: started,
+		Elapsed: time.Since(started),
 		Done:    done,
 	}
 
 	// If there is an estimated duration
 	if estimatedLengthFrames > 0 {
 		prog.Estimate = &ProgressEstimate{
-			Percent:          float64(prog.Frame) / float64(estimatedLengthFrames),
-			SecondsRemaining: float64(estimatedLengthFrames-prog.Frame) / math.Max(1, float64(prog.FPS)),
+			Percent:   float64(prog.Frame) / float64(estimatedLengthFrames),
+			Remaining: time.Duration(float64(estimatedLengthFrames-prog.Frame)/math.Max(1, float64(prog.FPS))) * time.Second,
 		}
 	}
 
