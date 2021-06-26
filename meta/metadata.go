@@ -1,8 +1,7 @@
 package meta
 
 import (
-	"encoding/json"
-	"os/exec"
+	"strconv"
 )
 
 type Meta struct {
@@ -75,32 +74,31 @@ type StreamDisposition struct {
 	TimedThumbnails int `json:"timed_thumbnails"`
 }
 
-func GetMetadata(
-	filename string,
-	ffprobePath string,
-) (*Meta, error) {
-
-	// If there is no probe path, use the default
-	if len(ffprobePath) == 0 {
-		ffprobePath = "ffprobe"
+func (m *Meta) GetVideoStream() *StreamMeta {
+	for _, v := range m.Streams {
+		if v.CodecType == "video" {
+			return &v
+		}
 	}
+	return nil
+}
 
-	// Create the command
-	cmd := exec.Command(ffprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
+func (m *Meta) GetLengthFrames() int {
+	video := m.GetVideoStream()
+	if video == nil {
+		return 0
+	}
+	return video.DurationTs
+}
 
-	// Run the command
-	output, err := cmd.Output()
+func (m *Meta) GetFrameRate() float64 {
+	video := m.GetVideoStream()
+	if video == nil {
+		return 0
+	}
+	durationSec, err := strconv.ParseFloat(video.Duration, 64)
 	if err != nil {
-		return nil, err
+		return 0
 	}
-
-	// Unmarshal the JSON output
-	var meta Meta
-	if err := json.Unmarshal(output, &meta); err != nil {
-		return nil, err
-	}
-
-	// Return the metadata
-	return &meta, nil
-
+	return float64(video.DurationTs) / durationSec
 }

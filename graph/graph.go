@@ -30,9 +30,9 @@ type OutputNode interface {
 
 type Link struct {
 	fromNode        Node
-	fromOutputIndex uint
+	fromOutputIndex int
 	toNode          Node
-	toInputIndex    uint
+	toInputIndex    int
 }
 
 type Graph struct {
@@ -76,7 +76,7 @@ func (graph *Graph) AddOutput(node OutputNode) OutputNode {
 }
 
 // AddLink adds a link between nodes in the graph
-func (graph *Graph) AddLink(fromNode Node, fromOutputIndex uint, toNode Node, toInputIndex uint) {
+func (graph *Graph) AddLink(fromNode Node, fromOutputIndex int, toNode Node, toInputIndex int) {
 	link := Link{
 		fromNode,
 		fromOutputIndex,
@@ -124,7 +124,7 @@ func (graph *Graph) getLinksToNode(node Node) []Link {
 
 func (graph *Graph) formatNodeOutputName(
 	node Node,
-	nodeOutputIndex uint,
+	nodeOutputIndex int,
 	mapping bool,
 ) string {
 	if in, ok := node.(InputNode); ok {
@@ -157,7 +157,7 @@ func (graph *Graph) generateFiltersString(node TransformNode) string {
 	// Create the output names
 	outputNames := []string{}
 	for i := 0; i < node.GetOutputsCount(); i++ {
-		outputNames = append(outputNames, graph.formatNodeOutputName(node, uint(i), false))
+		outputNames = append(outputNames, graph.formatNodeOutputName(node, i, false))
 	}
 
 	// Create the full filters string

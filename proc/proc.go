@@ -65,12 +65,18 @@ func (p *Proc) getBinPath() string {
 	return "ffmpeg"
 }
 
+func (p *Proc) GetCommandString() string {
+	return fmt.Sprintf(
+		"%s %s\n",
+		p.getBinPath(),
+		strings.Join(p.generateCmdArgs(), " "),
+	)
+}
+
 func (p *Proc) Run(chanProgress chan<- Progress) error {
 
 	// Generate the FFmpeg arguments
 	args := p.generateCmdArgs()
-
-	fmt.Printf("%s %s\n", p.getBinPath(), strings.Join(args, " "))
 
 	// Create the command
 	cmd := exec.Command(p.getBinPath(), args...)
