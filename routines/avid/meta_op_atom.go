@@ -14,6 +14,7 @@ import (
 // Reel is the equivalent of Spire's "tape"
 // Material Package is the equivalent of Spire's "clip"
 type AvidMxfMeta struct {
+	FilePackageUmid      string
 	ReelName             string
 	ReelUmid             string
 	MaterialPackageName  string
@@ -40,6 +41,7 @@ func ParseAvidMxfOpAtomMeta(metadata *meta.Meta) (*AvidMxfMeta, error) {
 
 	// Create the starting point for the metadata
 	avidMeta := AvidMxfMeta{
+		FilePackageUmid:      stream.Tags["file_package_umid"],
 		ReelName:             stream.Tags["reel_name"],
 		ReelUmid:             stream.Tags["reel_umid"],
 		MaterialPackageName:  metadata.Format.Tags["material_package_name"],
