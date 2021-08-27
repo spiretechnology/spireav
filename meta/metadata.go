@@ -40,6 +40,7 @@ type StreamMeta struct {
 	SampleAspectRatio  string            `json:"sample_aspect_ratio"`
 	DisplayAspectRatio string            `json:"display_aspect_ratio"`
 	PixFmt             string            `json:"pix_fmt"`
+	ColorSpace         string            `json:"color_space"`
 	Level              int               `json:"level"`
 	ChromaLocation     string            `json:"chroma_location"`
 	Refs               int               `json:"refs"`
