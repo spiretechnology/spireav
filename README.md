@@ -4,4 +4,4 @@ SpireAV is a wrapper library to FFmpeg that makes it simple to build complex fil
 
 ## Examples
 
-Several examples of how to use this library are in the `cmd` folder.
+Several examples of how to use this library are in the `examples` folder.
