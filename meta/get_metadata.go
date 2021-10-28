@@ -1,11 +1,24 @@
 package meta
 
 import (
+	"context"
 	"encoding/json"
 	"os/exec"
 )
 
 func GetMetadata(
+	filename string,
+	ffprobePath string,
+) (*Meta, error) {
+	return GetMetadataContext(
+		context.Background(),
+		filename,
+		ffprobePath,
+	)
+}
+
+func GetMetadataContext(
+	ctx context.Context,
 	filename string,
 	ffprobePath string,
 ) (*Meta, error) {
@@ -16,7 +29,7 @@ func GetMetadata(
 	}
 
 	// Create the command
-	cmd := exec.Command(ffprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
+	cmd := exec.CommandContext(ctx, ffprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
 
 	// Run the command
 	output, err := cmd.Output()
