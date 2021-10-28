@@ -3,6 +3,7 @@ package proc
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"os/exec"
@@ -75,12 +76,22 @@ func (p *Proc) GetCommandString() string {
 }
 
 func (p *Proc) Run(chanProgress chan<- Progress) error {
+	return p.RunContext(
+		context.Background(),
+		chanProgress,
+	)
+}
+
+func (p *Proc) RunContext(
+	ctx context.Context,
+	chanProgress chan<- Progress,
+) error {
 
 	// Generate the FFmpeg arguments
 	args := p.generateCmdArgs()
 
 	// Create the command
-	cmd := exec.Command(p.getBinPath(), args...)
+	cmd := exec.CommandContext(ctx, p.getBinPath(), args...)
 
 	// If progress needs to be reported
 	if chanProgress != nil {
@@ -114,6 +125,16 @@ func (p *Proc) Run(chanProgress chan<- Progress) error {
 }
 
 func (p *Proc) RunWithProgress(progressFunc func(Progress)) error {
+	return p.RunWithProgressContext(
+		context.Background(),
+		progressFunc,
+	)
+}
+
+func (p *Proc) RunWithProgressContext(
+	ctx context.Context,
+	progressFunc func(Progress),
+) error {
 
 	// Create a channel for progress reporting
 	chanProgress := make(chan Progress)
