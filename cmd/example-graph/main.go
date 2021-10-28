@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/spiretechnology/spireav/graph"
 	"github.com/spiretechnology/spireav/graph/transform"
@@ -13,10 +15,10 @@ func main() {
 	// Create a new graph
 	g := graph.Graph{}
 	inputNode := g.AddInput(&graph.FileInputNode{
-		Filename: "/Users/conner/Downloads/BigBuckBunny.mp4",
+		Filename: "reference-media/BigBuckBunny.mp4",
 	})
 	outputNode := g.AddOutput(&graph.OutputNodeMP4{
-		Filename: "/Users/conner/Desktop/graph-out-new.mp4",
+		Filename: "reference-outputs/BigBuckBunny-GRAPH.mp4",
 		// FrameRate: "0.5",
 	})
 
@@ -49,8 +51,13 @@ func main() {
 		fmt.Printf("E: %+v\n", progress.Estimate)
 	}
 
+	// Create a context for the transcoding job
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+
 	// Run the transcoding job
-	if err := p.RunWithProgress(progressFunc); err != nil {
+	if err := p.RunWithProgressContext(ctx, progressFunc); err != nil {
 		fmt.Println(err.Error())
 	}
 

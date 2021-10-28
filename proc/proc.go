@@ -118,7 +118,14 @@ func (p *Proc) RunContext(
 
 	// Wait for the process to end
 	if err := cmd.Wait(); err != nil {
+
+		// If the context triggered the process to be killed, we want to see the context's error
+		// instead of the process's error
+		if ctx != nil && ctx.Err() != nil {
+			return ctx.Err()
+		}
 		return err
+
 	}
 	return nil
 
@@ -151,7 +158,7 @@ func (p *Proc) RunWithProgressContext(
 	}()
 
 	// Produce the output
-	err := p.Run(chanProgress)
+	err := p.RunContext(ctx, chanProgress)
 	wg.Done()
 	wg.Wait()
 

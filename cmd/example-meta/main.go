@@ -9,7 +9,7 @@ import (
 func main() {
 
 	// Get the metadata for a file
-	metadata, err := meta.GetMetadata("/Users/conner/Downloads/BigBuckBunny.mp4", "")
+	metadata, err := meta.GetMetadata("reference-media/BigBuckBunny.mp4", "")
 	if err != nil {
 		panic(err)
 	}
