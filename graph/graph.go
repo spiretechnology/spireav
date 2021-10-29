@@ -33,8 +33,8 @@ type OutputNode interface {
 	GetOptions() []string
 }
 
-// Link is a connection between one node's output to another node's input
-type Link struct {
+// graphLink is a connection between one node's output to another node's input
+type graphLink struct {
 	fromNode        Node
 	fromOutputIndex int
 	toNode          Node
@@ -47,7 +47,7 @@ type Graph struct {
 	inputs     []InputNode
 	outputs    []OutputNode
 	transforms []TransformNode
-	links      []Link
+	links      []graphLink
 }
 
 func (graph *Graph) getInputIndex(node InputNode) int {
@@ -88,7 +88,7 @@ func (graph *Graph) AddOutput(node OutputNode) OutputNode {
 
 // AddLink adds a link between nodes in the graph
 func (graph *Graph) AddLink(fromNode Node, fromOutputIndex int, toNode Node, toInputIndex int) {
-	link := Link{
+	link := graphLink{
 		fromNode,
 		fromOutputIndex,
 		toNode,
@@ -113,10 +113,10 @@ func (graph *Graph) getOutputMappings(node OutputNode) []string {
 
 }
 
-func (graph *Graph) getLinksToNode(node Node) []Link {
+func (graph *Graph) getLinksToNode(node Node) []graphLink {
 
 	// Get the links
-	var links []Link
+	var links []graphLink
 	for i := range graph.links {
 		if graph.links[i].toNode == node {
 			links = append(links, graph.links[i])
