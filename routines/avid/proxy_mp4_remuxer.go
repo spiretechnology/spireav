@@ -4,15 +4,14 @@ import (
 	"errors"
 	"path"
 
+	"github.com/spiretechnology/spireav"
 	"github.com/spiretechnology/spireav/graph"
 	"github.com/spiretechnology/spireav/graph/transform"
-	"github.com/spiretechnology/spireav/meta"
-	"github.com/spiretechnology/spireav/proc"
 )
 
 type proxyMP4RemuxerInput struct {
 	filename string
-	fileMeta *meta.Meta
+	fileMeta *spireav.Meta
 	avidMeta *AvidMxfMeta
 	node     graph.InputNode
 }
@@ -47,7 +46,7 @@ func NewProxyMP4Remuxer(mxfFiles []string) (*ProxyMP4Remuxer, error) {
 func proxyMP4LoadInput(filename string) (*proxyMP4RemuxerInput, error) {
 
 	// Get the metadata for the MXF file
-	fileMeta, err := meta.GetMetadata(filename, "")
+	fileMeta, err := spireav.GetMetadata(filename, "")
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +64,7 @@ func proxyMP4LoadInput(filename string) (*proxyMP4RemuxerInput, error) {
 
 }
 
-func (r *ProxyMP4Remuxer) GenerateProc(outDir string) (*proc.Proc, error) {
+func (r *ProxyMP4Remuxer) GenerateProc(outDir string) (*spireav.Process, error) {
 
 	// Generate the graph
 	g, err := r.GenerateGraph(outDir)
@@ -74,8 +73,8 @@ func (r *ProxyMP4Remuxer) GenerateProc(outDir string) (*proc.Proc, error) {
 	}
 
 	// Create the process
-	return &proc.Proc{
-		Graph:                 g,
+	return &spireav.Process{
+		FfmpegArger:           g,
 		EstimatedLengthFrames: r.EstimateLengthFrames(),
 	}, nil
 

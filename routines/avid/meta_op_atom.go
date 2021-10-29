@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/spiretechnology/spireav/meta"
+	"github.com/spiretechnology/spireav"
 )
 
 // AvidMxfMeta is the metadata specific to AVID that can be gleaned from looking at the
@@ -26,12 +26,12 @@ type AvidMxfMeta struct {
 	LensModelName        string
 	Timecode             string
 	CreationDate         *time.Time
-	EssenceStream        *meta.StreamMeta
+	EssenceStream        *spireav.StreamMeta
 }
 
 // ParseAvidMxfOpAtomMeta parses a single op-atom file's metadata and returns the Avid-specific identifiers
 // and names for the tape and clip (reel and material package)
-func ParseAvidMxfOpAtomMeta(metadata *meta.Meta) (*AvidMxfMeta, error) {
+func ParseAvidMxfOpAtomMeta(metadata *spireav.Meta) (*AvidMxfMeta, error) {
 
 	// Get the stream that actually contains essence data, and thusly is represented by this Op-Atom file
 	stream := findOpAtomStreamWithEssenceData(metadata)
@@ -72,7 +72,7 @@ func ParseAvidMxfOpAtomMeta(metadata *meta.Meta) (*AvidMxfMeta, error) {
 
 // findOpAtomStreamWithEssenceData finds the stream in the metadata that contains actual essence data.
 // In the Op-Atom format, only one stream contains essence, and the others are empty and contain metadata only
-func findOpAtomStreamWithEssenceData(metadata *meta.Meta) *meta.StreamMeta {
+func findOpAtomStreamWithEssenceData(metadata *spireav.Meta) *spireav.StreamMeta {
 	for _, stream := range metadata.Streams {
 		if stream.CodecType == "audio" || stream.CodecType == "video" {
 			return &stream

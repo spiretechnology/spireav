@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 
-	"github.com/spiretechnology/spireav/meta"
+	"github.com/spiretechnology/spireav"
 )
 
 func main() {
 
 	// Get the metadata for a file
-	metadata, err := meta.GetMetadata("reference-media/BigBuckBunny.mp4", "")
+	metadata, err := spireav.GetMetadata("reference-media/BigBuckBunny.mp4", "")
 	if err != nil {
 		panic(err)
 	}

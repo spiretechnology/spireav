@@ -1,14 +1,16 @@
-package meta
+package spireav
 
 import (
 	"strconv"
 )
 
+// Meta is the overall metadata for a media file
 type Meta struct {
 	Format  FormatMeta   `json:"format"`
 	Streams []StreamMeta `json:"streams"`
 }
 
+// FormatMeta is the metadata specific to the file format some media is contained in
 type FormatMeta struct {
 	Filename       string            `json:"filename"`
 	NbStreams      int               `json:"nb_streams"`
@@ -23,6 +25,7 @@ type FormatMeta struct {
 	Tags           map[string]string `json:"tags"`
 }
 
+// StreamMeta is the metadata specific to a stream of data, with a specific codec
 type StreamMeta struct {
 	Index              int               `json:"index"`
 	CodecName          string            `json:"codec_name"`
@@ -75,6 +78,7 @@ type StreamDisposition struct {
 	TimedThumbnails int `json:"timed_thumbnails"`
 }
 
+// GetVideoStream gets the metadata for the video stream within the metadata
 func (m *Meta) GetVideoStream() *StreamMeta {
 	for _, v := range m.Streams {
 		if v.CodecType == "video" {
@@ -84,6 +88,7 @@ func (m *Meta) GetVideoStream() *StreamMeta {
 	return nil
 }
 
+// GetLengthFrames gets the duration of the media in frames
 func (m *Meta) GetLengthFrames() int {
 	video := m.GetVideoStream()
 	if video == nil {
@@ -92,6 +97,7 @@ func (m *Meta) GetLengthFrames() int {
 	return video.DurationTs
 }
 
+// GetFrameRate gets the frame rate of the video stream, represented as a float64 of frames per second
 func (m *Meta) GetFrameRate() float64 {
 	video := m.GetVideoStream()
 	if video == nil {

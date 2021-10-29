@@ -1,4 +1,4 @@
-package proc
+package spireav
 
 import (
 	"bufio"
@@ -10,85 +10,49 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/spiretechnology/spireav/graph"
 )
 
-type Proc struct {
+// Process represents a transcoding process that runs through FFmpeg
+type Process struct {
 	BinPath               string
-	Graph                 *graph.Graph
+	FfmpegArger           FfmpegArger
 	EstimatedLengthFrames int
 }
 
-// generateCmdArgs generates a slice of command arguments to pass into FFmpeg
-func (p *Proc) generateCmdArgs() []string {
-
-	// Get all the inputs and outputs
-	inputs := p.Graph.GetInputs()
-	outputs := p.Graph.GetOutputs()
-
-	// A slice to hold all the arguments
-	args := []string{}
-
-	// Loop through all the inputs
-	for _, in := range inputs {
-		args = append(args, "-i", in.GetFilename())
-	}
-
-	// Add the -y argument to skip interactive prompts
-	args = append(args, "-y")
-
-	// Add the filters string
-	args = append(args, "-filter_complex", p.Graph.FilterString())
-
-	// Loop through all the outputs
-	for _, out := range outputs {
-
-		// Get the mappings for the output
-		for _, mapping := range p.Graph.GetOutputMappings(out) {
-			args = append(args, "-map", mapping)
-		}
-
-		// Add all the other options, and end with the filename
-		args = append(args, out.GetOptions()...)
-		args = append(args, out.GetFilename())
-
-	}
-
-	// Return the slice of arguments
-	return args
-
-}
-
-func (p *Proc) getBinPath() string {
+// getBinPath gets the path to the executable to use for FFmpeg.
+func (p *Process) getBinPath() string {
 	if len(p.BinPath) > 0 {
 		return p.BinPath
 	}
 	return "ffmpeg"
 }
 
-func (p *Proc) GetCommandString() string {
+// GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
+func (p *Process) GetCommandString() (string, error) {
+	args, err := p.FfmpegArger.FfmpegArgs()
+	if err != nil {
+		return "", err
+	}
 	return fmt.Sprintf(
 		"%s %s\n",
 		p.getBinPath(),
-		strings.Join(p.generateCmdArgs(), " "),
-	)
+		strings.Join(args, " "),
+	), nil
 }
 
-func (p *Proc) Run(chanProgress chan<- Progress) error {
-	return p.RunContext(
-		context.Background(),
-		chanProgress,
-	)
-}
-
-func (p *Proc) RunContext(
+// Run executes the transcoding process and blocks the calling thread until the process is completed or failed.
+// If a chanProgress is provided, it will receive progress updates during the process's execution. When the process
+// completes, the progress channel will be closed automatically.
+func (p *Process) Run(
 	ctx context.Context,
 	chanProgress chan<- Progress,
 ) error {
 
 	// Generate the FFmpeg arguments
-	args := p.generateCmdArgs()
+	args, err := p.FfmpegArger.FfmpegArgs()
+	if err != nil {
+		return err
+	}
 
 	// Create the command
 	cmd := exec.CommandContext(ctx, p.getBinPath(), args...)
@@ -131,14 +95,8 @@ func (p *Proc) RunContext(
 
 }
 
-func (p *Proc) RunWithProgress(progressFunc func(Progress)) error {
-	return p.RunWithProgressContext(
-		context.Background(),
-		progressFunc,
-	)
-}
-
-func (p *Proc) RunWithProgressContext(
+// RunWithProgress executes the process and reports progress back to a progress handler function
+func (p *Process) RunWithProgress(
 	ctx context.Context,
 	progressFunc func(Progress),
 ) error {
@@ -158,7 +116,7 @@ func (p *Proc) RunWithProgressContext(
 	}()
 
 	// Produce the output
-	err := p.RunContext(ctx, chanProgress)
+	err := p.Run(ctx, chanProgress)
 	wg.Done()
 	wg.Wait()
 
@@ -167,18 +125,21 @@ func (p *Proc) RunWithProgressContext(
 
 }
 
-func (p *Proc) reportFFmpegProgress(chanProgress chan<- Progress, processOutput io.Reader) {
+func (p *Process) reportFFmpegProgress(
+	chanProgress chan<- Progress,
+	processOutput io.Reader,
+) {
 
 	// Calculate the start time
 	startTime := time.Now()
 
 	// Initialize the progress to empty
-	progress := EmptyProgress(startTime)
+	progress := emptyProgress(startTime)
 	chanProgress <- *progress
 
 	// Create a scanner for the standard output
 	scanner := bufio.NewScanner(processOutput)
-	scanner.Split(ScanLinesWithCR)
+	scanner.Split(scanLinesWithCR)
 	for scanner.Scan() {
 
 		// Read a line from the input
@@ -186,7 +147,7 @@ func (p *Proc) reportFFmpegProgress(chanProgress chan<- Progress, processOutput 
 		line = strings.ReplaceAll(line, "\r", "\n")
 
 		// Read a new progress value
-		newProgress := ParseProgressLine(
+		newProgress := parseProgressLine(
 			line,
 			p.EstimatedLengthFrames,
 			startTime,
@@ -203,7 +164,7 @@ func (p *Proc) reportFFmpegProgress(chanProgress chan<- Progress, processOutput 
 
 }
 
-func ScanLinesWithCR(data []byte, atEOF bool) (advance int, token []byte, err error) {
+func scanLinesWithCR(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	if atEOF && len(data) == 0 {
 		return 0, nil, nil
 	}

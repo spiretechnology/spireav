@@ -1,4 +1,4 @@
-package meta
+package spireav
 
 import (
 	"errors"
@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// RationalToFloat converts a rational string (ex. "24000/1001") to a float64 value
+// that is equivalent to the rational string
 func RationalToFloat(rational string) (float64, error) {
 
 	// Split it up by slash

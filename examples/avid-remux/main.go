@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/spiretechnology/spireav/proc"
+	"github.com/spiretechnology/spireav"
 	"github.com/spiretechnology/spireav/routines/avid"
 )
 
@@ -44,7 +44,7 @@ func main() {
 	fmt.Println(p.GetCommandString())
 
 	// Create a progress handler function
-	progressFunc := func(progress proc.Progress) {
+	progressFunc := func(progress spireav.Progress) {
 		// fmt.Printf("P: %+v\n", progress)
 		fmt.Printf("E: %+v\n", progress.Estimate)
 	}
@@ -55,7 +55,7 @@ func main() {
 	defer cancel()
 
 	// Run the transcoding job
-	if err := p.RunWithProgressContext(ctx, progressFunc); err != nil {
+	if err := p.RunWithProgress(ctx, progressFunc); err != nil {
 		fmt.Println(err.Error())
 	}
 

@@ -1,4 +1,4 @@
-package meta
+package spireav
 
 import (
 	"context"

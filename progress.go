@@ -1,4 +1,4 @@
-package proc
+package spireav
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ type Progress struct {
 	Estimate *ProgressEstimate
 }
 
-func EmptyProgress(started time.Time) *Progress {
+func emptyProgress(started time.Time) *Progress {
 	return &Progress{
 		Frame:   0,
 		FPS:     0,
@@ -41,7 +41,7 @@ func EmptyProgress(started time.Time) *Progress {
 	}
 }
 
-func ParseProgressLine(
+func parseProgressLine(
 	line string,
 	estimatedLengthFrames int,
 	started time.Time,

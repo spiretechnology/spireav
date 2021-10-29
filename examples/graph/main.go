@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/spiretechnology/spireav"
 	"github.com/spiretechnology/spireav/graph"
 	"github.com/spiretechnology/spireav/graph/transform"
-	"github.com/spiretechnology/spireav/proc"
 )
 
 func main() {
@@ -40,13 +40,13 @@ func main() {
 	g.AddLink(inputNode, 1, outputNode, 1)
 
 	// Create the process
-	p := proc.Proc{
-		Graph:                 &g,
+	p := spireav.Process{
+		FfmpegArger:           &g,
 		EstimatedLengthFrames: 14315,
 	}
 
 	// Create a progress handler function
-	progressFunc := func(progress proc.Progress) {
+	progressFunc := func(progress spireav.Progress) {
 		fmt.Printf("P: %+v\n", progress)
 		fmt.Printf("E: %+v\n", progress.Estimate)
 	}
@@ -57,7 +57,7 @@ func main() {
 	defer cancel()
 
 	// Run the transcoding job
-	if err := p.RunWithProgressContext(ctx, progressFunc); err != nil {
+	if err := p.RunWithProgress(ctx, progressFunc); err != nil {
 		fmt.Println(err.Error())
 	}
 

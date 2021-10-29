@@ -11,23 +11,29 @@ const nodeNamePrefix = "spire"
 
 type Node interface{}
 
+// InputNode is a node that is a source of one or more streams of data. InputNode is usually a file. In ffmpeg
+// terms, this is a buffersrc
 type InputNode interface {
 	Node
 	GetFilename() string
 }
 
+// TransformNode is a node that applies a filter to its inputs, producing one or more outputs
 type TransformNode interface {
 	Node
 	FilterString() string
 	GetOutputsCount() int
 }
 
+// OutputNode is a node to which a graph outputs final stream data. OutputNode is usually a file. In ffmpeg terms,
+// this is a buffersink
 type OutputNode interface {
 	Node
 	GetFilename() string
 	GetOptions() []string
 }
 
+// Link is a connection between one node's output to another node's input
 type Link struct {
 	fromNode        Node
 	fromOutputIndex int
@@ -35,6 +41,8 @@ type Link struct {
 	toInputIndex    int
 }
 
+// Graph is a directed acyclic graph of nodes that transforms media inputs (audio and video files) into media outputs (audio or video files).
+// The most common use of Graph is to transcode video, overlay timecode or watermarks, adjust resolutions, etc.
 type Graph struct {
 	inputs     []InputNode
 	outputs    []OutputNode
@@ -60,16 +68,19 @@ func (graph *Graph) getTransformIndex(node TransformNode) int {
 	return -1
 }
 
+// AddInput adds an input node to this transcoding graph. The node data will be read into the graph.
 func (graph *Graph) AddInput(node InputNode) InputNode {
 	graph.inputs = append(graph.inputs, node)
 	return node
 }
 
+// AddTransform adds a transform node to this transcoding graph
 func (graph *Graph) AddTransform(node TransformNode) TransformNode {
 	graph.transforms = append(graph.transforms, node)
 	return node
 }
 
+// AddOutput adds an output node to this transcoding graph. The output will be written to when the graph is executed.
 func (graph *Graph) AddOutput(node OutputNode) OutputNode {
 	graph.outputs = append(graph.outputs, node)
 	return node
@@ -86,7 +97,7 @@ func (graph *Graph) AddLink(fromNode Node, fromOutputIndex int, toNode Node, toI
 	graph.links = append(graph.links, link)
 }
 
-func (graph *Graph) GetOutputMappings(node OutputNode) []string {
+func (graph *Graph) getOutputMappings(node OutputNode) []string {
 
 	// Get all the links into the output node
 	links := graph.getLinksToNode(node)
@@ -164,7 +175,8 @@ func (graph *Graph) generateFiltersString(node TransformNode) string {
 
 }
 
-func (graph *Graph) FilterString() string {
+// filterGraphString generates the complete filtergraph string to be passed into FFmpeg
+func (graph *Graph) filterGraphString() string {
 
 	// Slice for all of the individual filter strings
 	filterStrs := []string{}
@@ -190,4 +202,45 @@ func (graph *Graph) GetInputs() []InputNode {
 // GetOutputs gets the output nodes from this transcoding graph
 func (graph *Graph) GetOutputs() []OutputNode {
 	return graph.outputs
+}
+
+// FfmpegArgs implements the interface FfmpegArger and produces the slice of all arguments
+// to be passed into the FFmpeg command to execute this graph
+func (graph *Graph) FfmpegArgs() ([]string, error) {
+
+	// Get all the inputs and outputs
+	inputs := graph.GetInputs()
+	outputs := graph.GetOutputs()
+
+	// A slice to hold all the arguments
+	args := []string{}
+
+	// Loop through all the inputs
+	for _, in := range inputs {
+		args = append(args, "-i", in.GetFilename())
+	}
+
+	// Add the -y argument to skip interactive prompts
+	args = append(args, "-y")
+
+	// Add the filters string
+	args = append(args, "-filter_complex", graph.filterGraphString())
+
+	// Loop through all the outputs
+	for _, out := range outputs {
+
+		// Get the mappings for the output
+		for _, mapping := range graph.getOutputMappings(out) {
+			args = append(args, "-map", mapping)
+		}
+
+		// Add all the other options, and end with the filename
+		args = append(args, out.GetOptions()...)
+		args = append(args, out.GetFilename())
+
+	}
+
+	// Return the slice of arguments
+	return args, nil
+
 }
