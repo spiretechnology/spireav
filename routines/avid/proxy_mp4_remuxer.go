@@ -1,6 +1,7 @@
 package avid
 
 import (
+	"context"
 	"errors"
 	"path"
 
@@ -46,7 +47,10 @@ func NewProxyMP4Remuxer(mxfFiles []string) (*ProxyMP4Remuxer, error) {
 func proxyMP4LoadInput(filename string) (*proxyMP4RemuxerInput, error) {
 
 	// Get the metadata for the MXF file
-	fileMeta, err := spireav.GetMetadata(filename, "")
+	fileMeta, err := spireav.GetMetadata(
+		context.Background(),
+		filename,
+	)
 	if err != nil {
 		return nil, err
 	}

@@ -14,17 +14,8 @@ import (
 
 // Process represents a transcoding process that runs through FFmpeg
 type Process struct {
-	BinPath               string
 	FfmpegArger           FfmpegArger
 	EstimatedLengthFrames int
-}
-
-// getBinPath gets the path to the executable to use for FFmpeg.
-func (p *Process) getBinPath() string {
-	if len(p.BinPath) > 0 {
-		return p.BinPath
-	}
-	return "ffmpeg"
 }
 
 // GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
@@ -35,7 +26,7 @@ func (p *Process) GetCommandString() (string, error) {
 	}
 	return fmt.Sprintf(
 		"%s %s\n",
-		p.getBinPath(),
+		FfmpegPath,
 		strings.Join(args, " "),
 	), nil
 }
@@ -55,7 +46,7 @@ func (p *Process) Run(
 	}
 
 	// Create the command
-	cmd := exec.CommandContext(ctx, p.getBinPath(), args...)
+	cmd := exec.CommandContext(ctx, FfmpegPath, args...)
 
 	// If progress needs to be reported
 	if chanProgress != nil {

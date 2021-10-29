@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/spiretechnology/spireav"
@@ -9,7 +10,10 @@ import (
 func main() {
 
 	// Get the metadata for a file
-	metadata, err := spireav.GetMetadata("reference-media/BigBuckBunny.mp4", "")
+	metadata, err := spireav.GetMetadata(
+		context.Background(),
+		"reference-media/BigBuckBunny.mp4",
+	)
 	if err != nil {
 		panic(err)
 	}

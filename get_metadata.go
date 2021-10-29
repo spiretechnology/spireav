@@ -7,29 +7,12 @@ import (
 )
 
 func GetMetadata(
-	filename string,
-	ffprobePath string,
-) (*Meta, error) {
-	return GetMetadataContext(
-		context.Background(),
-		filename,
-		ffprobePath,
-	)
-}
-
-func GetMetadataContext(
 	ctx context.Context,
 	filename string,
-	ffprobePath string,
 ) (*Meta, error) {
 
-	// If there is no probe path, use the default
-	if len(ffprobePath) == 0 {
-		ffprobePath = "ffprobe"
-	}
-
 	// Create the command
-	cmd := exec.CommandContext(ctx, ffprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
+	cmd := exec.CommandContext(ctx, FfprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
 
 	// Run the command
 	output, err := cmd.Output()
