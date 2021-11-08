@@ -24,6 +24,7 @@ func main() {
 		"reference-media/SS0815KB.01/SS0815KBA08.D97B84568C22B7A.mxf",
 		"reference-media/SS0815KB.01/SS0815KBV01.D97B84568C1FF8V.mxf",
 	})
+	remux.OverlayTimecode = true
 	if err != nil {
 		panic(err)
 	}

@@ -20,7 +20,8 @@ type proxyMP4RemuxerInput struct {
 // ProxyMP4Remuxer manages the job of remuxing multiple op-atom MXF files from Avid back into a proxy in the
 // MP4 format so it can be viewed over the web
 type ProxyMP4Remuxer struct {
-	mxfInputs []*proxyMP4RemuxerInput
+	mxfInputs       []*proxyMP4RemuxerInput
+	OverlayTimecode bool
 }
 
 // ffmpeg -i Z:\Avid MediaFiles\MXF\Transcode3.1\WC0624CC_AV01.DCFA3E60ECBFV.mxf -i Z:\Avid MediaFiles\MXF\Transcode3.1\WC0624CC_AA02.DCFA3E60F1FAA.mxf -i Z:\Avid MediaFiles\MXF\Transcode3.1\WC0624CC_AA01.DCFA3E60F1E1A.mxf -y -filter_complex [0:v:0]scale=426:240[genczFA];[genczFA]drawtext=fontfile='C\:\\Windows\\Fonts\\Verdana.ttf':x=(w-tw)/2:y=h-th*2:fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5:timecode='15\:51\:33\:04':r=23.980[genxXgD];[1:a:0][2:a:0]amerge=inputs=2[genytl5];[0:v:0]scale=214:120[genY2f9];[genY2f9]drawtext=fontfile='C\:\\Windows\\Fonts\\Verdana.ttf':x=(w-tw)/2:y=h-th*2:fontcolor=white:fontsize=24:box=1:boxcolor=black@0.5:boxborderw=5:timecode='15\:51\:33\:04':r=23.980[genojHw];[1:a:0][2:a:0]amerge=inputs=2[genngKX] -map [genxXgD] -map [genytl5] -movflags use_metadata_tags -pix_fmt yuv420p -movflags +faststart -f mp4 D:\MEDIA_OUT\TV21\WC0624CC_AMA\WC0624CC_AMA.01.new.01\240.mp4 -r 0.5 -map [genojHw] -map [genngKX] -an -movflags use_metadata_tags -pix_fmt yuv420p -movflags +faststart -f mp4 D:\MEDIA_OUT\TV21\WC0624CC_AMA\WC0624CC_AMA.01.new.01\thumb.mp4
@@ -147,8 +148,29 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 
 	// Link everything together for the primary output
 	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scale, 0)
+
+	// The video node is the full-size video result. It might just be the scaled video, or it might be
+	// the timecode overlay result, depending on the flag
+	var videoNode graph.Node = scale
+	if r.OverlayTimecode {
+		// Create a timecode overlay node for the video
+		timecodeOverlay := g.AddTransform(&transform.TimecodeOverlay{
+			StartTimecode: videoInput.avidMeta.Timecode,
+			FrameRate:     videoInput.fileMeta.GetFrameRate(),
+			X:             "(w-tw)/2",
+			Y:             "h-th*2",
+			Box:           true,
+			FontColor:     "white",
+			BoxColor:      "black@0.5",
+		})
+		// FontSize = 24
+		g.AddLink(scale, 0, timecodeOverlay, 0)
+		videoNode = timecodeOverlay
+	}
+
+	// Continue linking everything together
 	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scaleThumb, 0)
-	g.AddLink(scale, 0, output, 0)
+	g.AddLink(videoNode, 0, output, 0)
 	g.AddLink(scaleThumb, 0, outputThumb, 0)
 	for i, audio := range audioInputs {
 		g.AddLink(audio.node, audio.avidMeta.EssenceStream.Index, amerge, i)
