@@ -14,6 +14,7 @@ type TimecodeOverlay struct {
 	Y              string
 	FontColor      string
 	FontFile       string
+	FontSize       int
 	Box            bool
 	BoxColor       string
 	BoxBorderWidth int
@@ -46,6 +47,9 @@ func (node *TimecodeOverlay) getFilterOptions() map[string]string {
 	}
 	if len(node.FontColor) > 0 {
 		opts["fontcolor"] = node.FontColor
+	}
+	if node.FontSize > 0 {
+		opts["fontsize"] = fmt.Sprintf("%d", node.FontSize)
 	}
 	if node.Box {
 		opts["box"] = "1"

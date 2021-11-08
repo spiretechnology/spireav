@@ -161,6 +161,7 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 			Y:             "h-th*2",
 			Box:           true,
 			FontColor:     "white",
+			FontSize:      24,
 			BoxColor:      "black@0.5",
 		})
 		// FontSize = 24
