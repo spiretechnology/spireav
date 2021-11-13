@@ -142,11 +142,6 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 		Height: 120,
 	})
 
-	// Create a merge node for the audio
-	amerge := g.AddTransform(&transform.AudioMerge{
-		Inputs: len(audioInputs),
-	})
-
 	// Link everything together for the primary output
 	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scale, 0)
 
@@ -175,10 +170,21 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scaleThumb, 0)
 	g.AddLink(videoNode, 0, output, 0)
 	g.AddLink(scaleThumb, 0, outputThumb, 0)
-	for i, audio := range audioInputs {
-		g.AddLink(audio.node, audio.avidMeta.EssenceStream.Index, amerge, i)
+
+	// Only add the audio merge if there are 1 or more audio streams
+	if len(audioInputs) > 0 {
+
+		// Create a merge node for the audio
+		amerge := g.AddTransform(&transform.AudioMerge{
+			Inputs: len(audioInputs),
+		})
+
+		for i, audio := range audioInputs {
+			g.AddLink(audio.node, audio.avidMeta.EssenceStream.Index, amerge, i)
+		}
+		g.AddLink(amerge, 0, output, 1)
+
 	}
-	g.AddLink(amerge, 0, output, 1)
 
 	// Return the graph
 	return &g, nil
