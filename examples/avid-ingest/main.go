@@ -17,7 +17,7 @@ func main() {
 	defer cancel()
 
 	// Get the metadata for a file
-	metadata, err := spireav.GetMetadata(ctx, "reference-media/SC0808GB.01/SC0808GB_AA01.D9722BAE3008A.mxf")
+	metadata, err := spireav.GetMetadata(ctx, "reference-media/WS1108AA/WS1108AAA01.DDAF2E31D4D43EA.mxf")
 	if err != nil {
 		panic(err)
 	}
