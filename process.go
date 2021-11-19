@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -16,6 +17,7 @@ import (
 type Process struct {
 	FfmpegArger           FfmpegArger
 	EstimatedLengthFrames int
+	SysProcAttr           *syscall.SysProcAttr
 }
 
 // GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
@@ -47,6 +49,7 @@ func (p *Process) Run(
 
 	// Create the command
 	cmd := exec.CommandContext(ctx, FfmpegPath, args...)
+	cmd.SysProcAttr = p.SysProcAttr
 
 	// If progress needs to be reported
 	if chanProgress != nil {
