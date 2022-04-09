@@ -15,7 +15,7 @@ type TextOverlay struct {
 	BoxBorderWidth int
 }
 
-func (node *TextOverlay) GetOutputsCount() int {
+func (node *TextOverlay) OutputsCount() int {
 	return 1
 }
 

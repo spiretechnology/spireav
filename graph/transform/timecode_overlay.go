@@ -20,7 +20,7 @@ type TimecodeOverlay struct {
 	BoxBorderWidth int
 }
 
-func (node *TimecodeOverlay) GetOutputsCount() int {
+func (node *TimecodeOverlay) OutputsCount() int {
 	return 1
 }
 

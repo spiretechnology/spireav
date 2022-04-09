@@ -8,7 +8,7 @@ type Opacity struct {
 	Opacity float64
 }
 
-func (node *Opacity) GetOutputsCount() int {
+func (node *Opacity) OutputsCount() int {
 	return 1
 }
 

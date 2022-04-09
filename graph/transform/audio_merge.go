@@ -8,7 +8,7 @@ type AudioMerge struct {
 	Inputs int
 }
 
-func (node *AudioMerge) GetOutputsCount() int {
+func (node *AudioMerge) OutputsCount() int {
 	return 1
 }
 

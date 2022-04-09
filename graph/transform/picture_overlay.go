@@ -10,7 +10,7 @@ type PictureOverlay struct {
 	EnableExpr string
 }
 
-func (node *PictureOverlay) GetOutputsCount() int {
+func (node *PictureOverlay) OutputsCount() int {
 	return 1
 }
 

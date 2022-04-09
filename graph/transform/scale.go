@@ -9,7 +9,7 @@ type Scale struct {
 	Height int
 }
 
-func (node *Scale) GetOutputsCount() int {
+func (node *Scale) OutputsCount() int {
 	return 1
 }
 

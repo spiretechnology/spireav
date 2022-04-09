@@ -7,6 +7,8 @@ import (
 
 	"github.com/spiretechnology/spireav"
 	"github.com/spiretechnology/spireav/graph"
+	"github.com/spiretechnology/spireav/graph/input"
+	"github.com/spiretechnology/spireav/graph/output"
 	"github.com/spiretechnology/spireav/graph/transform"
 )
 
@@ -14,7 +16,7 @@ type proxyMP4RemuxerInput struct {
 	filename string
 	fileMeta *spireav.Meta
 	avidMeta *AvidMxfMeta
-	node     graph.InputNode
+	node     input.Input
 }
 
 // ProxyMP4Remuxer manages the job of remuxing multiple op-atom MXF files from Avid back into a proxy in the
@@ -86,10 +88,10 @@ func (r *ProxyMP4Remuxer) GenerateProc(outDir string) (*spireav.Process, error) 
 
 }
 
-func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
+func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (graph.Graph, error) {
 
 	// Create a graph
-	g := graph.Graph{}
+	g := graph.New()
 
 	// As we loop through below, put the video stream here
 	var videoInput *proxyMP4RemuxerInput
@@ -101,9 +103,7 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 	for _, input := range r.mxfInputs {
 
 		// Create the file input node
-		input.node = g.AddInput(&graph.FileInputNode{
-			Filename: input.filename,
-		})
+		input.node = g.NewInput(input.filename)
 
 		// If this is the video stream, use it
 		if input.avidMeta.EssenceStream.CodecType == "video" {
@@ -120,15 +120,17 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 	}
 
 	// Create the MP4 output
-	output := g.AddOutput(&graph.OutputNodeMP4{
-		Filename: path.Join(outDir, "240.mp4"),
-	})
+	output240 := g.AddOutput(output.New(
+		path.Join(outDir, "240.mp4"),
+		output.WithFormatMP4(),
+	))
 
 	// Create the thumbnail output
-	outputThumb := g.AddOutput(&graph.OutputNodeMP4{
-		Filename:  path.Join(outDir, "thumb.mp4"),
-		FrameRate: "0.5",
-	})
+	outputThumb := g.AddOutput(output.New(
+		path.Join(outDir, "thumb.mp4"),
+		output.WithFormatMP4(),
+		output.WithFrameRate("0.5"),
+	))
 
 	// Create a scale node for the video
 	scale := g.AddTransform(&transform.Scale{
@@ -168,7 +170,7 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 
 	// Continue linking everything together
 	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scaleThumb, 0)
-	g.AddLink(videoNode, 0, output, 0)
+	g.AddLink(videoNode, 0, output240, 0)
 	g.AddLink(scaleThumb, 0, outputThumb, 0)
 
 	// Only add the audio merge if there are 1 or more audio streams
@@ -182,12 +184,12 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (*graph.Graph, error) {
 		for i, audio := range audioInputs {
 			g.AddLink(audio.node, audio.avidMeta.EssenceStream.Index, amerge, i)
 		}
-		g.AddLink(amerge, 0, output, 1)
+		g.AddLink(amerge, 0, output240, 1)
 
 	}
 
 	// Return the graph
-	return &g, nil
+	return g, nil
 
 }
 

@@ -7,20 +7,19 @@ import (
 
 	"github.com/spiretechnology/spireav"
 	"github.com/spiretechnology/spireav/graph"
+	"github.com/spiretechnology/spireav/graph/output"
 	"github.com/spiretechnology/spireav/graph/transform"
 )
 
 func main() {
 
 	// Create a new graph
-	g := graph.Graph{}
-	inputNode := g.AddInput(&graph.FileInputNode{
-		Filename: "reference-media/BigBuckBunny.mp4",
-	})
-	outputNode := g.AddOutput(&graph.OutputNodeMP4{
-		Filename: "reference-outputs/BigBuckBunny-GRAPH.mp4",
-		// FrameRate: "0.5",
-	})
+	g := graph.New()
+	inputNode := g.NewInput("reference-media/BigBuckBunny.mp4")
+	outputNode := g.NewOutput(
+		"reference-outputs/BigBuckBunny-GRAPH.mp4",
+		output.WithFormatMP4(),
+	)
 
 	// Create a text overlay node
 	textOverlay := g.AddTransform(&transform.TextOverlay{
@@ -41,7 +40,7 @@ func main() {
 
 	// Create the process
 	p := spireav.Process{
-		FfmpegArger:           &g,
+		FfmpegArger:           g,
 		EstimatedLengthFrames: 14315,
 	}
 
