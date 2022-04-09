@@ -17,7 +17,7 @@ type testCase struct {
 
 var testCases = []testCase{
 	{
-		filename: "../../test-files/avid/V01.DE767F09_179DE179DE134V.mxf",
+		filename: testMedia("avid/V01.DE767F09_179DE179DE134V.mxf"),
 		meta: avid.AvidMxfMeta{
 			FilePackageUmid:      "0x060A2B340101010501010F1013000000179DE1349678990527A6147DDAC0824E",
 			ReelName:             "output.mp4",
@@ -33,7 +33,7 @@ var testCases = []testCase{
 		},
 	},
 	{
-		filename: "../../test-files/avid/A01.DE767F0A_179DE179DE147A.mxf",
+		filename: testMedia("avid/A01.DE767F0A_179DE179DE147A.mxf"),
 		meta: avid.AvidMxfMeta{
 			FilePackageUmid:     "0x060A2B340101010501010F1013000000179DE14796789905971C147DDAC0824E",
 			ReelName:            "output.mp4",
@@ -49,7 +49,7 @@ var testCases = []testCase{
 		},
 	},
 	{
-		filename: "../../test-files/avid/A02.DE767F0B_179DE179DE157A.mxf",
+		filename: testMedia("avid/A02.DE767F0B_179DE179DE157A.mxf"),
 		meta: avid.AvidMxfMeta{
 			FilePackageUmid:     "0x060A2B340101010501010F1013000000179DE15796789905004D147DDAC0824E",
 			ReelName:            "output.mp4",

@@ -129,6 +129,9 @@ func (p *Process) reportFFmpegProgress(
 
 	// Initialize the progress to empty
 	progress := emptyProgress(startTime)
+	progress.Estimate = &ProgressEstimate{
+		Percent: 0,
+	}
 	chanProgress <- *progress
 
 	// Create a scanner for the standard output
@@ -152,6 +155,17 @@ func (p *Process) reportFFmpegProgress(
 		}
 
 	}
+
+	// Send the 100% progress
+	progress.Elapsed = time.Now().Sub(startTime)
+	progress.FPS = 0
+	progress.Speed = 0
+	progress.Done = true
+	progress.Estimate = &ProgressEstimate{
+		Percent:   1,
+		Remaining: time.Duration(0),
+	}
+	chanProgress <- *progress
 
 	// Close the channel
 	close(chanProgress)
