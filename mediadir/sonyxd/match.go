@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strings"
 
@@ -48,11 +47,6 @@ func isXdrootDirname(part string) bool {
 }
 
 func ParseXDPath(fsys fs.FS, filename string) (*mediadir.Clip, error) {
-
-	// If the provided fs is nil, default to the operating system
-	if fsys == nil || reflect.ValueOf(fsys).IsNil() {
-		fsys = os.DirFS("/")
-	}
 
 	// GoPro
 	// .../SDRR08GA/DCIM/100GOPRO/SDRR08GA_GH010192.MP4
