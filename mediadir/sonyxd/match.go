@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -87,7 +86,6 @@ func ParseXDPath(fsys fs.FS, filename string) (*mediadir.Clip, error) {
 	for i := tapeIDPartIndex; i < len(pathParts); i++ {
 		part := pathParts[i]
 		if !(isXdrootDirname(part) || strings.ToUpper(part) == "PRIVATE") {
-			log.Println("Stuff: ", i, part)
 			tapeIDPartIndex = i
 			validTapeID = true
 			break
