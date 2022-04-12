@@ -3,22 +3,18 @@ package avid
 import (
 	"context"
 	"errors"
-	"path"
+	"sort"
 	"strconv"
 
 	"github.com/spiretechnology/spireav"
 	"github.com/spiretechnology/spireav/graph"
-	"github.com/spiretechnology/spireav/graph/input"
-	"github.com/spiretechnology/spireav/graph/output"
-	"github.com/spiretechnology/spireav/graph/transform"
-	"github.com/spiretechnology/spireav/graph/transform/expr"
+	"github.com/spiretechnology/spireav/routines/remux"
 )
 
 type proxyMP4RemuxerInput struct {
 	filename string
 	fileMeta *spireav.Meta
 	avidMeta *AvidMxfMeta
-	node     input.Input
 }
 
 // ProxyMP4Remuxer manages the job of remuxing multiple op-atom MXF files from Avid back into a proxy in the
@@ -92,143 +88,69 @@ func (r *ProxyMP4Remuxer) GenerateProc(outDir string) (*spireav.Process, error) 
 
 func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (graph.Graph, error) {
 
-	// Create a graph
-	g := graph.New()
+	// Create the base config for the remux
+	config := remux.Config{
+		OutDir:          outDir,
+		OverlayTimecode: r.OverlayTimecode,
+	}
+
+	var hasVideoStream bool
 
 	// As we loop through below, put the video stream here
-	var videoInput *proxyMP4RemuxerInput
+	for i, input := range r.mxfInputs {
 
-	// And put all of the audio inputs here
-	audioInputs := []*proxyMP4RemuxerInput{}
+		// If this stream isn't video or audio, skip it
+		if input.avidMeta.EssenceStream.CodecType != "video" && input.avidMeta.EssenceStream.CodecType != "audio" {
+			continue
+		}
 
-	// Register all of the inputs to the graph
-	for _, input := range r.mxfInputs {
-
-		// Create the file input node
-		input.node = g.NewInput(input.filename)
+		// Add this as an input to the graph
+		config.Inputs = append(config.Inputs, remux.Input{
+			Filename: input.filename,
+			Type:     input.avidMeta.EssenceStream.CodecType,
+		})
 
 		// If this is the video stream, use it
 		if input.avidMeta.EssenceStream.CodecType == "video" {
-			videoInput = input
+
+			// We found a video stream
+			hasVideoStream = true
+
+			// Update the video fields for the remux
+			config.StartTimecode = input.avidMeta.Timecode
+			config.FrameRate = strconv.FormatFloat(input.fileMeta.GetFrameRate(), 'f', 3, 64)
+
+			// Add the video stream reference to the config
+			config.VideoStream = remux.StreamRef{
+				Input:  i,
+				Stream: input.avidMeta.EssenceStream.Index,
+			}
+
 		} else if input.avidMeta.EssenceStream.CodecType == "audio" {
-			audioInputs = append(audioInputs, input)
+
+			// Add the audio stream reference to the config
+			config.AudioStreams = append(config.AudioStreams, remux.StreamRef{
+				Input:  i,
+				Stream: input.avidMeta.EssenceStream.Index,
+			})
+
 		}
 
 	}
 
-	// If no video stream was found
-	if videoInput == nil {
-		return nil, errors.New("no video stream found for proxy transcode")
-	}
-
-	// Create the MP4 output
-	output240 := g.AddOutput(output.New(
-		path.Join(outDir, "240.mp4"),
-		output.WithFormatMP4(),
-	))
-
-	// Create the thumbnail output
-	outputThumb := g.AddOutput(output.New(
-		path.Join(outDir, "thumb.mp4"),
-		output.WithFormatMP4(),
-		output.WithFrameRate("0.5"),
-	))
-
-	// Create a scale node for the video
-	scale := g.AddTransform(&transform.Scale{
-		Width:  426,
-		Height: 240,
+	// Sort the audio streams in ascending order by their stream index. This is a trick for
+	// Avid transcoding only.
+	sort.Slice(config.AudioStreams, func(i, j int) bool {
+		return config.AudioStreams[i].Stream < config.AudioStreams[j].Stream
 	})
 
-	// Create a scale node for the thumbnail
-	scaleThumb := g.AddTransform(&transform.Scale{
-		Width:  214,
-		Height: 120,
-	})
-
-	// Link everything together for the primary output
-	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scale, 0)
-
-	// The video node is the full-size video result. It might just be the scaled video, or it might be
-	// the timecode overlay result, depending on the flag
-	var videoNode graph.Node = scale
-	if r.OverlayTimecode {
-
-		// Create a timecode overlay node for the video
-		// timecodeOverlay := g.AddTransform(&transform.TimecodeOverlay{
-		// 	StartTimecode: videoInput.avidMeta.Timecode,
-		// 	FrameRate:     videoInput.fileMeta.GetFrameRate(),
-		// 	X:             "(w-tw)/2",
-		// 	Y:             "h-th*2",
-		// 	Box:           true,
-		// 	FontColor:     "white",
-		// 	FontSize:      "24",
-		// 	FontFile:      r.TimecodeFont,
-		// 	BoxColor:      "black@0.5",
-		// })
-
-		timecodeOverlay := g.AddTransform(transform.NewTextOverlay(
-			transform.WithTimecode(
-				videoInput.avidMeta.Timecode,
-				strconv.FormatFloat(videoInput.fileMeta.GetFrameRate(), 'f', 3, 64),
-			),
-			// x = (w-tw)/2
-			transform.WithX(
-				expr.Div(
-					expr.Sub(
-						expr.Var("w"),
-						expr.Var("tw"),
-					),
-					expr.Int(2),
-				),
-			),
-			// y = h-th*2
-			transform.WithY(
-				expr.Sub(
-					expr.Var("h"),
-					expr.Mul(
-						expr.Var("th"),
-						expr.Int(2),
-					),
-				),
-			),
-			transform.WithBox("black@0.5"),
-			transform.WithFontColor("white"),
-			transform.WithFontSize(
-				expr.Div(
-					expr.Int(240),
-					expr.Int(10),
-				),
-			),
-		))
-
-		// FontSize = 24
-		g.AddLink(scale, 0, timecodeOverlay, 0)
-		videoNode = timecodeOverlay
-	}
-
-	// Continue linking everything together
-	g.AddLink(videoInput.node, videoInput.avidMeta.EssenceStream.Index, scaleThumb, 0)
-	g.AddLink(videoNode, 0, output240, 0)
-	g.AddLink(scaleThumb, 0, outputThumb, 0)
-
-	// Only add the audio merge if there are 1 or more audio streams
-	if len(audioInputs) > 0 {
-
-		// Create a merge node for the audio
-		amerge := g.AddTransform(&transform.AudioMerge{
-			Inputs: len(audioInputs),
-		})
-
-		for i, audio := range audioInputs {
-			g.AddLink(audio.node, audio.avidMeta.EssenceStream.Index, amerge, i)
-		}
-		g.AddLink(amerge, 0, output240, 1)
-
+	// If we didn't find a video stream
+	if !hasVideoStream {
+		return nil, errors.New("no video stream found for remux")
 	}
 
 	// Return the graph
-	return g, nil
+	return remux.Remux(&config)
 
 }
 
