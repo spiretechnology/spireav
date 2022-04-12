@@ -151,7 +151,7 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (graph.Graph, error) {
 	}
 
 	// Return the graph
-	return remux.Remux(&config)
+	return remux.Remux(&config), nil
 
 }
 

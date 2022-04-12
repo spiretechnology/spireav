@@ -44,7 +44,7 @@ func roundUpNearestMult(x int) int {
 }
 
 // Remux creates a transcoding graph to perform a generic remux operation.
-func Remux(config *Config) (graph.Graph, error) {
+func Remux(config *Config) graph.Graph {
 
 	// Create the transcoding graph
 	g := graph.New()
@@ -188,6 +188,6 @@ func Remux(config *Config) (graph.Graph, error) {
 	}
 
 	// Return the graph
-	return g, nil
+	return g
 
 }
