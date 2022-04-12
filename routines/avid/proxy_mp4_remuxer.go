@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"path"
+	"strconv"
 
 	"github.com/spiretechnology/spireav"
 	"github.com/spiretechnology/spireav/graph"
 	"github.com/spiretechnology/spireav/graph/input"
 	"github.com/spiretechnology/spireav/graph/output"
 	"github.com/spiretechnology/spireav/graph/transform"
+	"github.com/spiretechnology/spireav/graph/transform/expr"
 )
 
 type proxyMP4RemuxerInput struct {
@@ -151,18 +153,55 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (graph.Graph, error) {
 	// the timecode overlay result, depending on the flag
 	var videoNode graph.Node = scale
 	if r.OverlayTimecode {
+
 		// Create a timecode overlay node for the video
-		timecodeOverlay := g.AddTransform(&transform.TimecodeOverlay{
-			StartTimecode: videoInput.avidMeta.Timecode,
-			FrameRate:     videoInput.fileMeta.GetFrameRate(),
-			X:             "(w-tw)/2",
-			Y:             "h-th*2",
-			Box:           true,
-			FontColor:     "white",
-			FontSize:      24,
-			FontFile:      r.TimecodeFont,
-			BoxColor:      "black@0.5",
-		})
+		// timecodeOverlay := g.AddTransform(&transform.TimecodeOverlay{
+		// 	StartTimecode: videoInput.avidMeta.Timecode,
+		// 	FrameRate:     videoInput.fileMeta.GetFrameRate(),
+		// 	X:             "(w-tw)/2",
+		// 	Y:             "h-th*2",
+		// 	Box:           true,
+		// 	FontColor:     "white",
+		// 	FontSize:      "24",
+		// 	FontFile:      r.TimecodeFont,
+		// 	BoxColor:      "black@0.5",
+		// })
+
+		timecodeOverlay := g.AddTransform(transform.NewTextOverlay(
+			transform.WithTimecode(
+				videoInput.avidMeta.Timecode,
+				strconv.FormatFloat(videoInput.fileMeta.GetFrameRate(), 'f', 3, 64),
+			),
+			// x = (w-tw)/2
+			transform.WithX(
+				expr.Div(
+					expr.Sub(
+						expr.Var("w"),
+						expr.Var("tw"),
+					),
+					expr.Int(2),
+				),
+			),
+			// y = h-th*2
+			transform.WithY(
+				expr.Sub(
+					expr.Var("h"),
+					expr.Mul(
+						expr.Var("th"),
+						expr.Int(2),
+					),
+				),
+			),
+			transform.WithBox("black@0.5"),
+			transform.WithFontColor("white"),
+			transform.WithFontSize(
+				expr.Div(
+					expr.Int(240),
+					expr.Int(10),
+				),
+			),
+		))
+
 		// FontSize = 24
 		g.AddLink(scale, 0, timecodeOverlay, 0)
 		videoNode = timecodeOverlay
