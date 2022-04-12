@@ -106,10 +106,7 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (graph.Graph, error) {
 		}
 
 		// Add this as an input to the graph
-		config.Inputs = append(config.Inputs, remux.Input{
-			Filename: input.filename,
-			Type:     input.avidMeta.EssenceStream.CodecType,
-		})
+		config.Inputs = append(config.Inputs, input.filename)
 
 		// If this is the video stream, use it
 		if input.avidMeta.EssenceStream.CodecType == "video" {

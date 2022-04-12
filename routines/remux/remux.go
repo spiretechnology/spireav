@@ -11,11 +11,6 @@ import (
 	"github.com/spiretechnology/spireav/graph/transform/expr"
 )
 
-type Input struct {
-	Filename string `json:"filename"`
-	Type     string `json:"type"`
-}
-
 type StreamRef struct {
 	Input  int `json:"input"`
 	Stream int `json:"stream"`
@@ -24,7 +19,7 @@ type StreamRef struct {
 // Config defines the configuration for a remux operation. This includes the files to use as inputs,
 // the mappings of the streams, output sizes, etc.
 type Config struct {
-	Inputs          []Input
+	Inputs          []string
 	VideoStream     StreamRef
 	AudioStreams    []StreamRef
 	OverlayTimecode bool
@@ -51,8 +46,8 @@ func Remux(config *Config) graph.Graph {
 
 	// Add all the inputs to the graph
 	inputs := make([]input.Input, len(config.Inputs))
-	for i, in := range config.Inputs {
-		inputs[i] = g.AddInput(input.New(in.Filename))
+	for i, filename := range config.Inputs {
+		inputs[i] = g.AddInput(input.New(filename))
 	}
 
 	type SizeContext struct {
