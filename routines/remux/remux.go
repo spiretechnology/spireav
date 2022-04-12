@@ -1,6 +1,7 @@
 package remux
 
 import (
+	"fmt"
 	"path"
 
 	"github.com/spiretechnology/spireav/graph"
@@ -20,21 +21,20 @@ type StreamRef struct {
 	Stream int `json:"stream"`
 }
 
+// Config defines the configuration for a remux operation. This includes the files to use as inputs,
+// the mappings of the streams, output sizes, etc.
 type Config struct {
-	Inputs          []Input     `json:"inputs"`
-	VideoStream     StreamRef   `json:"video_stream"`
-	AudioStreams    []StreamRef `json:"audio_streams"`
-	OutDir          string      `json:"out_dir"`
-	OverlayTimecode bool        `json:"overlay_timecode"`
-	StartTimecode   string      `json:"start_timecode"`
-	FrameRate       string      `json:"frame_rate"`
-	OutSizes        []int       `json:"out_sizes"`
+	Inputs          []Input
+	VideoStream     StreamRef
+	AudioStreams    []StreamRef
+	OverlayTimecode bool
+	StartTimecode   string
+	FrameRate       string
+	OutSizes        []int
+	OutDir          string
+	TimecodeFont    string
+	ThumbnailSize   int
 }
-
-const (
-	proxyHeight = 240
-	thumbHeight = 120
-)
 
 func roundUpNearestMult(x int) int {
 	if x%2 == 1 {
@@ -43,6 +43,7 @@ func roundUpNearestMult(x int) int {
 	return x
 }
 
+// Remux creates a transcoding graph to perform a generic remux operation.
 func Remux(config *Config) (graph.Graph, error) {
 
 	// Create the transcoding graph
@@ -54,11 +55,39 @@ func Remux(config *Config) (graph.Graph, error) {
 		inputs[i] = g.AddInput(input.New(in.Filename))
 	}
 
-	// Create the MP4 output
-	output240 := g.AddOutput(output.New(
-		path.Join(config.OutDir, "240.mp4"),
-		output.WithFormatMP4(),
-	))
+	type SizeContext struct {
+		Size   int
+		Video  transform.Transform
+		Output output.Output
+	}
+
+	// Create the MP4 output for all the output sizes
+	sizeContexts := make([]SizeContext, len(config.OutSizes))
+	for i, size := range config.OutSizes {
+
+		// Create the scale transform
+		scale := g.AddTransform(&transform.Scale{
+			Width:  -2,
+			Height: roundUpNearestMult(size),
+		})
+
+		// Create the output for this size
+		sizedOutput := g.AddOutput(output.New(
+			path.Join(config.OutDir, fmt.Sprintf("%d.mp4", size)),
+			output.WithFormatMP4(),
+		))
+
+		// Create the context for this size
+		sizeContexts[i] = SizeContext{
+			Size:   size,
+			Video:  scale,
+			Output: sizedOutput,
+		}
+
+		// Go ahead and feed the scale transform with the input video stream
+		g.AddLink(inputs[config.VideoStream.Input], config.VideoStream.Stream, scale, 0)
+
+	}
 
 	// Create the thumbnail output
 	outputThumb := g.AddOutput(output.New(
@@ -67,81 +96,68 @@ func Remux(config *Config) (graph.Graph, error) {
 		output.WithFrameRate("0.5"),
 	))
 
-	// Create a scale node for the video
-	scale := g.AddTransform(&transform.Scale{
-		Width:  roundUpNearestMult(proxyHeight * 16 / 9),
-		Height: roundUpNearestMult(proxyHeight),
-	})
-
 	// Create a scale node for the thumbnail
 	scaleThumb := g.AddTransform(&transform.Scale{
-		Width:  roundUpNearestMult(thumbHeight * 16 / 9),
-		Height: roundUpNearestMult(thumbHeight),
+		Width:  -2,
+		Height: roundUpNearestMult(config.ThumbnailSize),
 	})
 
-	// Link everything together for the primary output
-	g.AddLink(inputs[config.VideoStream.Input], config.VideoStream.Stream, scale, 0)
+	// Loop through all the sizes
+	for _, sizeContext := range sizeContexts {
 
-	// The video node is the full-size video result. It might just be the scaled video, or it might be
-	// the timecode overlay result, depending on the flag
-	var videoNode graph.Node = scale
-	if config.OverlayTimecode {
+		// If we're burning timecode, add the timecode burn node
+		if config.OverlayTimecode {
 
-		// Create a timecode overlay node for the video
-		// timecodeOverlay := g.AddTransform(&transform.TimecodeOverlay{
-		// 	StartTimecode: videoInput.avidMeta.Timecode,
-		// 	FrameRate:     videoInput.fileMeta.GetFrameRate(),
-		// 	X:             "(w-tw)/2",
-		// 	Y:             "h-th*2",
-		// 	Box:           true,
-		// 	FontColor:     "white",
-		// 	FontSize:      "24",
-		// 	FontFile:      r.TimecodeFont,
-		// 	BoxColor:      "black@0.5",
-		// })
-
-		timecodeOverlay := g.AddTransform(transform.NewTextOverlay(
-			transform.WithTimecode(
-				config.StartTimecode,
-				config.FrameRate,
-			),
-			// x = (w-tw)/2
-			transform.WithX(
-				expr.Div(
-					expr.Sub(
-						expr.Var("w"),
-						expr.Var("tw"),
-					),
-					expr.Int(2),
+			// Create the timecode overlay transform node
+			timecodeOverlay := g.AddTransform(transform.NewTextOverlay(
+				transform.WithTimecode(
+					config.StartTimecode,
+					config.FrameRate,
 				),
-			),
-			// y = h-th*2
-			transform.WithY(
-				expr.Sub(
-					expr.Var("h"),
-					expr.Mul(
-						expr.Var("th"),
+				// x = (w-tw)/2
+				transform.WithX(
+					expr.Div(
+						expr.Sub(
+							expr.Var("w"),
+							expr.Var("tw"),
+						),
 						expr.Int(2),
 					),
 				),
-			),
-			transform.WithBox("black@0.5"),
-			transform.WithFontColor("white"),
-			transform.WithFontSize(
-				expr.Div(
-					expr.Int(240), // expr.Var("h") this should be
-					expr.Int(10),
+				// y = h-th*2
+				transform.WithY(
+					expr.Sub(
+						expr.Var("h"),
+						expr.Mul(
+							expr.Var("th"),
+							expr.Int(2),
+						),
+					),
 				),
-			),
-		))
+				transform.WithBox("black@0.5"),
+				transform.WithFontFile(config.TimecodeFont),
+				transform.WithFontColor("white"),
+				transform.WithFontSize(
+					expr.Div(
+						expr.Var("h"),
+						expr.Int(10),
+					),
+				),
+			))
 
-		g.AddLink(scale, 0, timecodeOverlay, 0)
-		videoNode = timecodeOverlay
+			// Pipe the video into the timecode overlay
+			g.AddLink(sizeContext.Video, 0, timecodeOverlay, 0)
+			sizeContext.Video = timecodeOverlay
+
+		}
+
+		// Pipe the video of this size to the output
+		g.AddLink(sizeContext.Video, 0, sizeContext.Output, 0)
+
 	}
 
-	// Continue linking everything together
+	// Link everything together for the thumbnail
 	g.AddLink(inputs[config.VideoStream.Input], config.VideoStream.Stream, scaleThumb, 0)
-	g.AddLink(videoNode, 0, output240, 0)
 	g.AddLink(scaleThumb, 0, outputThumb, 0)
 
 	// Only add the audio merge if there are 1 or more audio streams
@@ -152,14 +168,22 @@ func Remux(config *Config) (graph.Graph, error) {
 			Inputs: len(config.AudioStreams),
 		})
 
+		// Create an audio split transform
+		asplit := g.AddTransform(transform.New(
+			fmt.Sprintf("asplit=%d", len(sizeContexts)),
+			len(sizeContexts),
+		))
+		g.AddLink(amerge, 0, asplit, 0)
+
 		// Map all the audio streams to the audio merge
 		for i, audio := range config.AudioStreams {
 			g.AddLink(inputs[audio.Input], audio.Stream, amerge, i)
 		}
 
-		// The result of the audio merge becomes the audio stream in the
-		// non-muted outputs.
-		g.AddLink(amerge, 0, output240, 1)
+		// Loop through all the sizes and pipe the audio to the second stream
+		for i, sizeContext := range sizeContexts {
+			g.AddLink(asplit, i, sizeContext.Output, 1)
+		}
 
 	}
 
