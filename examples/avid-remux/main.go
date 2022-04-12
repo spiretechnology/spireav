@@ -30,7 +30,7 @@ func main() {
 	}
 
 	// Create the output directory
-	outDir := "reference-outputs/avid-proxy-2"
+	outDir := "reference-outputs/avid-proxy"
 	if err := os.MkdirAll(outDir, 0700); err != nil {
 		panic(err)
 	}
