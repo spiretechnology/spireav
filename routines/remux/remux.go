@@ -16,19 +16,24 @@ type StreamRef struct {
 	Stream int `json:"stream"`
 }
 
+type Output struct {
+	Size            int    `json:"size"`
+	Format          string `json:"format"`
+	OverlayTimecode bool   `json:"overlay_timecode"`
+}
+
 // Config defines the configuration for a remux operation. This includes the files to use as inputs,
 // the mappings of the streams, output sizes, etc.
 type Config struct {
-	Inputs          []string
-	VideoStream     StreamRef
-	AudioStreams    []StreamRef
-	OverlayTimecode bool
-	StartTimecode   string
-	FrameRate       string
-	OutSizes        []int
-	OutDir          string
-	TimecodeFont    string
-	ThumbnailSize   int
+	Inputs        []string
+	VideoStream   StreamRef
+	AudioStreams  []StreamRef
+	StartTimecode string
+	FrameRate     string
+	Outputs       []Output
+	OutDir        string
+	TimecodeFont  string
+	ThumbnailSize int
 }
 
 func roundUpNearestMult(x int) int {
@@ -39,7 +44,7 @@ func roundUpNearestMult(x int) int {
 }
 
 // Remux creates a transcoding graph to perform a generic remux operation.
-func Remux(config *Config) graph.Graph {
+func Remux(config *Config) (graph.Graph, error) {
 
 	// Create the transcoding graph
 	g := graph.New()
@@ -51,32 +56,46 @@ func Remux(config *Config) graph.Graph {
 	}
 
 	type SizeContext struct {
-		Size   int
-		Video  transform.Transform
-		Output output.Output
+		Options Output
+		Video   transform.Transform
+		Output  output.Output
 	}
 
 	// Create the MP4 output for all the output sizes
-	sizeContexts := make([]SizeContext, len(config.OutSizes))
-	for i, size := range config.OutSizes {
+	sizeContexts := make([]SizeContext, len(config.Outputs))
+	for i, out := range config.Outputs {
 
 		// Create the scale transform
 		scale := g.AddTransform(&transform.Scale{
 			Width:  -2,
-			Height: roundUpNearestMult(size),
+			Height: roundUpNearestMult(out.Size),
 		})
 
 		// Create the output for this size
-		sizedOutput := g.AddOutput(output.New(
-			path.Join(config.OutDir, fmt.Sprintf("%d.mp4", size)),
-			output.WithFormatMP4(),
-		))
+		outputFilename := path.Join(config.OutDir, fmt.Sprintf("%d.%s", out.Size, out.Format))
+
+		// Create the output for the
+		var sizedOutput output.Output
+		if out.Format == "mp4" {
+			sizedOutput = g.AddOutput(output.New(
+				outputFilename,
+				output.WithFormatMP4(),
+			))
+		} else if out.Format == "mov" {
+			sizedOutput = g.AddOutput(output.New(
+				outputFilename,
+				output.WithFormatMOV(),
+				output.WithTimecode(config.StartTimecode),
+			))
+		} else {
+			return nil, fmt.Errorf("unrecognized output format: %q", out.Format)
+		}
 
 		// Create the context for this size
 		sizeContexts[i] = SizeContext{
-			Size:   size,
-			Video:  scale,
-			Output: sizedOutput,
+			Options: out,
+			Video:   scale,
+			Output:  sizedOutput,
 		}
 
 		// Go ahead and feed the scale transform with the input video stream
@@ -101,7 +120,7 @@ func Remux(config *Config) graph.Graph {
 	for _, sizeContext := range sizeContexts {
 
 		// If we're burning timecode, add the timecode burn node
-		if config.OverlayTimecode {
+		if sizeContext.Options.OverlayTimecode {
 
 			// Create the timecode overlay transform node
 			timecodeOverlay := g.AddTransform(transform.NewTextOverlay(
@@ -183,6 +202,6 @@ func Remux(config *Config) graph.Graph {
 	}
 
 	// Return the graph
-	return g
+	return g, nil
 
 }

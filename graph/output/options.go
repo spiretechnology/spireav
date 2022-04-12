@@ -11,6 +11,13 @@ func WithFormatMP4() Option {
 	)
 }
 
+func WithFormatMOV() Option {
+	return withMulti(
+		WithFormat("mov"),
+		withDefaultMP4Options(),
+	)
+}
+
 func withDefaultMP4Options() Option {
 	return withOptions(
 		"-movflags", "use_metadata_tags",
@@ -22,4 +29,8 @@ func withDefaultMP4Options() Option {
 
 func WithFrameRate(frameRate string) Option {
 	return withOptions("-r", frameRate)
+}
+
+func WithTimecode(timecode string) Option {
+	return withOptions("-timecode", timecode)
 }

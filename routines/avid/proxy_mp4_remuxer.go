@@ -89,10 +89,25 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (graph.Graph, error) {
 
 	// Create the base config for the remux
 	config := remux.Config{
-		OverlayTimecode: r.OverlayTimecode,
-		OutSizes:        []int{480, 240},
-		ThumbnailSize:   120,
-		OutDir:          outDir,
+		Outputs: []remux.Output{
+			{
+				Size:            480,
+				Format:          "mp4",
+				OverlayTimecode: r.OverlayTimecode,
+			},
+			{
+				Size:            240,
+				Format:          "mp4",
+				OverlayTimecode: r.OverlayTimecode,
+			},
+			{
+				Size:            240,
+				Format:          "mov",
+				OverlayTimecode: r.OverlayTimecode,
+			},
+		},
+		ThumbnailSize: 120,
+		OutDir:        outDir,
 	}
 
 	var hasVideoStream bool
@@ -148,7 +163,7 @@ func (r *ProxyMP4Remuxer) GenerateGraph(outDir string) (graph.Graph, error) {
 	}
 
 	// Return the graph
-	return remux.Remux(&config), nil
+	return remux.Remux(&config)
 
 }
 
