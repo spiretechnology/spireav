@@ -7,7 +7,11 @@ import (
 
 // FormatTransform formats a filter transform so that it conforms to the FFMpeg format
 func FormatTransform(filterName string, opts map[string]string) string {
-	return fmt.Sprintf("%s=%s", filterName, formatTransformOptions(opts))
+	optsStr := formatTransformOptions(opts)
+	if len(optsStr) == 0 {
+		return filterName
+	}
+	return fmt.Sprintf("%s=%s", filterName, optsStr)
 }
 
 // formatTransformOptions converts a map of keys and values into a string of options
