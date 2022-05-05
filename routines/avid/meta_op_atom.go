@@ -39,10 +39,16 @@ func ParseAvidMxfOpAtomMeta(metadata *spireav.Meta) (*AvidMxfMeta, error) {
 		return nil, errors.New("op-atom MXF file contains no stream with essence")
 	}
 
+	// Get the tape ID (reel name)
+	reelName, ok := stream.Tags["comment_TapeID"]
+	if !ok {
+		reelName = stream.Tags["reel_name"]
+	}
+
 	// Create the starting point for the metadata
 	avidMeta := AvidMxfMeta{
 		FilePackageUmid:      stream.Tags["file_package_umid"],
-		ReelName:             stream.Tags["reel_name"],
+		ReelName:             reelName,
 		ReelUmid:             stream.Tags["reel_umid"],
 		MaterialPackageName:  metadata.Format.Tags["material_package_name"],
 		MaterialPackageUmid:  metadata.Format.Tags["material_package_umid"],
