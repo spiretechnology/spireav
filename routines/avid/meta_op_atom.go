@@ -40,7 +40,7 @@ func ParseAvidMxfOpAtomMeta(metadata *spireav.Meta) (*AvidMxfMeta, error) {
 	}
 
 	// Get the tape ID (reel name)
-	reelName, ok := stream.Tags["comment_TapeID"]
+	reelName, ok := metadata.Format.Tags["comment_TapeID"]
 	if !ok {
 		reelName = stream.Tags["reel_name"]
 	}
