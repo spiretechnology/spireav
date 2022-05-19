@@ -67,7 +67,7 @@ func ParseXDPath(fsys fs.FS, filename string) (*mediadir.Clip, error) {
 	}
 
 	// Split the path parts
-	pathParts := strings.Split(filename, string(os.PathSeparator))
+	pathParts := strings.Split(filename, "/")
 	Reverse(pathParts)
 
 	// We require at least the file, a parent directory, and a grandparent directory
@@ -97,9 +97,10 @@ func ParseXDPath(fsys fs.FS, filename string) (*mediadir.Clip, error) {
 	tapeName := pathParts[tapeIDPartIndex]
 
 	// Resolve all of the other files with valid extensions in the CLIP directory
-	allFiles, err := fs.ReadDir(fsys, filepath.Dir(filename))
+	dir := strings.ReplaceAll(filepath.Dir(filename), string(os.PathSeparator), "/")
+	allFiles, err := fs.ReadDir(fsys, dir)
 	if err != nil {
-		return nil, fmt.Errorf("error reading CLIP dir %q: %s", filepath.Dir(filename), err)
+		return nil, fmt.Errorf("error reading CLIP dir \"%s\": %s", dir, err)
 	}
 	var validFiles []string
 	for _, f := range allFiles {
