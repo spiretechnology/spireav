@@ -26,3 +26,21 @@ jobs:
 
     - name: Test
       run: go test ./...
+
+  test-windows:
+    name: Build, Test on Windows
+    runs-on: windows-2019
+    steps:
+
+    - name: Install FFmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v1
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '1.18'
+    
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Test
+      run: go test ./...
