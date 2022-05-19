@@ -67,6 +67,7 @@ func ParseXDPath(fsys fs.FS, filename string) (*mediadir.Clip, error) {
 	}
 
 	// Split the path parts
+	filename = strings.ReplaceAll(filename, "/", string(os.PathSeparator))
 	pathParts := strings.Split(filename, string(os.PathSeparator))
 	Reverse(pathParts)
 
