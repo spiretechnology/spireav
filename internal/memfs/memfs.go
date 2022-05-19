@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"io/fs"
-	"os"
 	"strings"
 )
 
@@ -74,11 +73,11 @@ func (f *InMemoryFS) ReadDir(name string) ([]fs.DirEntry, error) {
 }
 
 func getPathSteps(name string) []string {
-	trimmed := strings.Trim(name, string(os.PathSeparator))
+	trimmed := strings.Trim(name, "/")
 	if len(trimmed) == 0 {
 		return nil
 	}
-	return strings.Split(trimmed, string(os.PathSeparator))
+	return strings.Split(trimmed, "/")
 }
 
 func seekEntry(steps []string, entry *dirEntry) *dirEntry {
