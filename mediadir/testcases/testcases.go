@@ -3,6 +3,8 @@ package testcases
 import (
 	_ "embed"
 	"io/fs"
+	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -38,6 +40,9 @@ func LoadTestCases() (fs.FS, []TestCase) {
 				ClipIndex: clipIndex,
 			},
 			Filename: cols[3],
+		}
+		if runtime.GOOS == "windows" {
+			tc.Filename = "C:\\" + strings.ReplaceAll(tc.Filename, "/", string(os.PathSeparator))
 		}
 		cases = append(cases, tc)
 	}
