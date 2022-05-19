@@ -3,6 +3,8 @@ package testcases
 import (
 	_ "embed"
 	"io/fs"
+	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -25,19 +27,24 @@ func LoadTestCases() (fs.FS, []TestCase) {
 	var cases []TestCase
 	lines := strings.Split(filenamesStr, "\n")
 	for _, line := range lines {
+		line = strings.TrimSpace(line)
 		cols := strings.Split(line, ",")
 		if len(cols) < 4 {
 			continue
 		}
 		clipIndex, _ := strconv.Atoi(cols[2])
-		cases = append(cases, TestCase{
+		tc := TestCase{
 			TapeType: cols[0],
 			Expected: mediadir.Clip{
 				TapeName:  cols[1],
 				ClipIndex: clipIndex,
 			},
 			Filename: cols[3],
-		})
+		}
+		if runtime.GOOS == "windows" {
+			tc.Filename = "C:\\" + strings.ReplaceAll(tc.Filename, "/", string(os.PathSeparator))
+		}
+		cases = append(cases, tc)
 	}
 
 	// Create the in-memory file system

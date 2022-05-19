@@ -99,7 +99,7 @@ func ParseXDPath(fsys fs.FS, filename string) (*mediadir.Clip, error) {
 	// Resolve all of the other files with valid extensions in the CLIP directory
 	allFiles, err := fs.ReadDir(fsys, filepath.Dir(filename))
 	if err != nil {
-		return nil, fmt.Errorf("error reading CLIP dir: %e", err)
+		return nil, fmt.Errorf("error reading CLIP dir %q: %s", filepath.Dir(filename), err)
 	}
 	var validFiles []string
 	for _, f := range allFiles {
