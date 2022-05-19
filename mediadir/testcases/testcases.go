@@ -44,6 +44,7 @@ func LoadTestCases() (fs.FS, []TestCase) {
 		if runtime.GOOS == "windows" {
 			tc.Filename = strings.ReplaceAll(tc.Filename, "/", string(os.PathSeparator))
 		}
+		tc.Filename = strings.Trim(tc.Filename, string(os.PathSeparator))
 		cases = append(cases, tc)
 	}
 
