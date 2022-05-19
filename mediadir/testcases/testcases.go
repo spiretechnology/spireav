@@ -27,6 +27,7 @@ func LoadTestCases() (fs.FS, []TestCase) {
 	var cases []TestCase
 	lines := strings.Split(filenamesStr, "\n")
 	for _, line := range lines {
+		line = strings.TrimSpace(line)
 		cols := strings.Split(line, ",")
 		if len(cols) < 4 {
 			continue
