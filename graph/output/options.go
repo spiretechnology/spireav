@@ -24,7 +24,7 @@ func withDefaultMP4Options() Option {
 		"-vcodec", "h264",
 		"-pix_fmt", "yuv420p",
 		"-movflags", "+faststart",
-		"-tune", "zerolatency",
+		"-tune", "fastdecode",
 	)
 }
 
