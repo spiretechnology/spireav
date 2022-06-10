@@ -80,12 +80,14 @@ func Remux(config *Config) (graph.Graph, error) {
 			sizedOutput = g.AddOutput(output.New(
 				outputFilename,
 				output.WithFormatMP4(),
+				output.WithConstantRateFactor(30),
 			))
 		} else if out.Format == "mov" {
 			sizedOutput = g.AddOutput(output.New(
 				outputFilename,
 				output.WithFormatMOV(),
 				output.WithTimecode(config.StartTimecode),
+				output.WithConstantRateFactor(30),
 			))
 		} else {
 			return nil, fmt.Errorf("unrecognized output format: %q", out.Format)
