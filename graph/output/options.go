@@ -1,5 +1,7 @@
 package output
 
+import "strconv"
+
 func WithFormat(format string) Option {
 	return withOptions("-f", format)
 }
@@ -34,4 +36,8 @@ func WithFrameRate(frameRate string) Option {
 
 func WithTimecode(timecode string) Option {
 	return withOptions("-timecode", timecode)
+}
+
+func WithConstantRateFactor(factor int) Option {
+	return withOptions("-crf", strconv.Itoa(factor))
 }
