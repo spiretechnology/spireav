@@ -27,6 +27,7 @@ func withDefaultMP4Options() Option {
 		"-pix_fmt", "yuv420p",
 		"-movflags", "+faststart",
 		"-tune", "fastdecode",
+		"-g", "12", // 12-frame GOP size
 	)
 }
 

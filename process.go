@@ -100,7 +100,7 @@ func (p *Process) RunWithProgress(
 
 	// Wait for both the progress handler to finish, and the transcoding
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(1)
 
 	go func() {
 		defer wg.Done()
@@ -111,7 +111,6 @@ func (p *Process) RunWithProgress(
 
 	// Produce the output
 	err := p.Run(ctx, chanProgress)
-	wg.Done()
 	wg.Wait()
 
 	// Return the error, if any
