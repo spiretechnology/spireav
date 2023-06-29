@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/spiretechnology/spireav"
@@ -26,13 +25,7 @@ func TestAvidRemux(t *testing.T) {
 	}
 
 	// Create the output directory
-	var tempDir string
-	if envTempDir, ok := os.LookupEnv("TEMP_DIR"); ok {
-		tempDir = filepath.Join(envTempDir, "spireav-remux-test")
-	} else {
-		tempDir = filepath.Join(os.TempDir(), "spireav-remux-test")
-	}
-	err = os.MkdirAll(tempDir, 0700)
+	tempDir, err := os.MkdirTemp("", "*")
 	assert.NoError(t, err, "create temp output dir")
 	defer os.RemoveAll(tempDir)
 
