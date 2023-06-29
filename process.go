@@ -156,7 +156,7 @@ func (p *Process) reportFFmpegProgress(
 	}
 
 	// Send the 100% progress
-	progress.Elapsed = time.Now().Sub(startTime)
+	progress.Elapsed = time.Since(startTime)
 	progress.FPS = 0
 	progress.Speed = 0
 	progress.Done = true
