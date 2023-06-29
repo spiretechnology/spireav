@@ -7,11 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
-	"syscall"
+
+	"github.com/spiretechnology/spireav"
 )
 
 // GetMetadata gets the metadata for the given MXF file.
-func GetMetadata(ctx context.Context, filename string, sysProcAttr *syscall.SysProcAttr) (*Mxf2RawResult, error) {
+func GetMetadataWithOptions(ctx context.Context, filename string, opts *spireav.MetadataOptions) (*Mxf2RawResult, error) {
 	// Make sure the path to mxf2raw is configured
 	if Mxf2RawPath == "" {
 		return nil, errors.New("mxf2raw path not configured")
@@ -19,7 +20,9 @@ func GetMetadata(ctx context.Context, filename string, sysProcAttr *syscall.SysP
 
 	// Create the command
 	cmd := exec.CommandContext(ctx, Mxf2RawPath, "--info-format", "xml", filename)
-	cmd.SysProcAttr = sysProcAttr
+	if opts != nil && opts.SysProcAttr != nil {
+		cmd.SysProcAttr = opts.SysProcAttr
+	}
 
 	// Create the output buffer to capture stdout
 	var stdoutBuffer bytes.Buffer

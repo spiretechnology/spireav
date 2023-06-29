@@ -36,6 +36,10 @@ type AvidMxfMeta struct {
 // GetMetadata gets the metadata for the given MXF file. It uses two methods for getting the metadata (ffprobe and mxf2raw)
 // and combines the results to get the most complete metadata possible.
 func GetMetadata(ctx context.Context, filename string) (*AvidMxfMeta, *spireav.Meta, error) {
+	return GetMetadataWithOptions(ctx, filename, nil)
+}
+
+func GetMetadataWithOptions(ctx context.Context, filename string, options *spireav.MetadataOptions) (*AvidMxfMeta, *spireav.Meta, error) {
 	// Get the metadata for the file using the usual route, and the Avid-specific metadata
 	var genericMetadata *spireav.Meta
 	var mxfMetadata *mxf2raw.Mxf2RawResult
@@ -44,12 +48,12 @@ func GetMetadata(ctx context.Context, filename string) (*AvidMxfMeta, *spireav.M
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		genericMetadata, err1 = spireav.GetMetadata(ctx, filename)
+		genericMetadata, err1 = spireav.GetMetadataWithOptions(ctx, filename, options)
 	}()
 	go func() {
 		defer wg.Done()
 		if mxf2raw.Mxf2RawPath != "" {
-			mxfMetadata, err2 = mxf2raw.GetMetadata(ctx, filename, nil)
+			mxfMetadata, err2 = mxf2raw.GetMetadataWithOptions(ctx, filename, options)
 		}
 	}()
 	wg.Wait()

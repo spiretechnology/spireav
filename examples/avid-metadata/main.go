@@ -19,7 +19,7 @@ func main() {
 	defer cancel()
 
 	// Get the metadata for a file
-	metadata, err := mxf2raw.GetMetadata(ctx, "/Users/conner/Downloads/Stage AAF/AA01B7EAC60C.mxf", nil)
+	metadata, err := mxf2raw.GetMetadataWithOptions(ctx, "/Users/conner/Downloads/Stage AAF/AA01B7EAC60C.mxf", nil)
 	if err != nil {
 		panic(err)
 	}
