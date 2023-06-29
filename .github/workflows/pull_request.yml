@@ -44,5 +44,5 @@ jobs:
 
     - name: Test
       env:
-        TEMP_DIR: ${{ runner.temp }}
+        TEMP_DIR: '.'
       run: go test ./...
