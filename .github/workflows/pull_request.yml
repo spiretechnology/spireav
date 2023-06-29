@@ -12,7 +12,7 @@ jobs:
     steps:
 
     - name: Install FFmpeg
-      uses: FedericoCarboni/setup-ffmpeg@v1
+      uses: FedericoCarboni/setup-ffmpeg@v2
 
     - uses: actions/setup-go@v2
       with:
@@ -33,7 +33,7 @@ jobs:
     steps:
 
     - name: Install FFmpeg
-      uses: FedericoCarboni/setup-ffmpeg@v1
+      uses: FedericoCarboni/setup-ffmpeg@v2
 
     - uses: actions/setup-go@v2
       with:
