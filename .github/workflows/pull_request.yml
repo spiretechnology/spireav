@@ -43,4 +43,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Test
+      env:
+        TEMP_DIR: ${{ runner.temp }}
       run: go test ./...
