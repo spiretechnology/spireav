@@ -77,7 +77,7 @@ func TestParseAvidMxfOpAtomMeta(t *testing.T) {
 		}
 
 		// Parse the Avid-specific metadata for the file
-		meta, err := avid.ParseAvidMxfOpAtomMeta(metaRaw)
+		meta, err := avid.ParseAvidMxfOpAtomMeta(metaRaw, nil)
 		if err != nil {
 			t.Fatal("Failed to parse AVID meta: ", err)
 		}

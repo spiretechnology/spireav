@@ -46,16 +46,8 @@ func NewProxyMP4Remuxer(mxfFiles []string) (*ProxyMP4Remuxer, error) {
 }
 
 func proxyMP4LoadInput(filename string) (*proxyMP4RemuxerInput, error) {
-
 	// Get the metadata for the MXF file
-	fileMeta, err := spireav.GetMetadata(
-		context.Background(),
-		filename,
-	)
-	if err != nil {
-		return nil, err
-	}
-	avidMeta, err := ParseAvidMxfOpAtomMeta(fileMeta)
+	avidMeta, fileMeta, err := GetMetadata(context.Background(), filename)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +58,6 @@ func proxyMP4LoadInput(filename string) (*proxyMP4RemuxerInput, error) {
 		fileMeta: fileMeta,
 		avidMeta: avidMeta,
 	}, nil
-
 }
 
 func (r *ProxyMP4Remuxer) GenerateProc(outDir string) (*spireav.Process, error) {

@@ -1,11 +1,15 @@
 package avid
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log"
+	"sync"
 	"time"
 
 	"github.com/spiretechnology/spireav"
+	"github.com/spiretechnology/spireav/mxf2raw"
 )
 
 // AvidMxfMeta is the metadata specific to AVID that can be gleaned from looking at the
@@ -29,10 +33,48 @@ type AvidMxfMeta struct {
 	EssenceStream        *spireav.StreamMeta
 }
 
+// GetMetadata gets the metadata for the given MXF file. It uses two methods for getting the metadata (ffprobe and mxf2raw)
+// and combines the results to get the most complete metadata possible.
+func GetMetadata(ctx context.Context, filename string) (*AvidMxfMeta, *spireav.Meta, error) {
+	// Get the metadata for the file using the usual route, and the Avid-specific metadata
+	var genericMetadata *spireav.Meta
+	var mxfMetadata *mxf2raw.Mxf2RawResult
+	var err1, err2 error
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		genericMetadata, err1 = spireav.GetMetadata(ctx, filename)
+	}()
+	go func() {
+		defer wg.Done()
+		if mxf2raw.Mxf2RawPath != "" {
+			mxfMetadata, err2 = mxf2raw.GetMetadata(ctx, filename, nil)
+		}
+	}()
+	wg.Wait()
+
+	// If there was an error getting the metadata, return it
+	if err1 != nil {
+		return nil, nil, fmt.Errorf("getting metadata: %s", err1)
+	}
+
+	// If there was an error getting the Avid-specific metadata, log it
+	if err2 != nil {
+		log.Printf("Error getting MXF metadata: %s", err2)
+	}
+
+	// Return the combined metadata
+	avidMeta, err := ParseAvidMxfOpAtomMeta(genericMetadata, mxfMetadata)
+	if err != nil {
+		return nil, nil, fmt.Errorf("parsing Avid metadata: %s", err)
+	}
+	return avidMeta, genericMetadata, nil
+}
+
 // ParseAvidMxfOpAtomMeta parses a single op-atom file's metadata and returns the Avid-specific identifiers
 // and names for the tape and clip (reel and material package)
-func ParseAvidMxfOpAtomMeta(metadata *spireav.Meta) (*AvidMxfMeta, error) {
-
+func ParseAvidMxfOpAtomMeta(metadata *spireav.Meta, mxfMetadata *mxf2raw.Mxf2RawResult) (*AvidMxfMeta, error) {
 	// Get the stream that actually contains essence data, and thusly is represented by this Op-Atom file
 	stream := findOpAtomStreamWithEssenceData(metadata)
 	if stream == nil {
@@ -71,9 +113,16 @@ func ParseAvidMxfOpAtomMeta(metadata *spireav.Meta) (*AvidMxfMeta, error) {
 		}
 	}
 
+	// If there is mxf-specific metadata
+	if mxfMetadata != nil {
+		// Use the timecode from the mxf metadata if it exists
+		if tc := mxfMetadata.Clip.StartTimecodes.PhysicalSource.Timecode; tc != "" {
+			avidMeta.Timecode = tc
+		}
+	}
+
 	// Return the metadata
 	return &avidMeta, nil
-
 }
 
 // findOpAtomStreamWithEssenceData finds the stream in the metadata that contains actual essence data.
