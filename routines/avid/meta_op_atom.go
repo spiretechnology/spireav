@@ -48,7 +48,9 @@ func GetMetadata(ctx context.Context, filename string) (*AvidMxfMeta, *spireav.M
 	}()
 	go func() {
 		defer wg.Done()
-		mxfMetadata, err2 = mxf2raw.GetMetadata(ctx, filename, nil)
+		if mxf2raw.Mxf2RawPath != "" {
+			mxfMetadata, err2 = mxf2raw.GetMetadata(ctx, filename, nil)
+		}
 	}()
 	wg.Wait()
 
