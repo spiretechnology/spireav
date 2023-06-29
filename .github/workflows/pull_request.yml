@@ -29,7 +29,7 @@ jobs:
 
   test-windows:
     name: Build, Test on Windows
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
 
     - name: Install FFmpeg
