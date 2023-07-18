@@ -17,10 +17,6 @@ spireav.FfmpegPath = "/path/to/ffmpeg"
 spireav.FfprobePath = "/path/to/ffprobe"
 ```
 
-## Avid Media Composer Integration
-
-This library natively supports the media file format used by Avid Media Composer, and is capable of remuxing MXF OP-Atom files from an Avid workspace into any output format. The library also has tools for organizing Avid MXF files into tapes and clips by reading the Avid metadata.
-
 ## Examples
 
 Several examples of how to use this library are in the `examples` folder.

@@ -42,3 +42,11 @@ func WithTimecode(timecode string) Option {
 func WithConstantRateFactor(factor int) Option {
 	return withOptions("-crf", strconv.Itoa(factor))
 }
+
+func WithVideoCodec(codec string) Option {
+	return withOptions("-vcodec", codec)
+}
+
+func WithAudioCodec(codec string) Option {
+	return withOptions("-acodec", codec)
+}
