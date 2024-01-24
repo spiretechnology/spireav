@@ -51,18 +51,21 @@ func (p *Process) Run(
 	cmd := exec.CommandContext(ctx, FfmpegPath, args...)
 	cmd.SysProcAttr = p.SysProcAttr
 
-	// If progress needs to be reported
-	if chanProgress != nil {
-		// Get a readable pipe of the command stdout
-		stderr, err := cmd.StderrPipe()
-		if err != nil {
-			return fmt.Errorf("acquiring stderr pipe: %w", err)
-		}
-		defer stderr.Close()
-
-		// Parse the output into progress reports on the channel
-		go p.reportFFmpegProgress(chanProgress, stderr)
+	// Get a readable pipe of the command stdout
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return fmt.Errorf("acquiring stderr pipe: %w", err)
 	}
+	defer stderr.Close()
+
+	// Parse the output into progress reports on the channel
+	// Also make sure we collect all of stderr before returning any error
+	var progressWaitGroup sync.WaitGroup
+	progressWaitGroup.Add(1)
+	go func() {
+		defer progressWaitGroup.Done()
+		p.reportFFmpegProgress(chanProgress, stderr)
+	}()
 
 	// Start running the command in the background
 	if err := cmd.Start(); err != nil {
@@ -71,6 +74,9 @@ func (p *Process) Run(
 
 	// Wait for the process to end
 	if err := cmd.Wait(); err != nil {
+		// Wait for the error log to finish
+		progressWaitGroup.Wait()
+
 		// If the context triggered the process to be killed, we want to see the context's error
 		// instead of the process's error
 		if ctx != nil && ctx.Err() != nil {
