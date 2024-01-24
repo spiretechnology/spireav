@@ -18,7 +18,7 @@ type Process struct {
 	FfmpegArger           FfmpegArger
 	EstimatedLengthFrames int
 	SysProcAttr           *syscall.SysProcAttr
-	lastStderrLine        string
+	errorOutput           string
 }
 
 // GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
@@ -78,9 +78,9 @@ func (p *Process) Run(
 		}
 		switch e := err.(type) {
 		case *exec.ExitError:
-			return fmt.Errorf("ffmpeg exit code %d: %s", e.ExitCode(), p.lastStderrLine)
+			return fmt.Errorf("ffmpeg exit code %d: %s", e.ExitCode(), p.errorOutput)
 		default:
-			return fmt.Errorf("ffmpeg error: %s", err)
+			return fmt.Errorf("ffmpeg error: %s: %s", err, p.errorOutput)
 		}
 	}
 	return nil
@@ -131,19 +131,22 @@ func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutp
 		// Read a line from the input
 		line := scanner.Text()
 		line = strings.ReplaceAll(line, "\r", "\n")
-		if line != "" {
-			p.lastStderrLine = line
-		}
+		lines := strings.Split(line, "\n")
+		for _, line := range lines {
+			if line != "" {
+				p.errorOutput = line
+			}
 
-		// Read a new progress value
-		newProgress := parseProgressLine(
-			line,
-			p.EstimatedLengthFrames,
-			startTime,
-		)
-		if newProgress != nil {
-			progress = newProgress
-			chanProgress <- *progress
+			// Read a new progress value
+			newProgress := parseProgressLine(
+				line,
+				p.EstimatedLengthFrames,
+				startTime,
+			)
+			if newProgress != nil {
+				progress = newProgress
+				chanProgress <- *progress
+			}
 		}
 	}
 

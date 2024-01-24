@@ -4,3 +4,10 @@ package spireav
 type FfmpegArger interface {
 	FfmpegArgs() ([]string, error)
 }
+
+// FfmpegArgs is a simple type that implements the FfmpegArger interface.
+type FfmpegArgs []string
+
+func (args FfmpegArgs) FfmpegArgs() ([]string, error) {
+	return args, nil
+}
