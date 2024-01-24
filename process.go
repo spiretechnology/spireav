@@ -18,7 +18,26 @@ type Process struct {
 	FfmpegArger           FfmpegArger
 	EstimatedLengthFrames int
 	SysProcAttr           *syscall.SysProcAttr
-	errorOutput           string
+	stderrLines           [20]string
+	stderrLineCursor      int
+}
+
+type FfmpegError struct {
+	ExitCode int
+	Logs     []string
+	child    error
+}
+
+func (e *FfmpegError) Error() string {
+	if len(e.Logs) > 0 {
+		return fmt.Sprintf("ffmpeg exit code %d: %s", e.ExitCode, strings.Join(e.Logs, "\n"))
+	} else {
+		return fmt.Sprintf("ffmpeg exit code %d", e.ExitCode)
+	}
+}
+
+func (e *FfmpegError) Unwrap() error {
+	return e.child
 }
 
 // GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
@@ -32,6 +51,22 @@ func (p *Process) GetCommandString() (string, error) {
 		FfmpegPath,
 		strings.Join(args, " "),
 	), nil
+}
+
+func (p *Process) stdErrSlice() []string {
+	if p.stderrLineCursor == 0 {
+		return []string{}
+	} else if p.stderrLineCursor < len(p.stderrLines) {
+		return p.stderrLines[:p.stderrLineCursor]
+	} else if p.stderrLineCursor == len(p.stderrLines) {
+		return p.stderrLines[:]
+	} else {
+		slice := make([]string, len(p.stderrLines))
+		for i := 0; i < len(p.stderrLines); i++ {
+			slice[i] = p.stderrLines[(p.stderrLineCursor+i)%len(p.stderrLines)]
+		}
+		return slice
+	}
 }
 
 // Run executes the transcoding process and blocks the calling thread until the process is completed or failed.
@@ -82,11 +117,10 @@ func (p *Process) Run(
 		if ctx != nil && ctx.Err() != nil {
 			return ctx.Err()
 		}
-		switch e := err.(type) {
-		case *exec.ExitError:
-			return fmt.Errorf("ffmpeg exit code %d: %s", e.ExitCode(), p.errorOutput)
-		default:
-			return fmt.Errorf("ffmpeg error: %s: %s", err, p.errorOutput)
+		return &FfmpegError{
+			ExitCode: cmd.ProcessState.ExitCode(),
+			Logs:     p.stdErrSlice(),
+			child:    err,
 		}
 	}
 	return nil
@@ -107,7 +141,9 @@ func (p *Process) RunWithProgress(
 	go func() {
 		defer wg.Done()
 		for progress := range chanProgress {
-			progressFunc(progress)
+			if progressFunc != nil {
+				progressFunc(progress)
+			}
 		}
 	}()
 
@@ -128,7 +164,9 @@ func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutp
 	progress.Estimate = &ProgressEstimate{
 		Percent: 0,
 	}
-	chanProgress <- *progress
+	if chanProgress != nil {
+		chanProgress <- *progress
+	}
 
 	// Create a scanner for the standard output
 	scanner := bufio.NewScanner(processOutput)
@@ -140,35 +178,38 @@ func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutp
 		lines := strings.Split(line, "\n")
 		for _, line := range lines {
 			if line != "" {
-				p.errorOutput = line
+				p.stderrLines[p.stderrLineCursor%len(p.stderrLines)] = line
+				p.stderrLineCursor++
 			}
 
 			// Read a new progress value
-			newProgress := parseProgressLine(
-				line,
-				p.EstimatedLengthFrames,
-				startTime,
-			)
-			if newProgress != nil {
-				progress = newProgress
-				chanProgress <- *progress
+			if chanProgress != nil {
+				newProgress := parseProgressLine(
+					line,
+					p.EstimatedLengthFrames,
+					startTime,
+				)
+				if newProgress != nil {
+					progress = newProgress
+					chanProgress <- *progress
+				}
 			}
 		}
 	}
 
 	// Send the 100% progress
-	progress.Elapsed = time.Since(startTime)
-	progress.FPS = 0
-	progress.Speed = 0
-	progress.Done = true
-	progress.Estimate = &ProgressEstimate{
-		Percent:   1,
-		Remaining: time.Duration(0),
+	if chanProgress != nil {
+		progress.Elapsed = time.Since(startTime)
+		progress.FPS = 0
+		progress.Speed = 0
+		progress.Done = true
+		progress.Estimate = &ProgressEstimate{
+			Percent:   1,
+			Remaining: time.Duration(0),
+		}
+		chanProgress <- *progress
+		close(chanProgress)
 	}
-	chanProgress <- *progress
-
-	// Close the channel
-	close(chanProgress)
 }
 
 func scanLinesWithCR(data []byte, atEOF bool) (advance int, token []byte, err error) {
