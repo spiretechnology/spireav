@@ -18,6 +18,7 @@ type Process struct {
 	FfmpegArger           FfmpegArger
 	EstimatedLengthFrames int
 	SysProcAttr           *syscall.SysProcAttr
+	errorOutput           string
 }
 
 // GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
@@ -40,11 +41,10 @@ func (p *Process) Run(
 	ctx context.Context,
 	chanProgress chan<- Progress,
 ) error {
-
 	// Generate the FFmpeg arguments
 	args, err := p.FfmpegArger.FfmpegArgs()
 	if err != nil {
-		return err
+		return fmt.Errorf("generating ffmpeg args: %w", err)
 	}
 
 	// Create the command
@@ -53,40 +53,37 @@ func (p *Process) Run(
 
 	// If progress needs to be reported
 	if chanProgress != nil {
-
 		// Get a readable pipe of the command stdout
 		stderr, err := cmd.StderrPipe()
 		if err != nil {
-			return err
+			return fmt.Errorf("acquiring stderr pipe: %w", err)
 		}
 		defer stderr.Close()
 
 		// Parse the output into progress reports on the channel
-		go p.reportFFmpegProgress(
-			chanProgress,
-			stderr,
-		)
-
+		go p.reportFFmpegProgress(chanProgress, stderr)
 	}
 
 	// Start running the command in the background
 	if err := cmd.Start(); err != nil {
-		return err
+		return fmt.Errorf("starting ffmpeg process: %w", err)
 	}
 
 	// Wait for the process to end
 	if err := cmd.Wait(); err != nil {
-
 		// If the context triggered the process to be killed, we want to see the context's error
 		// instead of the process's error
 		if ctx != nil && ctx.Err() != nil {
 			return ctx.Err()
 		}
-		return err
-
+		switch e := err.(type) {
+		case *exec.ExitError:
+			return fmt.Errorf("ffmpeg exit code %d: %s", e.ExitCode(), p.errorOutput)
+		default:
+			return fmt.Errorf("ffmpeg error: %s: %s", err, p.errorOutput)
+		}
 	}
 	return nil
-
 }
 
 // RunWithProgress executes the process and reports progress back to a progress handler function
@@ -94,7 +91,6 @@ func (p *Process) RunWithProgress(
 	ctx context.Context,
 	progressFunc func(Progress),
 ) error {
-
 	// Create a channel for progress reporting
 	chanProgress := make(chan Progress)
 
@@ -115,14 +111,9 @@ func (p *Process) RunWithProgress(
 
 	// Return the error, if any
 	return err
-
 }
 
-func (p *Process) reportFFmpegProgress(
-	chanProgress chan<- Progress,
-	processOutput io.Reader,
-) {
-
+func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutput io.Reader) {
 	// Calculate the start time
 	startTime := time.Now()
 
@@ -137,22 +128,26 @@ func (p *Process) reportFFmpegProgress(
 	scanner := bufio.NewScanner(processOutput)
 	scanner.Split(scanLinesWithCR)
 	for scanner.Scan() {
-
 		// Read a line from the input
 		line := scanner.Text()
 		line = strings.ReplaceAll(line, "\r", "\n")
+		lines := strings.Split(line, "\n")
+		for _, line := range lines {
+			if line != "" {
+				p.errorOutput = line
+			}
 
-		// Read a new progress value
-		newProgress := parseProgressLine(
-			line,
-			p.EstimatedLengthFrames,
-			startTime,
-		)
-		if newProgress != nil {
-			progress = newProgress
-			chanProgress <- *progress
+			// Read a new progress value
+			newProgress := parseProgressLine(
+				line,
+				p.EstimatedLengthFrames,
+				startTime,
+			)
+			if newProgress != nil {
+				progress = newProgress
+				chanProgress <- *progress
+			}
 		}
-
 	}
 
 	// Send the 100% progress
@@ -168,7 +163,6 @@ func (p *Process) reportFFmpegProgress(
 
 	// Close the channel
 	close(chanProgress)
-
 }
 
 func scanLinesWithCR(data []byte, atEOF bool) (advance int, token []byte, err error) {
