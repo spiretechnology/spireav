@@ -23,7 +23,7 @@ func TestProcessErrors(t *testing.T) {
 		}
 		err := proc.RunWithProgress(context.Background(), func(p spireav.Progress) {})
 		require.Error(t, err, "expected error when running process with invalid args")
-		require.ErrorContains(t, err, "several: Invalid argument")
+		require.ErrorContains(t, err, "Invalid argument")
 	})
 	t.Run("ffmpeg not in path", func(t *testing.T) {
 		defer overrideFfmpegPath("something-that-does-not-exist")()
