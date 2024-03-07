@@ -5,104 +5,72 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/spiretechnology/spireav/graph/input"
+	"github.com/spiretechnology/spireav/graph/filter"
 	"github.com/spiretechnology/spireav/graph/output"
-	"github.com/spiretechnology/spireav/graph/transform"
 )
-
-// Ensure that *graphImpl correctly implements Graph.
-var _ Graph = (*graphImpl)(nil)
 
 // graphLink is a connection between one node's output to another node's input
 type graphLink struct {
-	fromNode        Node
-	fromOutputIndex int
-	toNode          Node
-	toInputIndex    int
+	from         Stream
+	toNode       Node
+	toInputIndex int
 }
 
-type graphImpl struct {
-	inputs     []input.Input
-	outputs    []output.Output
-	transforms []transform.Transform
-	links      []graphLink
+type implGraph struct {
+	inputs  []*inputNode
+	filters []*filterNode
+	outputs []output.Output
+	links   []graphLink
 }
 
-func (g *graphImpl) getInputIndex(node input.Input) int {
-	for i := range g.inputs {
-		if g.inputs[i] == node {
-			return i
-		}
+func (g *implGraph) NewInput(filename string) NodeReadable {
+	node := &inputNode{
+		graph:      g,
+		inputIndex: len(g.inputs),
+		filename:   filename,
 	}
-	return -1
-}
-
-func (g *graphImpl) getTransformIndex(node transform.Transform) int {
-	for i := range g.transforms {
-		if g.transforms[i] == node {
-			return i
-		}
-	}
-	return -1
-}
-
-// NewOutput creates a new input on the g.
-func (g *graphImpl) NewInput(filename string) input.Input {
-	return g.AddInput(input.New(filename))
-}
-
-// AddInput adds an input node to this transcoding g. The node data will be read into the g.
-func (g *graphImpl) AddInput(node input.Input) input.Input {
 	g.inputs = append(g.inputs, node)
 	return node
 }
 
-// AddTransform adds a transform node to this transcoding graph
-func (g *graphImpl) AddTransform(node transform.Transform) transform.Transform {
-	g.transforms = append(g.transforms, node)
+func (g *implGraph) NewFilter(filter filter.Filter) NodeReadable {
+	node := &filterNode{
+		graph:    g,
+		uniqueID: fmt.Sprintf("spire%d", len(g.filters)),
+		filter:   filter,
+	}
+	g.filters = append(g.filters, node)
 	return node
 }
 
-// NewOutput creates a new input on the g.
-func (g *graphImpl) NewOutput(filename string, opts ...output.Option) output.Output {
-	return g.AddOutput(output.New(filename, opts...))
-}
-
-// AddOutput adds an output node to this transcoding g. The output will be written to when the graph is executed.
-func (g *graphImpl) AddOutput(node output.Output) output.Output {
-	g.outputs = append(g.outputs, node)
-	return node
+func (g *implGraph) NewOutput(filename string, opts ...output.Option) Node {
+	out := output.New(filename, opts...)
+	g.outputs = append(g.outputs, out)
+	return out
 }
 
 // AddLink adds a link between nodes in the graph
-func (g *graphImpl) AddLink(fromNode Node, fromOutputIndex int, toNode Node, toInputIndex int) {
-	link := graphLink{
-		fromNode,
-		fromOutputIndex,
+func (g *implGraph) addLink(from Stream, toNode Node, toInputIndex int) {
+	g.links = append(g.links, graphLink{
+		from,
 		toNode,
 		toInputIndex,
-	}
-	g.links = append(g.links, link)
+	})
 }
 
-func (g *graphImpl) getOutputMappings(node output.Output) []string {
-
+func (g *implGraph) getOutputMappings(node Node) []string {
 	// Get all the links into the output node
 	links := g.getLinksToNode(node)
 
 	// Collect the output names
-	outputNames := []string{}
+	var outputNames []string
 	for _, link := range links {
-		outputNames = append(outputNames, g.formatNodeOutputName(link.fromNode, link.fromOutputIndex, true))
+		outputNames = append(outputNames, link.from.MapLabel())
 	}
-
-	// Return the names
 	return outputNames
-
 }
 
-func (g *graphImpl) getLinksToNode(node Node) []graphLink {
-
+func (g *implGraph) getLinksToNode(node Node) []graphLink {
 	// Get the links
 	var links []graphLink
 	for i := range g.links {
@@ -118,102 +86,67 @@ func (g *graphImpl) getLinksToNode(node Node) []graphLink {
 
 	// Return the links
 	return links
-
 }
 
-func (g *graphImpl) formatNodeOutputName(
-	node Node,
-	nodeOutputIndex int,
-	mapping bool,
-) string {
-	if in, ok := node.(input.Input); ok {
-		if mapping {
-			return fmt.Sprintf("%d:%d", g.getInputIndex(in), nodeOutputIndex)
-		} else {
-			return fmt.Sprintf("[%d:%d]", g.getInputIndex(in), nodeOutputIndex)
-		}
-	} else if tn, ok := node.(transform.Transform); ok {
-		return fmt.Sprintf("[%s%d_%d]", nodeNamePrefix, g.getTransformIndex(tn), nodeOutputIndex)
-	}
-	return ""
-}
-
-func (g *graphImpl) generateFiltersString(node transform.Transform) string {
-
-	// Create the filter string for the node
-	filterStr := node.FilterString()
-
+func (g *implGraph) generateFiltersString(node *filterNode) string {
 	// Get the links into the node
 	linksIn := g.getLinksToNode(node)
 
 	// Create the input names
 	inputNames := []string{}
 	for _, link := range linksIn {
-		inputNames = append(inputNames, g.formatNodeOutputName(link.fromNode, link.fromOutputIndex, false))
+		inputNames = append(inputNames, fmt.Sprintf("[%s]", link.from.Label()))
 	}
 
 	// Create the output names
 	outputNames := []string{}
-	for i := 0; i < node.OutputsCount(); i++ {
-		outputNames = append(outputNames, g.formatNodeOutputName(node, i, false))
+	for i := 0; i < node.filter.Outputs(); i++ {
+		outputNames = append(outputNames, fmt.Sprintf("[%s]", node.Stream(i).Label()))
 	}
 
 	// Create the full filters string
-	return strings.Join(inputNames, "") + filterStr + strings.Join(outputNames, "")
-
+	return strings.Join(inputNames, "") + node.filter.String() + strings.Join(outputNames, "")
 }
 
-// filterGraphString generates the complete filtergraph string to be passed into FFmpeg
-func (g *graphImpl) filterGraphString() string {
-
+func (g *implGraph) FilterString() string {
 	// Slice for all of the individual filter strings
-	filterStrs := []string{}
+	var filterStrs []string
 
 	// Loop through all of the nodes
-	for _, node := range g.transforms {
-
+	for _, node := range g.filters {
 		// Get the node filter string
 		filterStrs = append(filterStrs, g.generateFiltersString(node))
-
 	}
 
 	// Join all the filter strings
 	return strings.Join(filterStrs, ";")
-
 }
 
 // FfmpegArgs implements the interface FfmpegArger and produces the slice of all arguments
 // to be passed into the FFmpeg command to execute this graph
-func (g *graphImpl) FfmpegArgs() ([]string, error) {
-
+func (g *implGraph) FfmpegArgs() ([]string, error) {
 	// A slice to hold all the arguments
-	args := []string{}
+	var args []string
 
 	// Loop through all the inputs
 	for _, in := range g.inputs {
-		args = append(args, "-i", in.Filename())
+		args = append(args, "-i", in.filename)
 	}
 
 	// Add the -y argument to skip interactive prompts
 	args = append(args, "-y")
 
 	// Add the filters string
-	args = append(args, "-filter_complex", g.filterGraphString())
+	args = append(args, "-filter_complex", g.FilterString())
 
-	// Loop through all the outputs
+	// Loop through all the outputs. Apply the stream mappings, then all other output options
 	for _, out := range g.outputs {
-
-		// Get the mappings for the output
 		for _, mapping := range g.getOutputMappings(out) {
 			args = append(args, "-map", mapping)
 		}
-
-		// Add all the other options for the output
 		args = append(args, out.Options()...)
-
 	}
 
 	// Return the slice of arguments
 	return args, nil
-
 }

@@ -12,18 +12,17 @@ type MetadataOptions struct {
 }
 
 func GetMetadata(ctx context.Context, filename string) (*Meta, error) {
-	return GetMetadataWithOptions(ctx, filename, nil)
+	return GetMetadataWithOptions(ctx, filename, MetadataOptions{})
 }
 
 func GetMetadataWithOptions(
 	ctx context.Context,
 	filename string,
-	opts *MetadataOptions,
+	opts MetadataOptions,
 ) (*Meta, error) {
-
 	// Create the command
 	cmd := exec.CommandContext(ctx, FfprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
-	if opts != nil && opts.SysProcAttr != nil {
+	if opts.SysProcAttr != nil {
 		cmd.SysProcAttr = opts.SysProcAttr
 	}
 
@@ -38,8 +37,5 @@ func GetMetadataWithOptions(
 	if err := json.Unmarshal(output, &meta); err != nil {
 		return nil, err
 	}
-
-	// Return the metadata
 	return &meta, nil
-
 }
