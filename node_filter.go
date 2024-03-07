@@ -1,9 +1,9 @@
-package graph
+package spireav
 
 import (
 	"fmt"
 
-	"github.com/spiretechnology/spireav/graph/filter"
+	"github.com/spiretechnology/spireav/filter"
 )
 
 type filterNode struct {

@@ -1,4 +1,4 @@
-package graph
+package spireav
 
 type Node interface{}
 

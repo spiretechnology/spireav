@@ -1,4 +1,4 @@
-package spireav
+package metadata
 
 import (
 	"strconv"

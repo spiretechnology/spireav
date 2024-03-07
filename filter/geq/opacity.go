@@ -1,8 +1,8 @@
 package geq
 
 import (
-	"github.com/spiretechnology/spireav/graph/filter"
-	"github.com/spiretechnology/spireav/graph/filter/expr"
+	"github.com/spiretechnology/spireav/filter"
+	"github.com/spiretechnology/spireav/filter/expr"
 )
 
 func Opacity(opacity float64) filter.Filter {

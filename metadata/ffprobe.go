@@ -1,10 +1,12 @@
-package spireav
+package metadata
 
 import (
 	"context"
 	"encoding/json"
 	"os/exec"
 	"syscall"
+
+	"github.com/spiretechnology/spireav"
 )
 
 type MetadataOptions struct {
@@ -21,7 +23,7 @@ func GetMetadataWithOptions(
 	opts MetadataOptions,
 ) (*Meta, error) {
 	// Create the command
-	cmd := exec.CommandContext(ctx, FfprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
+	cmd := exec.CommandContext(ctx, spireav.FfprobePath, "-v", "quiet", "-print_format", "json", "-show_format", "-show_streams", filename)
 	if opts.SysProcAttr != nil {
 		cmd.SysProcAttr = opts.SysProcAttr
 	}

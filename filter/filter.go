@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/spiretechnology/spireav/graph/filter/expr"
+	"github.com/spiretechnology/spireav/filter/expr"
 )
 
 // Filter is a node that applies a filter to its inputs, producing one or more outputs.

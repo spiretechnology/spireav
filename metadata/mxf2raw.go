@@ -1,4 +1,4 @@
-package mxf2raw
+package metadata
 
 import (
 	"bytes"
@@ -11,16 +11,20 @@ import (
 	"github.com/spiretechnology/spireav"
 )
 
-// GetMetadata gets the metadata for the given MXF file.
-func GetMetadataWithOptions(ctx context.Context, filename string, opts *spireav.MetadataOptions) (*Mxf2RawResult, error) {
+func GetMxfMetadata(ctx context.Context, filename string) (*Mxf2RawResult, error) {
+	return GetMxfMetadataWithOptions(ctx, filename, MetadataOptions{})
+}
+
+// GetMxfMetadata gets the metadata for the given MXF file.
+func GetMxfMetadataWithOptions(ctx context.Context, filename string, opts MetadataOptions) (*Mxf2RawResult, error) {
 	// Make sure the path to mxf2raw is configured
-	if Mxf2RawPath == "" {
+	if spireav.Mxf2RawPath == "" {
 		return nil, errors.New("mxf2raw path not configured")
 	}
 
 	// Create the command
-	cmd := exec.CommandContext(ctx, Mxf2RawPath, "--info-format", "xml", filename)
-	if opts != nil && opts.SysProcAttr != nil {
+	cmd := exec.CommandContext(ctx, spireav.Mxf2RawPath, "--info-format", "xml", filename)
+	if opts.SysProcAttr != nil {
 		cmd.SysProcAttr = opts.SysProcAttr
 	}
 

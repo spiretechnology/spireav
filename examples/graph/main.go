@@ -6,17 +6,15 @@ import (
 	"time"
 
 	"github.com/spiretechnology/spireav"
-	"github.com/spiretechnology/spireav/graph"
-	"github.com/spiretechnology/spireav/graph/filter/drawtext"
-	"github.com/spiretechnology/spireav/graph/filter/expr"
-	"github.com/spiretechnology/spireav/graph/filter/scale"
-	"github.com/spiretechnology/spireav/graph/output"
+	"github.com/spiretechnology/spireav/filter/drawtext"
+	"github.com/spiretechnology/spireav/filter/expr"
+	"github.com/spiretechnology/spireav/filter/scale"
+	"github.com/spiretechnology/spireav/output"
 )
 
 func main() {
-
 	// Create a new graph
-	g := graph.New()
+	g := spireav.New()
 	inputNode := g.NewInput("reference-media/BigBuckBunny.mp4")
 	outputNode := g.NewOutput(
 		"reference-outputs/BigBuckBunny-GRAPH.mp4",
@@ -40,14 +38,6 @@ func main() {
 	textOverlay.Stream(0).Pipe(outputNode, 0)
 	inputNode.Stream(1).Pipe(outputNode, 1)
 
-	// Create the process
-	p := spireav.Process{
-		FfmpegArger:           g,
-		EstimatedLengthFrames: 14315,
-	}
-	cmdStr, _ := p.GetCommandString()
-	fmt.Println(cmdStr)
-
 	// Create a progress handler function
 	progressFunc := func(progress spireav.Progress) {
 		fmt.Printf("P: %+v\n", progress)
@@ -59,9 +49,14 @@ func main() {
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
+	// Create the process
+	runner := spireav.NewRunner(g,
+		spireav.WithEstimatedLengthFrames(14315),
+		spireav.WithProgressCallback(progressFunc),
+	)
+
 	// Run the transcoding job
-	if err := p.RunWithProgress(ctx, progressFunc); err != nil {
+	if err := runner.Run(ctx); err != nil {
 		fmt.Println(err.Error())
 	}
-
 }

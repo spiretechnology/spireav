@@ -1,4 +1,4 @@
-package mxf2raw
+package metadata
 
 import "encoding/xml"
 

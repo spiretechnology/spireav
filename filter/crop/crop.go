@@ -1,8 +1,8 @@
 package crop
 
 import (
-	"github.com/spiretechnology/spireav/graph/filter"
-	"github.com/spiretechnology/spireav/graph/filter/expr"
+	"github.com/spiretechnology/spireav/filter"
+	"github.com/spiretechnology/spireav/filter/expr"
 )
 
 // https://ffmpeg.org/ffmpeg-filters.html#toc-crop

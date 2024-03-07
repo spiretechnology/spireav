@@ -13,36 +13,52 @@ import (
 	"time"
 )
 
-// Process represents a transcoding process that runs through FFmpeg
-type Process struct {
-	FfmpegArger           FfmpegArger
-	EstimatedLengthFrames int
-	SysProcAttr           *syscall.SysProcAttr
+type Runner interface {
+	Run(ctx context.Context) error
+}
+
+type Option func(*implRunner)
+
+func WithEstimatedLengthFrames(frames int) Option {
+	return func(r *implRunner) {
+		r.estimatedLengthFrames = frames
+	}
+}
+
+func WithProgressCallback(callback func(Progress)) Option {
+	return func(r *implRunner) {
+		r.progressCallback = callback
+	}
+}
+
+func WithSysProcAttr(attr *syscall.SysProcAttr) Option {
+	return func(r *implRunner) {
+		r.sysProcAttr = attr
+	}
+}
+
+func NewRunner(args FfmpegArgs, opts ...Option) Runner {
+	runner := &implRunner{
+		args: args,
+	}
+	for _, opt := range opts {
+		opt(runner)
+	}
+	return runner
+}
+
+type implRunner struct {
+	args                  FfmpegArgs
+	estimatedLengthFrames int
+	progressCallback      func(Progress)
+	sysProcAttr           *syscall.SysProcAttr
 	stderrLines           [20]string
 	stderrLineCursor      int
 }
 
-type FfmpegError struct {
-	ExitCode int
-	Logs     []string
-	child    error
-}
-
-func (e *FfmpegError) Error() string {
-	if len(e.Logs) > 0 {
-		return fmt.Sprintf("ffmpeg exit code %d: %s", e.ExitCode, strings.Join(e.Logs, "\n"))
-	} else {
-		return fmt.Sprintf("ffmpeg exit code %d", e.ExitCode)
-	}
-}
-
-func (e *FfmpegError) Unwrap() error {
-	return e.child
-}
-
 // GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
-func (p *Process) GetCommandString() (string, error) {
-	args, err := p.FfmpegArger.FfmpegArgs()
+func (p *implRunner) GetCommandString() (string, error) {
+	args, err := p.args.FfmpegArgs()
 	if err != nil {
 		return "", err
 	}
@@ -53,7 +69,7 @@ func (p *Process) GetCommandString() (string, error) {
 	), nil
 }
 
-func (p *Process) stdErrSlice() []string {
+func (p *implRunner) stdErrSlice() []string {
 	if p.stderrLineCursor == 0 {
 		return []string{}
 	} else if p.stderrLineCursor < len(p.stderrLines) {
@@ -72,19 +88,16 @@ func (p *Process) stdErrSlice() []string {
 // Run executes the transcoding process and blocks the calling thread until the process is completed or failed.
 // If a chanProgress is provided, it will receive progress updates during the process's execution. When the process
 // completes, the progress channel will be closed automatically.
-func (p *Process) Run(
-	ctx context.Context,
-	chanProgress chan<- Progress,
-) error {
+func (p *implRunner) Run(ctx context.Context) error {
 	// Generate the FFmpeg arguments
-	args, err := p.FfmpegArger.FfmpegArgs()
+	args, err := p.args.FfmpegArgs()
 	if err != nil {
 		return fmt.Errorf("generating ffmpeg args: %w", err)
 	}
 
 	// Create the command
 	cmd := exec.CommandContext(ctx, FfmpegPath, args...)
-	cmd.SysProcAttr = p.SysProcAttr
+	cmd.SysProcAttr = p.sysProcAttr
 
 	// Get a readable pipe of the command stdout
 	stderr, err := cmd.StderrPipe()
@@ -99,7 +112,7 @@ func (p *Process) Run(
 	progressWaitGroup.Add(1)
 	go func() {
 		defer progressWaitGroup.Done()
-		p.reportFFmpegProgress(chanProgress, stderr)
+		p.reportFFmpegProgress(stderr)
 	}()
 
 	// Start running the command in the background
@@ -126,36 +139,7 @@ func (p *Process) Run(
 	return nil
 }
 
-// RunWithProgress executes the process and reports progress back to a progress handler function
-func (p *Process) RunWithProgress(
-	ctx context.Context,
-	progressFunc func(Progress),
-) error {
-	// Create a channel for progress reporting
-	chanProgress := make(chan Progress)
-
-	// Wait for both the progress handler to finish, and the transcoding
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go func() {
-		defer wg.Done()
-		for progress := range chanProgress {
-			if progressFunc != nil {
-				progressFunc(progress)
-			}
-		}
-	}()
-
-	// Produce the output
-	err := p.Run(ctx, chanProgress)
-	wg.Wait()
-
-	// Return the error, if any
-	return err
-}
-
-func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutput io.Reader) {
+func (p *implRunner) reportFFmpegProgress(processOutput io.Reader) {
 	// Calculate the start time
 	startTime := time.Now()
 
@@ -164,8 +148,8 @@ func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutp
 	progress.Estimate = &ProgressEstimate{
 		Percent: 0,
 	}
-	if chanProgress != nil {
-		chanProgress <- *progress
+	if p.progressCallback != nil {
+		p.progressCallback(*progress)
 	}
 
 	// Create a scanner for the standard output
@@ -183,22 +167,22 @@ func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutp
 			}
 
 			// Read a new progress value
-			if chanProgress != nil {
+			if p.progressCallback != nil {
 				newProgress := parseProgressLine(
 					line,
-					p.EstimatedLengthFrames,
+					p.estimatedLengthFrames,
 					startTime,
 				)
 				if newProgress != nil {
 					progress = newProgress
-					chanProgress <- *progress
+					p.progressCallback(*progress)
 				}
 			}
 		}
 	}
 
 	// Send the 100% progress
-	if chanProgress != nil {
+	if p.progressCallback != nil {
 		progress.Elapsed = time.Since(startTime)
 		progress.FPS = 0
 		progress.Speed = 0
@@ -207,8 +191,7 @@ func (p *Process) reportFFmpegProgress(chanProgress chan<- Progress, processOutp
 			Percent:   1,
 			Remaining: time.Duration(0),
 		}
-		chanProgress <- *progress
-		close(chanProgress)
+		p.progressCallback(*progress)
 	}
 }
 

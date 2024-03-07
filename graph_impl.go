@@ -1,12 +1,12 @@
-package graph
+package spireav
 
 import (
 	"fmt"
 	"sort"
 	"strings"
 
-	"github.com/spiretechnology/spireav/graph/filter"
-	"github.com/spiretechnology/spireav/graph/output"
+	"github.com/spiretechnology/spireav/filter"
+	"github.com/spiretechnology/spireav/output"
 )
 
 // graphLink is a connection between one node's output to another node's input

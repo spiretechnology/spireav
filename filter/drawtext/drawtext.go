@@ -1,8 +1,8 @@
 package drawtext
 
 import (
-	"github.com/spiretechnology/spireav/graph/filter"
-	"github.com/spiretechnology/spireav/graph/filter/expr"
+	"github.com/spiretechnology/spireav/filter"
+	"github.com/spiretechnology/spireav/filter/expr"
 )
 
 func DrawText(opts ...filter.Option) filter.Filter {

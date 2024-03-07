@@ -6,12 +6,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spiretechnology/spireav/mxf2raw"
+	"github.com/spiretechnology/spireav"
+	"github.com/spiretechnology/spireav/metadata"
 )
 
 func main() {
 	// Setup the mxf2raw path
-	mxf2raw.Mxf2RawPath = "/Users/conner/Desktop/bmx/out/build/apps/mxf2raw/mxf2raw"
+	spireav.Mxf2RawPath = "/Users/conner/Desktop/bmx/out/build/apps/mxf2raw/mxf2raw"
 
 	// Create the context for the process
 	ctx := context.Background()
@@ -19,7 +20,7 @@ func main() {
 	defer cancel()
 
 	// Get the metadata for a file
-	metadata, err := mxf2raw.GetMetadataWithOptions(ctx, "/Users/conner/Downloads/Stage AAF/AA01B7EAC60C.mxf", nil)
+	metadata, err := metadata.GetMxfMetadata(ctx, "/Users/conner/Downloads/Stage AAF/AA01B7EAC60C.mxf")
 	if err != nil {
 		panic(err)
 	}
