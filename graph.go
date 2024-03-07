@@ -12,7 +12,7 @@ import (
 // Graph is a directed acyclic graph of nodes that transforms media inputs (audio and video files) into media outputs (audio or video files).
 // The most common use of Graph is to transcode video, overlay timecode or watermarks, adjust resolutions, etc.
 type Graph interface {
-	FfmpegArgs
+	Runnable
 	Input(filename string) NodeReadable
 	Filter(filter filter.Filter) NodeReadable
 	Output(filename string, opts ...output.Option) Node
@@ -135,9 +135,9 @@ func (g *implGraph) FilterString() string {
 	return strings.Join(filterStrs, ";")
 }
 
-// FfmpegArgs implements the interface FfmpegArger and produces the slice of all arguments
+// RunnableArgs implements the interface Runnable and produces the slice of all arguments
 // to be passed into the FFmpeg command to execute this graph
-func (g *implGraph) FfmpegArgs() ([]string, error) {
+func (g *implGraph) RunnableArgs() ([]string, error) {
 	// A slice to hold all the arguments
 	var args []string
 

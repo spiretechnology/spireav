@@ -37,9 +37,9 @@ func WithSysProcAttr(attr *syscall.SysProcAttr) Option {
 	}
 }
 
-func NewRunner(args FfmpegArgs, opts ...Option) Runner {
+func NewRunner(runnable Runnable, opts ...Option) Runner {
 	runner := &implRunner{
-		args: args,
+		runnable: runnable,
 	}
 	for _, opt := range opts {
 		opt(runner)
@@ -48,7 +48,7 @@ func NewRunner(args FfmpegArgs, opts ...Option) Runner {
 }
 
 type implRunner struct {
-	args                  FfmpegArgs
+	runnable              Runnable
 	estimatedLengthFrames int
 	progressCallback      func(Progress)
 	sysProcAttr           *syscall.SysProcAttr
@@ -58,7 +58,7 @@ type implRunner struct {
 
 // GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
 func (p *implRunner) GetCommandString() (string, error) {
-	args, err := p.args.FfmpegArgs()
+	args, err := p.runnable.RunnableArgs()
 	if err != nil {
 		return "", err
 	}
@@ -90,7 +90,7 @@ func (p *implRunner) stdErrSlice() []string {
 // completes, the progress channel will be closed automatically.
 func (p *implRunner) Run(ctx context.Context) error {
 	// Generate the FFmpeg arguments
-	args, err := p.args.FfmpegArgs()
+	args, err := p.runnable.RunnableArgs()
 	if err != nil {
 		return fmt.Errorf("generating ffmpeg args: %w", err)
 	}
