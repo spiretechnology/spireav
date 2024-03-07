@@ -91,6 +91,7 @@ var optionTypes = map[string]OptionType{
 	"expr":   {"expr.Expr", "", "Expr"},
 	"int":    {"int", "expr.Int", "Int"},
 	"string": {"string", "expr.String", "String"},
+	"bool":   {"bool", "expr.Bool", "Bool"},
 }
 
 func (fo FilterOption) GetMethods() []FilterOptionMethod {

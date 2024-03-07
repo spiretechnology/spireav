@@ -42,3 +42,37 @@ filters:
       - name: Inputs
         key: inputs
         type: [int]
+
+  - name: drawtext
+    func: DrawText
+    options:
+      - name: PosX
+        key: x
+        type: [expr, int]
+      - name: PosY
+        key: 'y'
+        type: [expr, int]
+      - name: FontColor
+        key: fontcolor
+        type: [expr, string]
+      - name: FontFile
+        key: fontfile
+        type: [string]
+      - name: FontSize
+        key: fontsize
+        type: [expr, int]
+      - name: Text
+        key: text
+        type: [string]
+      - name: Timecode
+        key: timecode
+        type: [string]
+      - name: TimecodeRate
+        key: timecode_rate
+        type: [string]
+      - name: Box
+        key: box
+        type: [bool]
+      - name: BoxColor
+        key: boxcolor
+        type: [expr, string]
