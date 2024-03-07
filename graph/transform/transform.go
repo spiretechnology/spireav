@@ -26,7 +26,7 @@ func (t *transformWithOpts) FilterString() string {
 	for _, optValue := range t.opts {
 		opts[optValue.Key] = optValue.Val.String()
 	}
-	return FormatTransform(t.name, opts)
+	return formatTransform(t.name, opts)
 }
 
 func (t *transformWithOpts) OutputsCount() int {
@@ -38,7 +38,7 @@ func New(name string, outputs int, opts ...Option) Transform {
 	return &transformWithOpts{
 		name:        name,
 		outputCount: outputs,
-		opts:        withMulti(opts...)(),
+		opts:        WithMulti(opts...)(),
 	}
 }
 
@@ -46,7 +46,7 @@ func New(name string, outputs int, opts ...Option) Transform {
 // into the slice of options for the output.
 type Option func() []OptionValue
 
-func withOption(key string, value expr.Expr) Option {
+func WithOption(key string, value expr.Expr) Option {
 	return func() []OptionValue {
 		return []OptionValue{
 			{
@@ -57,7 +57,7 @@ func withOption(key string, value expr.Expr) Option {
 	}
 }
 
-func withMulti(opts ...Option) Option {
+func WithMulti(opts ...Option) Option {
 	return func() []OptionValue {
 		var options []OptionValue
 		for _, opt := range opts {

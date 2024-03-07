@@ -23,6 +23,15 @@ func String(str string) Expr {
 	return Expr(str)
 }
 
+// Bool creates an expression for a boolean value.
+func Bool(val bool) Expr {
+	if val {
+		return Expr("1")
+	} else {
+		return Expr("0")
+	}
+}
+
 // Var creates an expression for a variable.
 func Var(name string) Expr {
 	return Expr(name)

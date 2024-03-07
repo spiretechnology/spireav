@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// FormatTransform formats a filter transform so that it conforms to the FFMpeg format
-func FormatTransform(filterName string, opts map[string]string) string {
+// formatTransform formats a filter transform so that it conforms to the FFMpeg format
+func formatTransform(filterName string, opts map[string]string) string {
 	optsStr := formatTransformOptions(opts)
 	if len(optsStr) == 0 {
 		return filterName
