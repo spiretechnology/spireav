@@ -133,6 +133,40 @@ filters:
         key: exact
         type: [bool]
 
+  - name: trim
+    func: Trim
+    outputs: 1
+    options:
+      - name: StartSeconds
+        key: start
+        type: [expr, string]
+      - name: EndSeconds
+        key: end
+        type: [expr, string]
+      - name: StartFrame
+        key: start_frame
+        type: [int]
+      - name: EndFrame
+        key: end_frame
+        type: [int]
+
+  - name: rotate
+    func: Rotate
+    outputs: 1
+    options:
+      - name: Angle
+        key: a
+        type: [expr]
+      - name: FillColor
+        key: c
+        type: [string]
+      - name: OutputWidth
+        key: out_w
+        type: [expr, int]
+      - name: OutputHeight
+        key: out_h
+        type: [expr, int]
+
   - name: geq
     func: GenericEquation
     outputs: 1
