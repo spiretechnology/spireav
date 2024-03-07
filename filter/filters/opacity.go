@@ -1,4 +1,4 @@
-package geq
+package filters
 
 import (
 	"github.com/spiretechnology/spireav/filter"
@@ -6,8 +6,7 @@ import (
 )
 
 func Opacity(opacity float64) filter.Filter {
-	return GenericEquation(
-		WithRed(expr.Expr("r(X,Y)")),
-		WithAlpha(expr.Mul(expr.Expr("alpha(X,Y)"), expr.Float(opacity))),
-	)
+	return GenericEquation().
+		Red(expr.Expr("r(X,Y)")).
+		Alpha(expr.Mul(expr.Expr("alpha(X,Y)"), expr.Float(opacity)))
 }

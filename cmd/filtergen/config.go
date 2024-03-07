@@ -11,12 +11,14 @@ type Config struct {
 }
 
 type Filter struct {
-	Name    string         `yaml:"name"`
-	Comment *string        `yaml:"comment"`
-	Link    *string        `yaml:"link"`
-	Func    string         `yaml:"func"`
-	Outputs any            `yaml:"outputs"`
-	Options []FilterOption `yaml:"options"`
+	Name          string         `yaml:"name"`
+	Comment       *string        `yaml:"comment"`
+	Link          *string        `yaml:"link"`
+	Func          string         `yaml:"func"`
+	Outputs       any            `yaml:"outputs"`
+	OutputsOption *string        `yaml:"outputs_option"`
+	Options       []FilterOption `yaml:"options"`
+	ExtraMethods  []string       `yaml:"extra_methods"`
 }
 
 func (f Filter) GetDocsLink() string {
@@ -92,6 +94,7 @@ var optionTypes = map[string]OptionType{
 	"int":    {"int", "expr.Int", "Int"},
 	"string": {"string", "expr.String", "String"},
 	"bool":   {"bool", "expr.Bool", "Bool"},
+	"size":   {"", "expr.Size", "Size"},
 }
 
 func (fo FilterOption) GetMethods() []FilterOptionMethod {
@@ -119,16 +122,21 @@ func (fo FilterOption) GetMethods() []FilterOptionMethod {
 		}
 
 		var method FilterOptionMethod
+		method.Option = fo
 		if typeIndex == 0 {
 			method.Name = fmt.Sprintf("%s%s", MethodPrefix, fo.Name)
 		} else {
 			method.Name = fmt.Sprintf("%s%s%s", MethodPrefix, fo.Name, optionType.Suffix)
 		}
-		method.Args = fmt.Sprintf("%s %s", camelCaseName, optionType.GoType)
-		method.Option = fo
-		method.ExprValue = camelCaseName
-		if optionType.ExprCast != "" {
-			method.ExprValue = fmt.Sprintf("%s(%s)", optionType.ExprCast, camelCaseName)
+		if typeKey == "size" {
+			method.Args = "width, height int"
+			method.ExprValue = "expr.Size(width, height)"
+		} else {
+			method.Args = fmt.Sprintf("%s %s", camelCaseName, optionType.GoType)
+			method.ExprValue = camelCaseName
+			if optionType.ExprCast != "" {
+				method.ExprValue = fmt.Sprintf("%s(%s)", optionType.ExprCast, camelCaseName)
+			}
 		}
 		methods = append(methods, method)
 	}

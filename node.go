@@ -1,5 +1,7 @@
 package spireav
 
+import "fmt"
+
 // Node is a node in a graph.
 type Node interface{}
 
@@ -21,4 +23,15 @@ type Stream interface {
 	Label() string
 	MapLabel() string
 	Pipe(to Node, toIndex int)
+}
+
+func Pipeline(nodes ...Node) error {
+	for i := 0; i < len(nodes)-1; i++ {
+		from, ok := nodes[i].(NodeReadable)
+		if !ok {
+			return fmt.Errorf("node %d is not a readable node", i)
+		}
+		from.Pipe(nodes[i+1], 0)
+	}
+	return nil
 }

@@ -14,6 +14,10 @@ func (e Expr) String() string {
 	return string(e)
 }
 
+func Size(width, height int) Expr {
+	return Expr(fmt.Sprintf("%dx%d", width, height))
+}
+
 // String creates a string expression.
 func String(str string) Expr {
 	if strings.Contains(str, ":") {

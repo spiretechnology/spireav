@@ -15,7 +15,7 @@ const (
 	FilterDir = "filter"
 
 	// FilterConfigFile is the file where the filtergen tool will read the filter configuration from.
-	FilterConfigFile = "filter/filters.yml"
+	FilterConfigFile = "cmd/filtergen/filters.yml"
 
 	// MethodPrefix is the prefix that will be added to the filter option methods.
 	// We've used "With" before, but no prefix is cleaner.
@@ -103,11 +103,6 @@ func writeFilterFile(file io.Writer, filter Filter) error {
 	}
 	fmt.Fprintf(file, ")\n")
 
-	// _, err = fmt.Fprintf(file, "// https://ffmpeg.org/ffmpeg-filters.html#%s\n", filter.Name)
-	// if err != nil {
-	// 	return fmt.Errorf("writing filter comment: %w", err)
-	// }
-
 	builderInterfaceName := fmt.Sprintf("%sBuilder", filter.Func)
 	builderImplName := fmt.Sprintf("impl%sBuilder", filter.Func)
 
@@ -127,6 +122,9 @@ func writeFilterFile(file io.Writer, filter Filter) error {
 		fmt.Fprintf(file, "\t// %s %s.\n", method.Name, method.Option.CommentString())
 		fmt.Fprintf(file, "\t%s(%s) %s\n", method.Name, method.Args, builderInterfaceName)
 	}
+	for _, method := range filter.ExtraMethods {
+		fmt.Fprintf(file, "\t%s\n", method)
+	}
 	fmt.Fprintf(file, "}\n")
 
 	// If the filter has a configurable number of outputs
@@ -139,10 +137,13 @@ func writeFilterFile(file io.Writer, filter Filter) error {
 	if outputs.Configurable {
 		// Define the function to create the filter builder
 		fmt.Fprintf(file, "func %s(outputs int, opts ...filter.Option) %s {\n", filter.Func, builderInterfaceName)
-		fmt.Fprintf(file, "\treturn &%s{\n", builderImplName)
-		fmt.Fprintf(file, "\t\tf: filter.New(%q, outputs, opts...),\n", filter.Name)
-		fmt.Fprintf(file, "\t}\n")
+		fmt.Fprintf(file, "\tf := filter.New(%q, outputs, opts...)\n", filter.Name)
+		if filter.OutputsOption != nil {
+			fmt.Fprintf(file, "\tf = f.With(%q, expr.Int(outputs))\n", *filter.OutputsOption)
+		}
+		fmt.Fprintf(file, "\treturn &%s{f: f}\n", builderImplName)
 		fmt.Fprintf(file, "}\n")
+
 	} else {
 		// Define the function to create the filter builder
 		fmt.Fprintf(file, "func %s(opts ...filter.Option) %s {\n", filter.Func, builderInterfaceName)
