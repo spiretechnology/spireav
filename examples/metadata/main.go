@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/spiretechnology/spireav"
+	"github.com/spiretechnology/spireav/metadata"
 )
 
 func main() {
 
 	// Get the metadata for a file
-	metadata, err := spireav.GetMetadata(
+	metadata, err := metadata.GetMetadata(
 		context.Background(),
 		"reference-media/BigBuckBunny.mp4",
 	)

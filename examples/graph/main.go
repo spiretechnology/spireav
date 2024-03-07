@@ -6,43 +6,37 @@ import (
 	"time"
 
 	"github.com/spiretechnology/spireav"
-	"github.com/spiretechnology/spireav/graph"
-	"github.com/spiretechnology/spireav/graph/output"
-	"github.com/spiretechnology/spireav/graph/transform"
+	"github.com/spiretechnology/spireav/filter/drawtext"
+	"github.com/spiretechnology/spireav/filter/expr"
+	"github.com/spiretechnology/spireav/filter/scale"
+	"github.com/spiretechnology/spireav/output"
 )
 
 func main() {
-
 	// Create a new graph
-	g := graph.New()
-	inputNode := g.NewInput("reference-media/BigBuckBunny.mp4")
-	outputNode := g.NewOutput(
+	g := spireav.New()
+	inputNode := g.Input("reference-media/BigBuckBunny.mp4")
+	outputNode := g.Output(
 		"reference-outputs/BigBuckBunny-GRAPH.mp4",
 		output.WithFormatMP4(),
 	)
 
 	// Create a text overlay node
-	textOverlay := g.AddTransform(&transform.TextOverlay{
-		Text: "SpireAV Test",
-	})
+	textOverlay := g.Filter(drawtext.DrawText(
+		drawtext.WithText("SpireAV Test"),
+	))
 
 	// Create a text overlay node
-	scale := g.AddTransform(&transform.Scale{
-		Width:  200,
-		Height: 200,
-	})
+	scaleNode := g.Filter(scale.Scale(
+		scale.WithWidth(expr.Int(200)),
+		scale.WithHeight(expr.Int(200)),
+	))
 
 	// Link together the nodes to create a video processing pipeline
-	g.AddLink(inputNode, 0, scale, 0)
-	g.AddLink(scale, 0, textOverlay, 0)
-	g.AddLink(textOverlay, 0, outputNode, 0)
-	g.AddLink(inputNode, 1, outputNode, 1)
-
-	// Create the process
-	p := spireav.Process{
-		FfmpegArger:           g,
-		EstimatedLengthFrames: 14315,
-	}
+	inputNode.Stream(0).Pipe(scaleNode, 0)
+	scaleNode.Stream(0).Pipe(textOverlay, 0)
+	textOverlay.Stream(0).Pipe(outputNode, 0)
+	inputNode.Stream(1).Pipe(outputNode, 1)
 
 	// Create a progress handler function
 	progressFunc := func(progress spireav.Progress) {
@@ -55,9 +49,14 @@ func main() {
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
+	// Create the process
+	runner := spireav.NewRunner(g,
+		spireav.WithEstimatedLengthFrames(14315),
+		spireav.WithProgressCallback(progressFunc),
+	)
+
 	// Run the transcoding job
-	if err := p.RunWithProgress(ctx, progressFunc); err != nil {
+	if err := runner.Run(ctx); err != nil {
 		fmt.Println(err.Error())
 	}
-
 }
