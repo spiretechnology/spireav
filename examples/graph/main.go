@@ -31,8 +31,7 @@ func main() {
 
 	// Create a progress handler function
 	progressFunc := func(progress spireav.Progress) {
-		fmt.Printf("P: %+v\n", progress)
-		fmt.Printf("E: %+v\n", progress.Estimate)
+		fmt.Printf("%+v\n", progress)
 	}
 
 	// Create a context for the transcoding job
@@ -41,10 +40,7 @@ func main() {
 	defer cancel()
 
 	// Create the process
-	runner := spireav.NewRunner(g,
-		spireav.WithEstimatedLengthFrames(14315),
-		spireav.WithProgressCallback(progressFunc),
-	)
+	runner := spireav.NewRunner(g, spireav.WithProgressCallback(progressFunc))
 
 	// Run the transcoding job
 	if err := runner.Run(ctx); err != nil {

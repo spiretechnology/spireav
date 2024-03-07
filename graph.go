@@ -149,6 +149,12 @@ func (g *implGraph) RunnableArgs() ([]string, error) {
 	// Add the -y argument to skip interactive prompts
 	args = append(args, "-y")
 
+	// Print progress updates to stdout in a machine-readable format
+	args = append(args, "-progress", "pipe:1")
+
+	// Don't print any info to stderr other than errors
+	args = append(args, "-v", "error")
+
 	// Add the filters string
 	args = append(args, "-filter_complex", g.FilterString())
 
