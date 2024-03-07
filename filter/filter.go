@@ -9,6 +9,7 @@ import (
 
 // Filter is a node that applies a filter to its inputs, producing one or more outputs.
 type Filter interface {
+	With(key string, value expr.Expr) Filter
 	String() string
 	Outputs() int
 }
@@ -60,6 +61,14 @@ type filterWithOpts struct {
 	name    string
 	outputs int
 	opts    []OptionValue
+}
+
+func (t *filterWithOpts) With(key string, value expr.Expr) Filter {
+	return &filterWithOpts{
+		name:    t.name,
+		outputs: t.outputs,
+		opts:    append(t.opts, OptionValue{Key: key, Val: value}),
+	}
 }
 
 func (t *filterWithOpts) String() string {

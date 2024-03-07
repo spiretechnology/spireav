@@ -74,3 +74,24 @@ func chainMath(op string, exprs ...Expr) Expr {
 	}
 	return Expr(fmt.Sprintf("(%s)", strings.Join(strs, op)))
 }
+
+func functionCall(name string, args ...Expr) Expr {
+	strs := make([]string, len(args))
+	for i, e := range args {
+		strs[i] = e.String()
+	}
+	return Expr(fmt.Sprintf("%s(%s)", name, strings.Join(strs, ",")))
+}
+
+func Sin(x Expr) Expr {
+	return functionCall("sin", x)
+}
+
+func Cos(x Expr) Expr {
+	return functionCall("cos", x)
+}
+
+func Sin0to1(x Expr) Expr {
+	num := Add(Sin(Mul(x, Var("PI"))), Int(1))
+	return Div(num, Int(2))
+}

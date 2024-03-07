@@ -7,7 +7,10 @@ type Node interface{}
 // piped into subsequent nodes in the graph.
 type NodeReadable interface {
 	Node
+	// Stream returns the stream at the specified index.
 	Stream(index int) Stream
+	// Pipe pipes the first output stream from this node to an input slot on another node.
+	Pipe(to Node, toIndex int)
 }
 
 // Stream is a single stream of data that can be piped into a subsequent node in the graph.

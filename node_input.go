@@ -15,6 +15,10 @@ func (in *inputNode) Stream(index int) Stream {
 	}
 }
 
+func (in *inputNode) Pipe(to Node, toIndex int) {
+	in.Stream(0).Pipe(to, toIndex)
+}
+
 type inputNodeStream struct {
 	node  *inputNode
 	index int

@@ -19,6 +19,10 @@ func (fn *filterNode) Stream(index int) Stream {
 	}
 }
 
+func (fn *filterNode) Pipe(to Node, toIndex int) {
+	fn.Stream(0).Pipe(to, toIndex)
+}
+
 type filterNodeStream struct {
 	node  *filterNode
 	index int

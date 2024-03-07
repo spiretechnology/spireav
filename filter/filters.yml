@@ -1,0 +1,44 @@
+filters:
+
+  - name: scale
+    func: Scale
+    outputs: 1
+    options:
+      - name: Width
+        key: w
+        type: [expr, int]
+      - name: Height
+        key: h
+        type: [expr, int]
+      - name: EvalOn
+        key: eval
+        type: [string]
+      - name: EvalOnInit
+        key: eval
+        value: init
+      - name: EvalOnFrame
+        key: eval
+        value: frame
+      - name: Interlace
+        key: interl
+        value: '1'
+      - name: IncreaseToPreserveAspectRatio
+        key: force_original_aspect_ratio
+        value: increase
+      - name: DecreaseToPreserveAspectRatio
+        key: force_original_aspect_ratio
+        value: decrease
+      - name: IgnoreAspectRatio
+        key: force_original_aspect_ratio
+        value: disable
+      - name: ForceDivisibleBy
+        key: force_divisible_by
+        type: [int]
+
+  - name: amerge
+    func: AudioMerge
+    outputs: 1
+    options:
+      - name: Inputs
+        key: inputs
+        type: [int]
