@@ -15,19 +15,19 @@ import (
 func main() {
 	// Create a new graph
 	g := spireav.New()
-	inputNode := g.NewInput("reference-media/BigBuckBunny.mp4")
-	outputNode := g.NewOutput(
+	inputNode := g.Input("reference-media/BigBuckBunny.mp4")
+	outputNode := g.Output(
 		"reference-outputs/BigBuckBunny-GRAPH.mp4",
 		output.WithFormatMP4(),
 	)
 
 	// Create a text overlay node
-	textOverlay := g.NewFilter(drawtext.DrawText(
+	textOverlay := g.Filter(drawtext.DrawText(
 		drawtext.WithText("SpireAV Test"),
 	))
 
 	// Create a text overlay node
-	scaleNode := g.NewFilter(scale.Scale(
+	scaleNode := g.Filter(scale.Scale(
 		scale.WithWidth(expr.Int(200)),
 		scale.WithHeight(expr.Int(200)),
 	))

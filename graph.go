@@ -9,9 +9,9 @@ import (
 // The most common use of Graph is to transcode video, overlay timecode or watermarks, adjust resolutions, etc.
 type Graph interface {
 	FfmpegArgs
-	NewInput(filename string) NodeReadable
-	NewFilter(filter filter.Filter) NodeReadable
-	NewOutput(filename string, opts ...output.Option) Node
+	Input(filename string) NodeReadable
+	Filter(filter filter.Filter) NodeReadable
+	Output(filename string, opts ...output.Option) Node
 }
 
 func New() Graph {

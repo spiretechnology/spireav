@@ -23,7 +23,7 @@ type implGraph struct {
 	links   []graphLink
 }
 
-func (g *implGraph) NewInput(filename string) NodeReadable {
+func (g *implGraph) Input(filename string) NodeReadable {
 	node := &inputNode{
 		graph:      g,
 		inputIndex: len(g.inputs),
@@ -33,7 +33,7 @@ func (g *implGraph) NewInput(filename string) NodeReadable {
 	return node
 }
 
-func (g *implGraph) NewFilter(filter filter.Filter) NodeReadable {
+func (g *implGraph) Filter(filter filter.Filter) NodeReadable {
 	node := &filterNode{
 		graph:    g,
 		uniqueID: fmt.Sprintf("spire%d", len(g.filters)),
@@ -43,7 +43,7 @@ func (g *implGraph) NewFilter(filter filter.Filter) NodeReadable {
 	return node
 }
 
-func (g *implGraph) NewOutput(filename string, opts ...output.Option) Node {
+func (g *implGraph) Output(filename string, opts ...output.Option) Node {
 	out := output.New(filename, opts...)
 	g.outputs = append(g.outputs, out)
 	return out
