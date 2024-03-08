@@ -29,6 +29,7 @@ type Progress struct {
 
 type Runner interface {
 	Run(ctx context.Context) error
+	CommandString() (string, error)
 }
 
 type Option func(*implRunner)
@@ -61,8 +62,8 @@ type implRunner struct {
 	sysProcAttr      *syscall.SysProcAttr
 }
 
-// GetCommandString is a utility function that gets the FFmpeg command string that is run by this process
-func (p *implRunner) GetCommandString() (string, error) {
+// CommandString is a utility function that gets the FFmpeg command string that is run by this process
+func (p *implRunner) CommandString() (string, error) {
 	args, err := p.runnable.RunnableArgs()
 	if err != nil {
 		return "", err
