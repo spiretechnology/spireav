@@ -109,3 +109,27 @@ func formatTransformOptionValue(value string) string {
 	}
 	return value
 }
+
+type rawFilter struct {
+	str     string
+	outputs int
+}
+
+func Raw(str string, outputs int) Filter {
+	return &rawFilter{
+		str:     str,
+		outputs: outputs,
+	}
+}
+
+func (f *rawFilter) With(key string, value expr.Expr) Filter {
+	return f
+}
+
+func (f *rawFilter) String() string {
+	return f.str
+}
+
+func (f *rawFilter) Outputs() int {
+	return f.outputs
+}
