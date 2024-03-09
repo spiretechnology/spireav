@@ -88,17 +88,21 @@ func (m *Meta) GetVideoStream() *StreamMeta {
 	return nil
 }
 
-// GetLengthFrames gets the duration of the media in frames
-func (m *Meta) GetLengthFrames() int {
+// GetLengthFrames gets the duration of the media in frames.
+func (m *Meta) GetLengthFrames() int64 {
 	video := m.GetVideoStream()
 	if video == nil {
 		return 0
 	}
-	return video.DurationTs
+	frames, err := strconv.ParseInt(video.NbFrames, 10, 64)
+	if err != nil {
+		return 0
+	}
+	return frames
 }
 
-// GetFrameRate gets the frame rate of the video stream, represented as a float64 of frames per second
-func (m *Meta) GetFrameRate() float64 {
+// GetDurationSeconds gets the duration of the media in seconds.
+func (m *Meta) GetDurationSeconds() float64 {
 	video := m.GetVideoStream()
 	if video == nil {
 		return 0
@@ -107,5 +111,10 @@ func (m *Meta) GetFrameRate() float64 {
 	if err != nil {
 		return 0
 	}
-	return float64(video.DurationTs) / durationSec
+	return durationSec
+}
+
+// GetFrameRate gets the frame rate of the video stream, represented as a float64 of frames per second
+func (m *Meta) GetFrameRate() float64 {
+	return float64(m.GetLengthFrames()) / m.GetDurationSeconds()
 }
