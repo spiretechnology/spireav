@@ -40,9 +40,9 @@ type StreamMeta struct {
 	RFrameRate       string            `json:"r_frame_rate"`
 	AvgFrameRate     string            `json:"avg_frame_rate"`
 	TimeBase         string            `json:"time_base"`
-	StartPts         int               `json:"start_pts"`
+	StartPts         int64             `json:"start_pts"`
 	StartTime        string            `json:"start_time"`
-	DurationTs       int               `json:"duration_ts"`
+	DurationTs       int64             `json:"duration_ts"`
 	Duration         string            `json:"duration"`
 	BitRate          string            `json:"bit_rate"`
 	BitsPerRawSample string            `json:"bits_per_raw_sample"`
@@ -123,11 +123,14 @@ func (m *Meta) GetLengthFrames() int64 {
 	if video == nil {
 		return 0
 	}
-	frames, err := strconv.ParseInt(video.NbFrames, 10, 64)
-	if err != nil {
-		return 0
+	if video.NbFrames != "" {
+		frames, err := strconv.ParseInt(video.NbFrames, 10, 64)
+		if err != nil {
+			return 0
+		}
+		return frames
 	}
-	return frames
+	return video.DurationTs
 }
 
 // GetDurationSeconds gets the duration of the media in seconds.
