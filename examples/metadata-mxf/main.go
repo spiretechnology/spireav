@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"os/signal"
 	"syscall"
 
@@ -20,9 +21,10 @@ func main() {
 	defer cancel()
 
 	// Get the metadata for a file
-	metadata, err := metadata.GetMxfMetadata(ctx, "/Users/conner/Downloads/Stage AAF/AA01B7EAC60C.mxf")
+	metadata, err := metadata.GetMxfMetadata(ctx, "reference-media/SC0808GB.01/SC0808GB_AA01.D9722BAE3008A.mxf")
 	if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 
 	// Log the metadata

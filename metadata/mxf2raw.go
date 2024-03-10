@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/spiretechnology/spireav"
 )
@@ -29,12 +30,14 @@ func GetMxfMetadataWithOptions(ctx context.Context, filename string, opts Metada
 	}
 
 	// Create the output buffer to capture stdout
-	var stdoutBuffer bytes.Buffer
+	var stdoutBuffer, stderrBuffer bytes.Buffer
 	cmd.Stdout = &stdoutBuffer
+	cmd.Stderr = &stderrBuffer
 
 	// Run the command
 	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("running mxf2raw: %s", err)
+		errStr := strings.TrimSpace(stderrBuffer.String())
+		return nil, fmt.Errorf("running mxf2raw: %s: %s", err, errStr)
 	}
 
 	// Get the bytes from the output
