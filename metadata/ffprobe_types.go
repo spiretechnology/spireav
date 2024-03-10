@@ -27,40 +27,58 @@ type FormatMeta struct {
 
 // StreamMeta is the metadata specific to a stream of data, with a specific codec
 type StreamMeta struct {
-	Index              int               `json:"index"`
-	CodecName          string            `json:"codec_name"`
-	CodecLongName      string            `json:"codec_long_name"`
-	Profile            string            `json:"profile"`
-	CodecType          string            `json:"codec_type"`
-	CodecTagString     string            `json:"codec_tag_string"`
-	CodecTag           string            `json:"codec_tag"`
-	Width              int               `json:"width"`
-	Height             int               `json:"height"`
-	CodedWidth         int               `json:"coded_width"`
-	CodedHeight        int               `json:"coded_height"`
-	ClosedCaptions     int               `json:"closed_captions"`
-	HasBFrames         int               `json:"has_b_frames"`
-	SampleAspectRatio  string            `json:"sample_aspect_ratio"`
-	DisplayAspectRatio string            `json:"display_aspect_ratio"`
-	PixFmt             string            `json:"pix_fmt"`
-	ColorSpace         string            `json:"color_space"`
-	Level              int               `json:"level"`
-	ChromaLocation     string            `json:"chroma_location"`
-	Refs               int               `json:"refs"`
-	IsAvc              string            `json:"is_avc"`
-	NalLengthSize      string            `json:"nal_length_size"`
-	RFrameRate         string            `json:"r_frame_rate"`
-	AvgFrameRate       string            `json:"avg_frame_rate"`
-	TimeBase           string            `json:"time_base"`
-	StartPts           int               `json:"start_pts"`
-	StartTime          string            `json:"start_time"`
-	DurationTs         int               `json:"duration_ts"`
-	Duration           string            `json:"duration"`
-	BitRate            string            `json:"bit_rate"`
-	BitsPerRawSample   string            `json:"bits_per_raw_sample"`
-	NbFrames           string            `json:"nb_frames"`
-	Disposition        StreamDisposition `json:"disposition"`
-	Tags               map[string]string `json:"tags"`
+	Index          int    `json:"index"`
+	CodecName      string `json:"codec_name"`
+	CodecLongName  string `json:"codec_long_name"`
+	Profile        string `json:"profile"`
+	CodecType      string `json:"codec_type"`
+	CodecTagString string `json:"codec_tag_string"`
+	CodecTag       string `json:"codec_tag"`
+	VideoStreamMeta
+	AudioStreamMeta
+	ID               string            `json:"id"`
+	RFrameRate       string            `json:"r_frame_rate"`
+	AvgFrameRate     string            `json:"avg_frame_rate"`
+	TimeBase         string            `json:"time_base"`
+	StartPts         int               `json:"start_pts"`
+	StartTime        string            `json:"start_time"`
+	DurationTs       int               `json:"duration_ts"`
+	Duration         string            `json:"duration"`
+	BitRate          string            `json:"bit_rate"`
+	BitsPerRawSample string            `json:"bits_per_raw_sample"`
+	NbFrames         string            `json:"nb_frames"`
+	Disposition      StreamDisposition `json:"disposition"`
+	Tags             map[string]string `json:"tags"`
+}
+
+type VideoStreamMeta struct {
+	Width              int    `json:"width"`
+	Height             int    `json:"height"`
+	CodedWidth         int    `json:"coded_width"`
+	CodedHeight        int    `json:"coded_height"`
+	ClosedCaptions     int    `json:"closed_captions"`
+	FilmGrain          int    `json:"film_grain"`
+	HasBFrames         int    `json:"has_b_frames"`
+	SampleAspectRatio  string `json:"sample_aspect_ratio"`
+	DisplayAspectRatio string `json:"display_aspect_ratio"`
+	PixFmt             string `json:"pix_fmt"`
+	Level              int    `json:"level"`
+	ColorRange         string `json:"color_range"`
+	ColorSpace         string `json:"color_space"`
+	ColorTransfer      string `json:"color_transfer"`
+	ColorPrimaries     string `json:"color_primaries"`
+	ChromaLocation     string `json:"chroma_location"`
+	FieldOrder         string `json:"field_order"`
+	Refs               int    `json:"refs"`
+	IsAvc              string `json:"is_avc"`
+	NalLengthSize      string `json:"nal_length_size"`
+}
+
+type AudioStreamMeta struct {
+	Channels       int    `json:"channels"`
+	ChannelLayout  string `json:"channel_layout"`
+	BitsPerSample  int    `json:"bits_per_sample"`
+	InitialPadding int    `json:"initial_padding"`
 }
 
 type StreamDisposition struct {
@@ -78,7 +96,7 @@ type StreamDisposition struct {
 	TimedThumbnails int `json:"timed_thumbnails"`
 }
 
-// GetVideoStream gets the metadata for the video stream within the metadata
+// GetVideoStream gets the metadata for the video stream within the metadata.
 func (m *Meta) GetVideoStream() *StreamMeta {
 	for _, v := range m.Streams {
 		if v.CodecType == "video" {
@@ -86,6 +104,17 @@ func (m *Meta) GetVideoStream() *StreamMeta {
 		}
 	}
 	return nil
+}
+
+// GetStreamsByType gets a slice of all streams with a given type.
+func (m *Meta) GetStreamsByType(codecType string) []StreamMeta {
+	var streams []StreamMeta
+	for _, v := range m.Streams {
+		if v.CodecType == codecType {
+			streams = append(streams, v)
+		}
+	}
+	return streams
 }
 
 // GetLengthFrames gets the duration of the media in frames.
