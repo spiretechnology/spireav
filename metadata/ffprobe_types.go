@@ -75,6 +75,8 @@ type VideoStreamMeta struct {
 }
 
 type AudioStreamMeta struct {
+	SampleFmt      string `json:"sample_fmt"`
+	SampleRate     string `json:"sample_rate"`
 	Channels       int    `json:"channels"`
 	ChannelLayout  string `json:"channel_layout"`
 	BitsPerSample  int    `json:"bits_per_sample"`
