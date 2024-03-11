@@ -1,7 +1,9 @@
 package metadata
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Meta is the overall metadata for a media file
@@ -108,47 +110,20 @@ func (m *Meta) GetVideoStream() *StreamMeta {
 	return nil
 }
 
-// GetStreamsByType gets a slice of all streams with a given type.
-func (m *Meta) GetStreamsByType(codecType string) []StreamMeta {
-	var streams []StreamMeta
-	for _, v := range m.Streams {
-		if v.CodecType == codecType {
-			streams = append(streams, v)
-		}
+// GetFrameRate gets the frame rate / sample rate of the stream, represented as a fraction with numerator and denominator.
+func (sm *StreamMeta) GetFrameRate() (int, int, error) {
+	parts := strings.Split(sm.TimeBase, "/")
+	if len(parts) != 2 {
+		return 0, 0, fmt.Errorf("invalid time base: %s", sm.TimeBase)
 	}
-	return streams
-}
-
-// GetLengthFrames gets the duration of the media in frames.
-func (m *Meta) GetLengthFrames() int64 {
-	video := m.GetVideoStream()
-	if video == nil {
-		return 0
-	}
-	if video.NbFrames != "" {
-		frames, err := strconv.ParseInt(video.NbFrames, 10, 64)
-		if err != nil {
-			return 0
-		}
-		return frames
-	}
-	return video.DurationTs
-}
-
-// GetDurationSeconds gets the duration of the media in seconds.
-func (m *Meta) GetDurationSeconds() float64 {
-	video := m.GetVideoStream()
-	if video == nil {
-		return 0
-	}
-	durationSec, err := strconv.ParseFloat(video.Duration, 64)
+	flipped := []string{parts[1], parts[0]}
+	num, err := strconv.ParseInt(flipped[0], 10, 64)
 	if err != nil {
-		return 0
+		return 0, 0, fmt.Errorf("parsing numerator of \"%s\": %w", strings.Join(flipped, "/"), err)
 	}
-	return durationSec
-}
-
-// GetFrameRate gets the frame rate of the video stream, represented as a float64 of frames per second
-func (m *Meta) GetFrameRate() float64 {
-	return float64(m.GetLengthFrames()) / m.GetDurationSeconds()
+	den, err := strconv.ParseInt(flipped[1], 10, 64)
+	if err != nil {
+		return 0, 0, fmt.Errorf("parsing denominator of \"%s\": %w", strings.Join(flipped, "/"), err)
+	}
+	return int(num), int(den), nil
 }
