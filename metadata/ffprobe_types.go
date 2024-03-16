@@ -112,18 +112,17 @@ func (m *Meta) GetVideoStream() *StreamMeta {
 
 // GetFrameRate gets the frame rate / sample rate of the stream, represented as a fraction with numerator and denominator.
 func (sm *StreamMeta) GetFrameRate() (int, int, error) {
-	parts := strings.Split(sm.TimeBase, "/")
+	parts := strings.Split(sm.AvgFrameRate, "/")
 	if len(parts) != 2 {
 		return 0, 0, fmt.Errorf("invalid time base: %s", sm.TimeBase)
 	}
-	flipped := []string{parts[1], parts[0]}
-	num, err := strconv.ParseInt(flipped[0], 10, 64)
+	num, err := strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("parsing numerator of \"%s\": %w", strings.Join(flipped, "/"), err)
+		return 0, 0, fmt.Errorf("parsing numerator of \"%s\": %w", sm.AvgFrameRate, err)
 	}
-	den, err := strconv.ParseInt(flipped[1], 10, 64)
+	den, err := strconv.ParseInt(parts[1], 10, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("parsing denominator of \"%s\": %w", strings.Join(flipped, "/"), err)
+		return 0, 0, fmt.Errorf("parsing denominator of \"%s\": %w", sm.AvgFrameRate, err)
 	}
 	return int(num), int(den), nil
 }
