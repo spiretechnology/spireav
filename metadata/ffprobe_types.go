@@ -110,6 +110,23 @@ func (m *Meta) GetVideoStream() *StreamMeta {
 	return nil
 }
 
+func (m *Meta) FindTimecode() string {
+	if m.Format.Tags != nil {
+		if timecode, ok := m.Format.Tags["timecode"]; ok && len(timecode) > 0 {
+			return timecode
+		}
+	}
+	for _, stream := range m.Streams {
+		if stream.Tags != nil {
+			if timecode, ok := stream.Tags["timecode"]; ok && len(timecode) > 0 {
+				return timecode
+			}
+
+		}
+	}
+	return ""
+}
+
 // GetFrameRate gets the frame rate / sample rate of the stream, represented as a fraction with numerator and denominator.
 func (sm *StreamMeta) GetFrameRate() (int, int, error) {
 	num, den, _ := parseFraction(sm.RFrameRate)
