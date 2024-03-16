@@ -112,17 +112,49 @@ func (m *Meta) GetVideoStream() *StreamMeta {
 
 // GetFrameRate gets the frame rate / sample rate of the stream, represented as a fraction with numerator and denominator.
 func (sm *StreamMeta) GetFrameRate() (int, int, error) {
-	parts := strings.Split(sm.AvgFrameRate, "/")
+	num, den, _ := parseFraction(sm.RFrameRate)
+	if num > 0 && den > 0 {
+		return num, den, nil
+	}
+	num, den, _ = parseFraction(sm.AvgFrameRate)
+	if num > 0 && den > 0 {
+		return num, den, nil
+	}
+	return 0, 0, fmt.Errorf("no frame rate found")
+}
+
+func (sm *StreamMeta) GetTimeBase() (int, int, error) {
+	return parseFraction(sm.TimeBase)
+}
+
+func (sm *StreamMeta) GetTotalFrames() (int64, error) {
+	if sm.NbFrames != "" {
+		if frames, err := strconv.ParseInt(sm.NbFrames, 10, 64); err == nil && frames > 0 {
+			return frames, nil
+		}
+	}
+	if sm.DurationTs > 0 {
+		timebaseNum, timebaseDen, _ := sm.GetTimeBase()
+		frameRateNum, frameRateDen, _ := sm.GetFrameRate()
+		if timebaseNum > 0 && timebaseDen > 0 && frameRateNum > 0 && frameRateDen > 0 {
+			return sm.DurationTs * int64(timebaseNum) * int64(frameRateNum) / int64(frameRateDen) / int64(timebaseDen), nil
+		}
+	}
+	return 0, fmt.Errorf("no frame count found")
+}
+
+func parseFraction(str string) (int, int, error) {
+	parts := strings.Split(str, "/")
 	if len(parts) != 2 {
-		return 0, 0, fmt.Errorf("invalid time base: %s", sm.TimeBase)
+		return 0, 0, fmt.Errorf("invalid time base: %s", str)
 	}
 	num, err := strconv.ParseInt(parts[0], 10, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("parsing numerator of \"%s\": %w", sm.AvgFrameRate, err)
+		return 0, 0, fmt.Errorf("parsing numerator of \"%s\": %w", str, err)
 	}
 	den, err := strconv.ParseInt(parts[1], 10, 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("parsing denominator of \"%s\": %w", sm.AvgFrameRate, err)
+		return 0, 0, fmt.Errorf("parsing denominator of \"%s\": %w", str, err)
 	}
 	return int(num), int(den), nil
 }
