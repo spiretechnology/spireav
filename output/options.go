@@ -3,7 +3,7 @@ package output
 import "strconv"
 
 func WithFormat(format string) Option {
-	return withOptions("-f", format)
+	return WithOptions("-f", format)
 }
 
 func WithFormatMP4() Option {
@@ -21,7 +21,7 @@ func WithFormatMOV() Option {
 }
 
 func withDefaultMP4Options() Option {
-	return withOptions(
+	return WithOptions(
 		"-movflags", "use_metadata_tags",
 		"-vcodec", "h264",
 		"-pix_fmt", "yuv420p",
@@ -32,21 +32,21 @@ func withDefaultMP4Options() Option {
 }
 
 func WithFrameRate(frameRate string) Option {
-	return withOptions("-r", frameRate)
+	return WithOptions("-r", frameRate)
 }
 
 func WithTimecode(timecode string) Option {
-	return withOptions("-timecode", timecode)
+	return WithOptions("-timecode", timecode)
 }
 
 func WithConstantRateFactor(factor int) Option {
-	return withOptions("-crf", strconv.Itoa(factor))
+	return WithOptions("-crf", strconv.Itoa(factor))
 }
 
 func WithVideoCodec(codec string) Option {
-	return withOptions("-vcodec", codec)
+	return WithOptions("-vcodec", codec)
 }
 
 func WithAudioCodec(codec string) Option {
-	return withOptions("-acodec", codec)
+	return WithOptions("-acodec", codec)
 }

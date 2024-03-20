@@ -25,7 +25,7 @@ func (o *outputWithArgs) Options() []string {
 	return o.opts
 }
 
-func withOptions(opts ...string) Option {
+func WithOptions(opts ...string) Option {
 	return func() []string {
 		return opts
 	}
