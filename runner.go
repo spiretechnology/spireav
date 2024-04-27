@@ -129,10 +129,13 @@ func (p *implRunner) Run(ctx context.Context) error {
 	}
 
 	// Wait for the process to end
-	if err := cmd.Wait(); err != nil {
-		// Wait for the error log to finish
-		wg.Wait()
+	err = cmd.Wait()
 
+	// Wait for the error log to finish
+	wg.Wait()
+
+	// If the process errored, return the error
+	if err != nil {
 		// If the context triggered the process to be killed, we want to see the context's error
 		// instead of the process's error
 		if ctx != nil && ctx.Err() != nil {
