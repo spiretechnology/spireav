@@ -156,7 +156,9 @@ func (g *implGraph) RunnableArgs() ([]string, error) {
 	args = append(args, "-v", "error")
 
 	// Add the filters string
-	args = append(args, "-filter_complex", g.FilterString())
+	if filterString := g.FilterString(); filterString != "" {
+		args = append(args, "-filter_complex", filterString)
+	}
 
 	// Loop through all the outputs. Apply the stream mappings, then all other output options
 	for _, out := range g.outputs {
