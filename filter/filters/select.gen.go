@@ -7,14 +7,16 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// SelectBuilder corresponds to the "select" FFmpeg filter.
+// SelectBuilder Select video frames to pass in output.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#select
 type SelectBuilder interface {
 	filter.Filter
-	// Expression sets the "e" option on the filter.
-	Expression(expression expr.Expr) SelectBuilder
-	// ExpressionString sets the "e" option on the filter.
-	ExpressionString(expression string) SelectBuilder
+	// Expr set an expression to use for selecting frames (default "1").
+	Expr(expression string) SelectBuilder
+	// E set an expression to use for selecting frames (default "1").
+	E(e string) SelectBuilder
+	// N set the number of outputs (from 1 to INT_MAX) (default 1).
+	N(n int) SelectBuilder
 }
 
 // Select creates a new SelectBuilder to configure the "select" filter.
@@ -28,28 +30,32 @@ type implSelectBuilder struct {
 	f filter.Filter
 }
 
-func (b *implSelectBuilder) String() string {
-	return b.f.String()
+func (selectBuilder *implSelectBuilder) String() string {
+	return selectBuilder.f.String()
 }
 
-func (b *implSelectBuilder) Outputs() int {
-	return b.f.Outputs()
+func (selectBuilder *implSelectBuilder) Outputs() int {
+	return selectBuilder.f.Outputs()
 }
 
-func (b *implSelectBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (selectBuilder *implSelectBuilder) With(key string, value expr.Expr) filter.Filter {
+	return selectBuilder.withOption(key, value)
 }
 
-func (b *implSelectBuilder) withOption(key string, value expr.Expr) SelectBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (selectBuilder *implSelectBuilder) withOption(key string, value expr.Expr) SelectBuilder {
+	bCopy := *selectBuilder
+	bCopy.f = selectBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implSelectBuilder) Expression(expression expr.Expr) SelectBuilder {
-	return b.withOption("e", expression)
+func (selectBuilder *implSelectBuilder) Expr(expression string) SelectBuilder {
+	return selectBuilder.withOption("expr", expr.String(expression))
 }
 
-func (b *implSelectBuilder) ExpressionString(expression string) SelectBuilder {
-	return b.withOption("e", expr.String(expression))
+func (selectBuilder *implSelectBuilder) E(e string) SelectBuilder {
+	return selectBuilder.withOption("e", expr.String(e))
+}
+
+func (selectBuilder *implSelectBuilder) N(n int) SelectBuilder {
+	return selectBuilder.withOption("n", expr.Int(n))
 }

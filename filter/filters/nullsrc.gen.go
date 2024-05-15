@@ -3,59 +3,85 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// NullSourceBuilder corresponds to the "nullsrc" FFmpeg filter.
+// NullsrcBuilder Null video source, return unprocessed video frames.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#nullsrc
-type NullSourceBuilder interface {
+type NullsrcBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) NullSourceBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) NullSourceBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) NullSourceBuilder
+	// Size set video size (default "320x240").
+	Size(size expr.Size) NullsrcBuilder
+	// S set video size (default "320x240").
+	S(s expr.Size) NullsrcBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) NullsrcBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) NullsrcBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) NullsrcBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) NullsrcBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) NullsrcBuilder
 }
 
-// NullSource creates a new NullSourceBuilder to configure the "nullsrc" filter.
-func NullSource(opts ...filter.Option) NullSourceBuilder {
-	return &implNullSourceBuilder{
+// Nullsrc creates a new NullsrcBuilder to configure the "nullsrc" filter.
+func Nullsrc(opts ...filter.Option) NullsrcBuilder {
+	return &implNullsrcBuilder{
 		f: filter.New("nullsrc", 1, opts...),
 	}
 }
 
-type implNullSourceBuilder struct {
+type implNullsrcBuilder struct {
 	f filter.Filter
 }
 
-func (b *implNullSourceBuilder) String() string {
-	return b.f.String()
+func (nullsrcBuilder *implNullsrcBuilder) String() string {
+	return nullsrcBuilder.f.String()
 }
 
-func (b *implNullSourceBuilder) Outputs() int {
-	return b.f.Outputs()
+func (nullsrcBuilder *implNullsrcBuilder) Outputs() int {
+	return nullsrcBuilder.f.Outputs()
 }
 
-func (b *implNullSourceBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (nullsrcBuilder *implNullsrcBuilder) With(key string, value expr.Expr) filter.Filter {
+	return nullsrcBuilder.withOption(key, value)
 }
 
-func (b *implNullSourceBuilder) withOption(key string, value expr.Expr) NullSourceBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (nullsrcBuilder *implNullsrcBuilder) withOption(key string, value expr.Expr) NullsrcBuilder {
+	bCopy := *nullsrcBuilder
+	bCopy.f = nullsrcBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implNullSourceBuilder) Size(width, height int) NullSourceBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (nullsrcBuilder *implNullsrcBuilder) Size(size expr.Size) NullsrcBuilder {
+	return nullsrcBuilder.withOption("size", size)
 }
 
-func (b *implNullSourceBuilder) FrameRate(frameRate expr.Expr) NullSourceBuilder {
-	return b.withOption("r", frameRate)
+func (nullsrcBuilder *implNullsrcBuilder) S(s expr.Size) NullsrcBuilder {
+	return nullsrcBuilder.withOption("s", s)
 }
 
-func (b *implNullSourceBuilder) Duration(duration string) NullSourceBuilder {
-	return b.withOption("d", expr.String(duration))
+func (nullsrcBuilder *implNullsrcBuilder) Rate(rate expr.Rational) NullsrcBuilder {
+	return nullsrcBuilder.withOption("rate", rate)
+}
+
+func (nullsrcBuilder *implNullsrcBuilder) R(r expr.Rational) NullsrcBuilder {
+	return nullsrcBuilder.withOption("r", r)
+}
+
+func (nullsrcBuilder *implNullsrcBuilder) Duration(duration time.Duration) NullsrcBuilder {
+	return nullsrcBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (nullsrcBuilder *implNullsrcBuilder) D(d time.Duration) NullsrcBuilder {
+	return nullsrcBuilder.withOption("d", expr.Duration(d))
+}
+
+func (nullsrcBuilder *implNullsrcBuilder) Sar(sar expr.Rational) NullsrcBuilder {
+	return nullsrcBuilder.withOption("sar", sar)
 }

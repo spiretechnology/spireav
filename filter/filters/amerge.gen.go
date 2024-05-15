@@ -7,43 +7,43 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// AudioMergeBuilder corresponds to the "amerge" FFmpeg filter.
+// AmergeBuilder Merge two or more audio streams into a single multi-channel stream.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#amerge
-type AudioMergeBuilder interface {
+type AmergeBuilder interface {
 	filter.Filter
-	// Inputs sets the "inputs" option on the filter.
-	Inputs(inputs int) AudioMergeBuilder
+	// Inputs specify the number of inputs (from 1 to 64) (default 2).
+	Inputs(inputs int) AmergeBuilder
 }
 
-// AudioMerge creates a new AudioMergeBuilder to configure the "amerge" filter.
-func AudioMerge(opts ...filter.Option) AudioMergeBuilder {
-	return &implAudioMergeBuilder{
+// Amerge creates a new AmergeBuilder to configure the "amerge" filter.
+func Amerge(opts ...filter.Option) AmergeBuilder {
+	return &implAmergeBuilder{
 		f: filter.New("amerge", 1, opts...),
 	}
 }
 
-type implAudioMergeBuilder struct {
+type implAmergeBuilder struct {
 	f filter.Filter
 }
 
-func (b *implAudioMergeBuilder) String() string {
-	return b.f.String()
+func (amergeBuilder *implAmergeBuilder) String() string {
+	return amergeBuilder.f.String()
 }
 
-func (b *implAudioMergeBuilder) Outputs() int {
-	return b.f.Outputs()
+func (amergeBuilder *implAmergeBuilder) Outputs() int {
+	return amergeBuilder.f.Outputs()
 }
 
-func (b *implAudioMergeBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (amergeBuilder *implAmergeBuilder) With(key string, value expr.Expr) filter.Filter {
+	return amergeBuilder.withOption(key, value)
 }
 
-func (b *implAudioMergeBuilder) withOption(key string, value expr.Expr) AudioMergeBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (amergeBuilder *implAmergeBuilder) withOption(key string, value expr.Expr) AmergeBuilder {
+	bCopy := *amergeBuilder
+	bCopy.f = amergeBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implAudioMergeBuilder) Inputs(inputs int) AudioMergeBuilder {
-	return b.withOption("inputs", expr.Int(inputs))
+func (amergeBuilder *implAmergeBuilder) Inputs(inputs int) AmergeBuilder {
+	return amergeBuilder.withOption("inputs", expr.Int(inputs))
 }

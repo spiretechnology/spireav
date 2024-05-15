@@ -3,59 +3,73 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// AllRGBBuilder corresponds to the "allrgb" FFmpeg filter.
+// AllrgbBuilder Generate all RGB colors.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#allrgb
-type AllRGBBuilder interface {
+type AllrgbBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) AllRGBBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) AllRGBBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) AllRGBBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) AllrgbBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) AllrgbBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) AllrgbBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) AllrgbBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) AllrgbBuilder
 }
 
-// AllRGB creates a new AllRGBBuilder to configure the "allrgb" filter.
-func AllRGB(opts ...filter.Option) AllRGBBuilder {
-	return &implAllRGBBuilder{
+// Allrgb creates a new AllrgbBuilder to configure the "allrgb" filter.
+func Allrgb(opts ...filter.Option) AllrgbBuilder {
+	return &implAllrgbBuilder{
 		f: filter.New("allrgb", 1, opts...),
 	}
 }
 
-type implAllRGBBuilder struct {
+type implAllrgbBuilder struct {
 	f filter.Filter
 }
 
-func (b *implAllRGBBuilder) String() string {
-	return b.f.String()
+func (allrgbBuilder *implAllrgbBuilder) String() string {
+	return allrgbBuilder.f.String()
 }
 
-func (b *implAllRGBBuilder) Outputs() int {
-	return b.f.Outputs()
+func (allrgbBuilder *implAllrgbBuilder) Outputs() int {
+	return allrgbBuilder.f.Outputs()
 }
 
-func (b *implAllRGBBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (allrgbBuilder *implAllrgbBuilder) With(key string, value expr.Expr) filter.Filter {
+	return allrgbBuilder.withOption(key, value)
 }
 
-func (b *implAllRGBBuilder) withOption(key string, value expr.Expr) AllRGBBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (allrgbBuilder *implAllrgbBuilder) withOption(key string, value expr.Expr) AllrgbBuilder {
+	bCopy := *allrgbBuilder
+	bCopy.f = allrgbBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implAllRGBBuilder) Size(width, height int) AllRGBBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (allrgbBuilder *implAllrgbBuilder) Rate(rate expr.Rational) AllrgbBuilder {
+	return allrgbBuilder.withOption("rate", rate)
 }
 
-func (b *implAllRGBBuilder) FrameRate(frameRate expr.Expr) AllRGBBuilder {
-	return b.withOption("r", frameRate)
+func (allrgbBuilder *implAllrgbBuilder) R(r expr.Rational) AllrgbBuilder {
+	return allrgbBuilder.withOption("r", r)
 }
 
-func (b *implAllRGBBuilder) Duration(duration string) AllRGBBuilder {
-	return b.withOption("d", expr.String(duration))
+func (allrgbBuilder *implAllrgbBuilder) Duration(duration time.Duration) AllrgbBuilder {
+	return allrgbBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (allrgbBuilder *implAllrgbBuilder) D(d time.Duration) AllrgbBuilder {
+	return allrgbBuilder.withOption("d", expr.Duration(d))
+}
+
+func (allrgbBuilder *implAllrgbBuilder) Sar(sar expr.Rational) AllrgbBuilder {
+	return allrgbBuilder.withOption("sar", sar)
 }

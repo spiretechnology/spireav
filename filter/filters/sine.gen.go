@@ -3,59 +3,97 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// SineSourceBuilder corresponds to the "sine" FFmpeg filter.
+// SineBuilder Generate sine wave audio signal.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#sine
-type SineSourceBuilder interface {
+type SineBuilder interface {
 	filter.Filter
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) SineSourceBuilder
-	// Frequency sets the "f" option on the filter.
-	Frequency(frequency expr.Expr) SineSourceBuilder
-	// FrequencyInt sets the "f" option on the filter.
-	FrequencyInt(frequency int) SineSourceBuilder
+	// Frequency set the sine frequency (from 0 to DBL_MAX) (default 440).
+	Frequency(frequency float64) SineBuilder
+	// F set the sine frequency (from 0 to DBL_MAX) (default 440).
+	F(f float64) SineBuilder
+	// BeepFactor set the beep frequency factor (from 0 to DBL_MAX) (default 0).
+	BeepFactor(beepFactor float64) SineBuilder
+	// B set the beep frequency factor (from 0 to DBL_MAX) (default 0).
+	B(b float64) SineBuilder
+	// SampleRate set the sample rate (from 1 to INT_MAX) (default 44100).
+	SampleRate(sampleRate int) SineBuilder
+	// R set the sample rate (from 1 to INT_MAX) (default 44100).
+	R(r int) SineBuilder
+	// Duration set the audio duration (default 0).
+	Duration(duration time.Duration) SineBuilder
+	// D set the audio duration (default 0).
+	D(d time.Duration) SineBuilder
+	// SamplesPerFrame set the number of samples per frame (default "1024").
+	SamplesPerFrame(samplesPerFrame string) SineBuilder
 }
 
-// SineSource creates a new SineSourceBuilder to configure the "sine" filter.
-func SineSource(opts ...filter.Option) SineSourceBuilder {
-	return &implSineSourceBuilder{
+// Sine creates a new SineBuilder to configure the "sine" filter.
+func Sine(opts ...filter.Option) SineBuilder {
+	return &implSineBuilder{
 		f: filter.New("sine", 1, opts...),
 	}
 }
 
-type implSineSourceBuilder struct {
+type implSineBuilder struct {
 	f filter.Filter
 }
 
-func (b *implSineSourceBuilder) String() string {
-	return b.f.String()
+func (sineBuilder *implSineBuilder) String() string {
+	return sineBuilder.f.String()
 }
 
-func (b *implSineSourceBuilder) Outputs() int {
-	return b.f.Outputs()
+func (sineBuilder *implSineBuilder) Outputs() int {
+	return sineBuilder.f.Outputs()
 }
 
-func (b *implSineSourceBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (sineBuilder *implSineBuilder) With(key string, value expr.Expr) filter.Filter {
+	return sineBuilder.withOption(key, value)
 }
 
-func (b *implSineSourceBuilder) withOption(key string, value expr.Expr) SineSourceBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (sineBuilder *implSineBuilder) withOption(key string, value expr.Expr) SineBuilder {
+	bCopy := *sineBuilder
+	bCopy.f = sineBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implSineSourceBuilder) Duration(duration string) SineSourceBuilder {
-	return b.withOption("d", expr.String(duration))
+func (sineBuilder *implSineBuilder) Frequency(frequency float64) SineBuilder {
+	return sineBuilder.withOption("frequency", expr.Double(frequency))
 }
 
-func (b *implSineSourceBuilder) Frequency(frequency expr.Expr) SineSourceBuilder {
-	return b.withOption("f", frequency)
+func (sineBuilder *implSineBuilder) F(f float64) SineBuilder {
+	return sineBuilder.withOption("f", expr.Double(f))
 }
 
-func (b *implSineSourceBuilder) FrequencyInt(frequency int) SineSourceBuilder {
-	return b.withOption("f", expr.Int(frequency))
+func (sineBuilder *implSineBuilder) BeepFactor(beepFactor float64) SineBuilder {
+	return sineBuilder.withOption("beep_factor", expr.Double(beepFactor))
+}
+
+func (sineBuilder *implSineBuilder) B(b float64) SineBuilder {
+	return sineBuilder.withOption("b", expr.Double(b))
+}
+
+func (sineBuilder *implSineBuilder) SampleRate(sampleRate int) SineBuilder {
+	return sineBuilder.withOption("sample_rate", expr.Int(sampleRate))
+}
+
+func (sineBuilder *implSineBuilder) R(r int) SineBuilder {
+	return sineBuilder.withOption("r", expr.Int(r))
+}
+
+func (sineBuilder *implSineBuilder) Duration(duration time.Duration) SineBuilder {
+	return sineBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (sineBuilder *implSineBuilder) D(d time.Duration) SineBuilder {
+	return sineBuilder.withOption("d", expr.Duration(d))
+}
+
+func (sineBuilder *implSineBuilder) SamplesPerFrame(samplesPerFrame string) SineBuilder {
+	return sineBuilder.withOption("samples_per_frame", expr.String(samplesPerFrame))
 }

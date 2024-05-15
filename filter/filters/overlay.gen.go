@@ -7,28 +7,28 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// OverlayBuilder corresponds to the "overlay" FFmpeg filter.
+// OverlayBuilder Overlay a video source on top of the input.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#overlay
 type OverlayBuilder interface {
 	filter.Filter
-	// PosX sets the "x" option on the filter.
-	PosX(posX expr.Expr) OverlayBuilder
-	// PosXInt sets the "x" option on the filter.
-	PosXInt(posX int) OverlayBuilder
-	// PosY sets the "y" option on the filter.
-	PosY(posY expr.Expr) OverlayBuilder
-	// PosYInt sets the "y" option on the filter.
-	PosYInt(posY int) OverlayBuilder
-	// EvalOn sets the "eval" option on the filter.
-	EvalOn(evalOn string) OverlayBuilder
-	// EvalOnInit sets the "eval" option on the filter.
-	EvalOnInit() OverlayBuilder
-	// EvalOnFrame sets the "eval" option on the filter.
-	EvalOnFrame() OverlayBuilder
-	// AlphaStraight sets the "alpha" option on the filter.
-	AlphaStraight() OverlayBuilder
-	// AlphaPremultiplied sets the "alpha" option on the filter.
-	AlphaPremultiplied() OverlayBuilder
+	// X set the x expression (default "0").
+	X(x string) OverlayBuilder
+	// Y set the y expression (default "0").
+	Y(y string) OverlayBuilder
+	// EofAction Action to take when encountering EOF from secondary input  (from 0 to 2) (default repeat).
+	EofAction(eofAction int) OverlayBuilder
+	// Eval specify when to evaluate expressions (from 0 to 1) (default frame).
+	Eval(eval int) OverlayBuilder
+	// Shortest force termination when the shortest input terminates (default false).
+	Shortest(shortest bool) OverlayBuilder
+	// Format set output format (from 0 to 8) (default yuv420).
+	Format(format int) OverlayBuilder
+	// Repeatlast repeat overlay of the last overlay frame (default true).
+	Repeatlast(repeatlast bool) OverlayBuilder
+	// Alpha alpha format (from 0 to 1) (default straight).
+	Alpha(alpha int) OverlayBuilder
+	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
+	TsSyncMode(tsSyncMode int) OverlayBuilder
 }
 
 // Overlay creates a new OverlayBuilder to configure the "overlay" filter.
@@ -42,56 +42,56 @@ type implOverlayBuilder struct {
 	f filter.Filter
 }
 
-func (b *implOverlayBuilder) String() string {
-	return b.f.String()
+func (overlayBuilder *implOverlayBuilder) String() string {
+	return overlayBuilder.f.String()
 }
 
-func (b *implOverlayBuilder) Outputs() int {
-	return b.f.Outputs()
+func (overlayBuilder *implOverlayBuilder) Outputs() int {
+	return overlayBuilder.f.Outputs()
 }
 
-func (b *implOverlayBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (overlayBuilder *implOverlayBuilder) With(key string, value expr.Expr) filter.Filter {
+	return overlayBuilder.withOption(key, value)
 }
 
-func (b *implOverlayBuilder) withOption(key string, value expr.Expr) OverlayBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (overlayBuilder *implOverlayBuilder) withOption(key string, value expr.Expr) OverlayBuilder {
+	bCopy := *overlayBuilder
+	bCopy.f = overlayBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implOverlayBuilder) PosX(posX expr.Expr) OverlayBuilder {
-	return b.withOption("x", posX)
+func (overlayBuilder *implOverlayBuilder) X(x string) OverlayBuilder {
+	return overlayBuilder.withOption("x", expr.String(x))
 }
 
-func (b *implOverlayBuilder) PosXInt(posX int) OverlayBuilder {
-	return b.withOption("x", expr.Int(posX))
+func (overlayBuilder *implOverlayBuilder) Y(y string) OverlayBuilder {
+	return overlayBuilder.withOption("y", expr.String(y))
 }
 
-func (b *implOverlayBuilder) PosY(posY expr.Expr) OverlayBuilder {
-	return b.withOption("y", posY)
+func (overlayBuilder *implOverlayBuilder) EofAction(eofAction int) OverlayBuilder {
+	return overlayBuilder.withOption("eof_action", expr.Int(eofAction))
 }
 
-func (b *implOverlayBuilder) PosYInt(posY int) OverlayBuilder {
-	return b.withOption("y", expr.Int(posY))
+func (overlayBuilder *implOverlayBuilder) Eval(eval int) OverlayBuilder {
+	return overlayBuilder.withOption("eval", expr.Int(eval))
 }
 
-func (b *implOverlayBuilder) EvalOn(evalOn string) OverlayBuilder {
-	return b.withOption("eval", expr.String(evalOn))
+func (overlayBuilder *implOverlayBuilder) Shortest(shortest bool) OverlayBuilder {
+	return overlayBuilder.withOption("shortest", expr.Bool(shortest))
 }
 
-func (b *implOverlayBuilder) EvalOnInit() OverlayBuilder {
-	return b.withOption("eval", "init")
+func (overlayBuilder *implOverlayBuilder) Format(format int) OverlayBuilder {
+	return overlayBuilder.withOption("format", expr.Int(format))
 }
 
-func (b *implOverlayBuilder) EvalOnFrame() OverlayBuilder {
-	return b.withOption("eval", "frame")
+func (overlayBuilder *implOverlayBuilder) Repeatlast(repeatlast bool) OverlayBuilder {
+	return overlayBuilder.withOption("repeatlast", expr.Bool(repeatlast))
 }
 
-func (b *implOverlayBuilder) AlphaStraight() OverlayBuilder {
-	return b.withOption("alpha", "straight")
+func (overlayBuilder *implOverlayBuilder) Alpha(alpha int) OverlayBuilder {
+	return overlayBuilder.withOption("alpha", expr.Int(alpha))
 }
 
-func (b *implOverlayBuilder) AlphaPremultiplied() OverlayBuilder {
-	return b.withOption("alpha", "premultiplied")
+func (overlayBuilder *implOverlayBuilder) TsSyncMode(tsSyncMode int) OverlayBuilder {
+	return overlayBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
 }

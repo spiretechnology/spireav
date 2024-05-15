@@ -7,49 +7,55 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// AudioSelectBuilder corresponds to the "aselect" FFmpeg filter.
+// AselectBuilder Select audio frames to pass in output.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#aselect
-type AudioSelectBuilder interface {
+type AselectBuilder interface {
 	filter.Filter
-	// Expression sets the "e" option on the filter.
-	Expression(expression expr.Expr) AudioSelectBuilder
-	// ExpressionString sets the "e" option on the filter.
-	ExpressionString(expression string) AudioSelectBuilder
+	// Expr set an expression to use for selecting frames (default "1").
+	Expr(expression string) AselectBuilder
+	// E set an expression to use for selecting frames (default "1").
+	E(e string) AselectBuilder
+	// N set the number of outputs (from 1 to INT_MAX) (default 1).
+	N(n int) AselectBuilder
 }
 
-// AudioSelect creates a new AudioSelectBuilder to configure the "aselect" filter.
-func AudioSelect(outputs int, opts ...filter.Option) AudioSelectBuilder {
+// Aselect creates a new AselectBuilder to configure the "aselect" filter.
+func Aselect(outputs int, opts ...filter.Option) AselectBuilder {
 	f := filter.New("aselect", outputs, opts...)
 	f = f.With("outputs", expr.Int(outputs))
-	return &implAudioSelectBuilder{f: f}
+	return &implAselectBuilder{f: f}
 }
 
-type implAudioSelectBuilder struct {
+type implAselectBuilder struct {
 	f filter.Filter
 }
 
-func (b *implAudioSelectBuilder) String() string {
-	return b.f.String()
+func (aselectBuilder *implAselectBuilder) String() string {
+	return aselectBuilder.f.String()
 }
 
-func (b *implAudioSelectBuilder) Outputs() int {
-	return b.f.Outputs()
+func (aselectBuilder *implAselectBuilder) Outputs() int {
+	return aselectBuilder.f.Outputs()
 }
 
-func (b *implAudioSelectBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (aselectBuilder *implAselectBuilder) With(key string, value expr.Expr) filter.Filter {
+	return aselectBuilder.withOption(key, value)
 }
 
-func (b *implAudioSelectBuilder) withOption(key string, value expr.Expr) AudioSelectBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (aselectBuilder *implAselectBuilder) withOption(key string, value expr.Expr) AselectBuilder {
+	bCopy := *aselectBuilder
+	bCopy.f = aselectBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implAudioSelectBuilder) Expression(expression expr.Expr) AudioSelectBuilder {
-	return b.withOption("e", expression)
+func (aselectBuilder *implAselectBuilder) Expr(expression string) AselectBuilder {
+	return aselectBuilder.withOption("expr", expr.String(expression))
 }
 
-func (b *implAudioSelectBuilder) ExpressionString(expression string) AudioSelectBuilder {
-	return b.withOption("e", expr.String(expression))
+func (aselectBuilder *implAselectBuilder) E(e string) AselectBuilder {
+	return aselectBuilder.withOption("e", expr.String(e))
+}
+
+func (aselectBuilder *implAselectBuilder) N(n int) AselectBuilder {
+	return aselectBuilder.withOption("n", expr.Int(n))
 }

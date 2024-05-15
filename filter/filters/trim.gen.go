@@ -3,26 +3,36 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// TrimBuilder corresponds to the "trim" FFmpeg filter.
+// TrimBuilder Pick one continuous section from the input, drop the rest.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#trim
 type TrimBuilder interface {
 	filter.Filter
-	// StartSeconds sets the "start" option on the filter.
-	StartSeconds(startSeconds expr.Expr) TrimBuilder
-	// StartSecondsString sets the "start" option on the filter.
-	StartSecondsString(startSeconds string) TrimBuilder
-	// EndSeconds sets the "end" option on the filter.
-	EndSeconds(endSeconds expr.Expr) TrimBuilder
-	// EndSecondsString sets the "end" option on the filter.
-	EndSecondsString(endSeconds string) TrimBuilder
-	// StartFrame sets the "start_frame" option on the filter.
-	StartFrame(startFrame int) TrimBuilder
-	// EndFrame sets the "end_frame" option on the filter.
-	EndFrame(endFrame int) TrimBuilder
+	// Start Timestamp of the first frame that should be passed (default INT64_MAX).
+	Start(start time.Duration) TrimBuilder
+	// Starti Timestamp of the first frame that should be passed (default INT64_MAX).
+	Starti(starti time.Duration) TrimBuilder
+	// End Timestamp of the first frame that should be dropped again (default INT64_MAX).
+	End(end time.Duration) TrimBuilder
+	// Endi Timestamp of the first frame that should be dropped again (default INT64_MAX).
+	Endi(endi time.Duration) TrimBuilder
+	// StartPts Timestamp of the first frame that should be  passed (from I64_MIN to I64_MAX) (default I64_MIN).
+	StartPts(startPts int64) TrimBuilder
+	// EndPts Timestamp of the first frame that should be dropped again (from I64_MIN to I64_MAX) (default I64_MIN).
+	EndPts(endPts int64) TrimBuilder
+	// Duration Maximum duration of the output (default 0).
+	Duration(duration time.Duration) TrimBuilder
+	// Durationi Maximum duration of the output (default 0).
+	Durationi(durationi time.Duration) TrimBuilder
+	// StartFrame Number of the first frame that should be passed to the output (from -1 to I64_MAX) (default -1).
+	StartFrame(startFrame int64) TrimBuilder
+	// EndFrame Number of the first frame that should be dropped again (from 0 to I64_MAX) (default I64_MAX).
+	EndFrame(endFrame int64) TrimBuilder
 }
 
 // Trim creates a new TrimBuilder to configure the "trim" filter.
@@ -36,44 +46,60 @@ type implTrimBuilder struct {
 	f filter.Filter
 }
 
-func (b *implTrimBuilder) String() string {
-	return b.f.String()
+func (trimBuilder *implTrimBuilder) String() string {
+	return trimBuilder.f.String()
 }
 
-func (b *implTrimBuilder) Outputs() int {
-	return b.f.Outputs()
+func (trimBuilder *implTrimBuilder) Outputs() int {
+	return trimBuilder.f.Outputs()
 }
 
-func (b *implTrimBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (trimBuilder *implTrimBuilder) With(key string, value expr.Expr) filter.Filter {
+	return trimBuilder.withOption(key, value)
 }
 
-func (b *implTrimBuilder) withOption(key string, value expr.Expr) TrimBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (trimBuilder *implTrimBuilder) withOption(key string, value expr.Expr) TrimBuilder {
+	bCopy := *trimBuilder
+	bCopy.f = trimBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implTrimBuilder) StartSeconds(startSeconds expr.Expr) TrimBuilder {
-	return b.withOption("start", startSeconds)
+func (trimBuilder *implTrimBuilder) Start(start time.Duration) TrimBuilder {
+	return trimBuilder.withOption("start", expr.Duration(start))
 }
 
-func (b *implTrimBuilder) StartSecondsString(startSeconds string) TrimBuilder {
-	return b.withOption("start", expr.String(startSeconds))
+func (trimBuilder *implTrimBuilder) Starti(starti time.Duration) TrimBuilder {
+	return trimBuilder.withOption("starti", expr.Duration(starti))
 }
 
-func (b *implTrimBuilder) EndSeconds(endSeconds expr.Expr) TrimBuilder {
-	return b.withOption("end", endSeconds)
+func (trimBuilder *implTrimBuilder) End(end time.Duration) TrimBuilder {
+	return trimBuilder.withOption("end", expr.Duration(end))
 }
 
-func (b *implTrimBuilder) EndSecondsString(endSeconds string) TrimBuilder {
-	return b.withOption("end", expr.String(endSeconds))
+func (trimBuilder *implTrimBuilder) Endi(endi time.Duration) TrimBuilder {
+	return trimBuilder.withOption("endi", expr.Duration(endi))
 }
 
-func (b *implTrimBuilder) StartFrame(startFrame int) TrimBuilder {
-	return b.withOption("start_frame", expr.Int(startFrame))
+func (trimBuilder *implTrimBuilder) StartPts(startPts int64) TrimBuilder {
+	return trimBuilder.withOption("start_pts", expr.Int64(startPts))
 }
 
-func (b *implTrimBuilder) EndFrame(endFrame int) TrimBuilder {
-	return b.withOption("end_frame", expr.Int(endFrame))
+func (trimBuilder *implTrimBuilder) EndPts(endPts int64) TrimBuilder {
+	return trimBuilder.withOption("end_pts", expr.Int64(endPts))
+}
+
+func (trimBuilder *implTrimBuilder) Duration(duration time.Duration) TrimBuilder {
+	return trimBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (trimBuilder *implTrimBuilder) Durationi(durationi time.Duration) TrimBuilder {
+	return trimBuilder.withOption("durationi", expr.Duration(durationi))
+}
+
+func (trimBuilder *implTrimBuilder) StartFrame(startFrame int64) TrimBuilder {
+	return trimBuilder.withOption("start_frame", expr.Int64(startFrame))
+}
+
+func (trimBuilder *implTrimBuilder) EndFrame(endFrame int64) TrimBuilder {
+	return trimBuilder.withOption("end_frame", expr.Int64(endFrame))
 }

@@ -7,34 +7,56 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// ScaleBuilder corresponds to the "scale" FFmpeg filter.
+// ScaleBuilder Scale the input video size and/or convert the image format.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#scale
 type ScaleBuilder interface {
 	filter.Filter
-	// Width sets the "w" option on the filter.
-	Width(width expr.Expr) ScaleBuilder
-	// WidthInt sets the "w" option on the filter.
-	WidthInt(width int) ScaleBuilder
-	// Height sets the "h" option on the filter.
-	Height(height expr.Expr) ScaleBuilder
-	// HeightInt sets the "h" option on the filter.
-	HeightInt(height int) ScaleBuilder
-	// EvalOn sets the "eval" option on the filter.
-	EvalOn(evalOn string) ScaleBuilder
-	// EvalOnInit sets the "eval" option on the filter.
-	EvalOnInit() ScaleBuilder
-	// EvalOnFrame sets the "eval" option on the filter.
-	EvalOnFrame() ScaleBuilder
-	// Interlace sets the "interl" option on the filter.
-	Interlace() ScaleBuilder
-	// IncreaseToPreserveAspectRatio sets the "force_original_aspect_ratio" option on the filter.
-	IncreaseToPreserveAspectRatio() ScaleBuilder
-	// DecreaseToPreserveAspectRatio sets the "force_original_aspect_ratio" option on the filter.
-	DecreaseToPreserveAspectRatio() ScaleBuilder
-	// IgnoreAspectRatio sets the "force_original_aspect_ratio" option on the filter.
-	IgnoreAspectRatio() ScaleBuilder
-	// ForceDivisibleBy sets the "force_divisible_by" option on the filter.
+	// W Output video width.
+	W(w string) ScaleBuilder
+	// WExpr Output video width.
+	WExpr(w expr.Expr) ScaleBuilder
+	// Width Output video width.
+	Width(width string) ScaleBuilder
+	// WidthExpr Output video width.
+	WidthExpr(width expr.Expr) ScaleBuilder
+	// H Output video height.
+	H(h string) ScaleBuilder
+	// HExpr Output video height.
+	HExpr(h expr.Expr) ScaleBuilder
+	// Height Output video height.
+	Height(height string) ScaleBuilder
+	// HeightExpr Output video height.
+	HeightExpr(height expr.Expr) ScaleBuilder
+	// Flags Flags to pass to libswscale (default "").
+	Flags(flags string) ScaleBuilder
+	// Interl set interlacing (default false).
+	Interl(interl bool) ScaleBuilder
+	// InColorMatrix set input YCbCr type (from -1 to 14) (default auto).
+	InColorMatrix(inColorMatrix int) ScaleBuilder
+	// OutColorMatrix set output YCbCr type (from 0 to 14) (default 2).
+	OutColorMatrix(outColorMatrix int) ScaleBuilder
+	// InRange set input color range (from 0 to 2) (default auto).
+	InRange(inRange int) ScaleBuilder
+	// OutRange set output color range (from 0 to 2) (default auto).
+	OutRange(outRange int) ScaleBuilder
+	// InVChrPos input vertical chroma position in luma grid/256 (from -513 to 512) (default -513).
+	InVChrPos(inVChrPos int) ScaleBuilder
+	// InHChrPos input horizontal chroma position in luma grid/256 (from -513 to 512) (default -513).
+	InHChrPos(inHChrPos int) ScaleBuilder
+	// OutVChrPos output vertical chroma position in luma grid/256 (from -513 to 512) (default -513).
+	OutVChrPos(outVChrPos int) ScaleBuilder
+	// OutHChrPos output horizontal chroma position in luma grid/256 (from -513 to 512) (default -513).
+	OutHChrPos(outHChrPos int) ScaleBuilder
+	// ForceOriginalAspectRatio decrease or increase w/h if necessary to keep the original AR (from 0 to 2) (default disable).
+	ForceOriginalAspectRatio(forceOriginalAspectRatio int) ScaleBuilder
+	// ForceDivisibleBy enforce that the output resolution is divisible by a defined integer when force_original_aspect_ratio is used (from 1 to 256) (default 1).
 	ForceDivisibleBy(forceDivisibleBy int) ScaleBuilder
+	// Param0 Scaler param 0 (from -DBL_MAX to DBL_MAX) (default DBL_MAX).
+	Param0(param0 float64) ScaleBuilder
+	// Param1 Scaler param 1 (from -DBL_MAX to DBL_MAX) (default DBL_MAX).
+	Param1(param1 float64) ScaleBuilder
+	// Eval specify when to evaluate expressions (from 0 to 1) (default init).
+	Eval(eval int) ScaleBuilder
 }
 
 // Scale creates a new ScaleBuilder to configure the "scale" filter.
@@ -48,68 +70,112 @@ type implScaleBuilder struct {
 	f filter.Filter
 }
 
-func (b *implScaleBuilder) String() string {
-	return b.f.String()
+func (scaleBuilder *implScaleBuilder) String() string {
+	return scaleBuilder.f.String()
 }
 
-func (b *implScaleBuilder) Outputs() int {
-	return b.f.Outputs()
+func (scaleBuilder *implScaleBuilder) Outputs() int {
+	return scaleBuilder.f.Outputs()
 }
 
-func (b *implScaleBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (scaleBuilder *implScaleBuilder) With(key string, value expr.Expr) filter.Filter {
+	return scaleBuilder.withOption(key, value)
 }
 
-func (b *implScaleBuilder) withOption(key string, value expr.Expr) ScaleBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (scaleBuilder *implScaleBuilder) withOption(key string, value expr.Expr) ScaleBuilder {
+	bCopy := *scaleBuilder
+	bCopy.f = scaleBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implScaleBuilder) Width(width expr.Expr) ScaleBuilder {
-	return b.withOption("w", width)
+func (scaleBuilder *implScaleBuilder) W(w string) ScaleBuilder {
+	return scaleBuilder.withOption("w", expr.String(w))
 }
 
-func (b *implScaleBuilder) WidthInt(width int) ScaleBuilder {
-	return b.withOption("w", expr.Int(width))
+func (scaleBuilder *implScaleBuilder) WExpr(w expr.Expr) ScaleBuilder {
+	return scaleBuilder.withOption("w", w)
 }
 
-func (b *implScaleBuilder) Height(height expr.Expr) ScaleBuilder {
-	return b.withOption("h", height)
+func (scaleBuilder *implScaleBuilder) Width(width string) ScaleBuilder {
+	return scaleBuilder.withOption("width", expr.String(width))
 }
 
-func (b *implScaleBuilder) HeightInt(height int) ScaleBuilder {
-	return b.withOption("h", expr.Int(height))
+func (scaleBuilder *implScaleBuilder) WidthExpr(width expr.Expr) ScaleBuilder {
+	return scaleBuilder.withOption("width", width)
 }
 
-func (b *implScaleBuilder) EvalOn(evalOn string) ScaleBuilder {
-	return b.withOption("eval", expr.String(evalOn))
+func (scaleBuilder *implScaleBuilder) H(h string) ScaleBuilder {
+	return scaleBuilder.withOption("h", expr.String(h))
 }
 
-func (b *implScaleBuilder) EvalOnInit() ScaleBuilder {
-	return b.withOption("eval", "init")
+func (scaleBuilder *implScaleBuilder) HExpr(h expr.Expr) ScaleBuilder {
+	return scaleBuilder.withOption("h", h)
 }
 
-func (b *implScaleBuilder) EvalOnFrame() ScaleBuilder {
-	return b.withOption("eval", "frame")
+func (scaleBuilder *implScaleBuilder) Height(height string) ScaleBuilder {
+	return scaleBuilder.withOption("height", expr.String(height))
 }
 
-func (b *implScaleBuilder) Interlace() ScaleBuilder {
-	return b.withOption("interl", "1")
+func (scaleBuilder *implScaleBuilder) HeightExpr(height expr.Expr) ScaleBuilder {
+	return scaleBuilder.withOption("height", height)
 }
 
-func (b *implScaleBuilder) IncreaseToPreserveAspectRatio() ScaleBuilder {
-	return b.withOption("force_original_aspect_ratio", "increase")
+func (scaleBuilder *implScaleBuilder) Flags(flags string) ScaleBuilder {
+	return scaleBuilder.withOption("flags", expr.String(flags))
 }
 
-func (b *implScaleBuilder) DecreaseToPreserveAspectRatio() ScaleBuilder {
-	return b.withOption("force_original_aspect_ratio", "decrease")
+func (scaleBuilder *implScaleBuilder) Interl(interl bool) ScaleBuilder {
+	return scaleBuilder.withOption("interl", expr.Bool(interl))
 }
 
-func (b *implScaleBuilder) IgnoreAspectRatio() ScaleBuilder {
-	return b.withOption("force_original_aspect_ratio", "disable")
+func (scaleBuilder *implScaleBuilder) InColorMatrix(inColorMatrix int) ScaleBuilder {
+	return scaleBuilder.withOption("in_color_matrix", expr.Int(inColorMatrix))
 }
 
-func (b *implScaleBuilder) ForceDivisibleBy(forceDivisibleBy int) ScaleBuilder {
-	return b.withOption("force_divisible_by", expr.Int(forceDivisibleBy))
+func (scaleBuilder *implScaleBuilder) OutColorMatrix(outColorMatrix int) ScaleBuilder {
+	return scaleBuilder.withOption("out_color_matrix", expr.Int(outColorMatrix))
+}
+
+func (scaleBuilder *implScaleBuilder) InRange(inRange int) ScaleBuilder {
+	return scaleBuilder.withOption("in_range", expr.Int(inRange))
+}
+
+func (scaleBuilder *implScaleBuilder) OutRange(outRange int) ScaleBuilder {
+	return scaleBuilder.withOption("out_range", expr.Int(outRange))
+}
+
+func (scaleBuilder *implScaleBuilder) InVChrPos(inVChrPos int) ScaleBuilder {
+	return scaleBuilder.withOption("in_v_chr_pos", expr.Int(inVChrPos))
+}
+
+func (scaleBuilder *implScaleBuilder) InHChrPos(inHChrPos int) ScaleBuilder {
+	return scaleBuilder.withOption("in_h_chr_pos", expr.Int(inHChrPos))
+}
+
+func (scaleBuilder *implScaleBuilder) OutVChrPos(outVChrPos int) ScaleBuilder {
+	return scaleBuilder.withOption("out_v_chr_pos", expr.Int(outVChrPos))
+}
+
+func (scaleBuilder *implScaleBuilder) OutHChrPos(outHChrPos int) ScaleBuilder {
+	return scaleBuilder.withOption("out_h_chr_pos", expr.Int(outHChrPos))
+}
+
+func (scaleBuilder *implScaleBuilder) ForceOriginalAspectRatio(forceOriginalAspectRatio int) ScaleBuilder {
+	return scaleBuilder.withOption("force_original_aspect_ratio", expr.Int(forceOriginalAspectRatio))
+}
+
+func (scaleBuilder *implScaleBuilder) ForceDivisibleBy(forceDivisibleBy int) ScaleBuilder {
+	return scaleBuilder.withOption("force_divisible_by", expr.Int(forceDivisibleBy))
+}
+
+func (scaleBuilder *implScaleBuilder) Param0(param0 float64) ScaleBuilder {
+	return scaleBuilder.withOption("param0", expr.Double(param0))
+}
+
+func (scaleBuilder *implScaleBuilder) Param1(param1 float64) ScaleBuilder {
+	return scaleBuilder.withOption("param1", expr.Double(param1))
+}
+
+func (scaleBuilder *implScaleBuilder) Eval(eval int) ScaleBuilder {
+	return scaleBuilder.withOption("eval", expr.Int(eval))
 }

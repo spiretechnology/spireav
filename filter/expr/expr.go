@@ -4,98 +4,151 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
+)
+
+const (
+	// PI is the area of the unit disc, approximately 3.14.
+	PI = Var("PI")
+	// E is exp(1) (Euler’s number), approximately 2.718.
+	E = Var("E")
+	// PHI is the golden ratio (1+sqrt(5))/2, approximately 1.618.
+	PHI = Var("PHI")
 )
 
 // Expr is an expression in a complex filter node.
-type Expr string
-
-// String gets a string representation of the expression.
-func (e Expr) String() string {
-	return string(e)
+type Expr interface {
+	String() string
 }
 
-func Size(width, height int) Expr {
-	return Expr(fmt.Sprintf("%dx%d", width, height))
+// Raw is a raw expression that is not escaped.
+type Raw string
+
+func (r Raw) String() string {
+	return string(r)
 }
 
-// String creates a string expression.
-func String(str string) Expr {
+// Var is a variable in an expression.
+type Var string
+
+func (v Var) String() string {
+	return string(v)
+}
+
+// Size is an image size with width and height.
+type Size struct {
+	Width, Height int
+}
+
+func (s Size) String() string {
+	return fmt.Sprintf("%dx%d", s.Width, s.Height)
+}
+
+// Rational is a video rate or rational value with a numerator and denominator.
+type Rational struct {
+	Num int
+	Den int
+}
+
+func (r Rational) String() string {
+	return fmt.Sprintf("%d/%d", r.Num, r.Den)
+}
+
+// String is a string literal in an expression.
+type String string
+
+func (s String) String() string {
+	str := string(s)
 	if strings.Contains(str, ":") {
 		str = strings.ReplaceAll(str, ":", "\\:")
+	}
+	if strings.Contains(str, " ") {
 		str = fmt.Sprintf("'%s'", str)
 	}
-	return Expr(str)
+	return str
 }
 
-// Bool creates an expression for a boolean value.
-func Bool(val bool) Expr {
-	if val {
-		return Expr("1")
-	} else {
-		return Expr("0")
+// Bool is a boolean literal in an expression.
+type Bool bool
+
+func (b Bool) String() string {
+	if b {
+		return "1"
 	}
+	return "0"
 }
 
-// Var creates an expression for a variable.
-func Var(name string) Expr {
-	return Expr(name)
+// Int is an integer literal in an expression.
+type Int int
+
+func (i Int) String() string {
+	return strconv.FormatInt(int64(i), 10)
 }
 
-// Int creates an expression for an integer.
-func Int(val int) Expr {
-	return Expr(strconv.FormatInt(int64(val), 10))
+// Int64 is an int64 literal in an expression.
+type Int64 int64
+
+func (i Int64) String() string {
+	return strconv.FormatInt(int64(i), 10)
 }
 
-// Float creates an expression for a float.
-func Float(val float64) Expr {
-	return Expr(fmt.Sprintf("%0.2f", val))
+// Float is a float literal in an expression.
+type Float float32
+
+func (f Float) String() string {
+	return fmt.Sprintf("%0.2f", f)
 }
 
-// Div is a divide expression.
-func Div(exprs ...Expr) Expr {
-	return chainMath("/", exprs...)
+// Double is a double literal in an expression.
+type Double float64
+
+func (d Double) String() string {
+	return fmt.Sprintf("%0.2f", d)
 }
 
-// Mul is a multiply expression.
-func Mul(exprs ...Expr) Expr {
-	return chainMath("*", exprs...)
+// Color is a color literal in an expression.
+type Color string
+
+func (c Color) String() string {
+	return string(c)
 }
 
-// Add is an addition expression.
-func Add(exprs ...Expr) Expr {
-	return chainMath("+", exprs...)
+// Duration is a duration literal in an expression.
+type Duration time.Duration
+
+func (d Duration) String() string {
+	// TODO: fix this
+	return time.Duration(d).String()
 }
 
-// Sub is a subtract expression.
-func Sub(exprs ...Expr) Expr {
-	return chainMath("-", exprs...)
+// PixFmt is a pixel format literal in an expression.
+type PixFmt string
+
+func (p PixFmt) String() string {
+	return string(p)
 }
 
-func chainMath(op string, exprs ...Expr) Expr {
-	strs := make([]string, len(exprs))
-	for i, e := range exprs {
-		strs[i] = e.String()
+// SampleFmt is a sample format literal in an expression.
+type SampleFmt string
+
+func (s SampleFmt) String() string {
+	return string(s)
+}
+
+// ChannelLayout is a channel layout literal in an expression.
+type ChannelLayout string
+
+func (c ChannelLayout) String() string {
+	return string(c)
+}
+
+// Dictionary is a dictionary literal in an expression.
+type Dictionary map[string]Expr
+
+func (d Dictionary) String() string {
+	var parts []string
+	for key, value := range d {
+		parts = append(parts, fmt.Sprintf("%s=%s", key, value))
 	}
-	return Expr(fmt.Sprintf("(%s)", strings.Join(strs, op)))
-}
-
-func functionCall(name string, args ...Expr) Expr {
-	strs := make([]string, len(args))
-	for i, e := range args {
-		strs[i] = e.String()
-	}
-	return Expr(fmt.Sprintf("%s(%s)", name, strings.Join(strs, ",")))
-}
-
-func Sin(x Expr) Expr {
-	return functionCall("sin", x)
-}
-
-func Cos(x Expr) Expr {
-	return functionCall("cos", x)
-}
-
-func Sin0to1(x Expr) Expr {
-	num := Add(Sin(Mul(x, Var("PI"))), Int(1))
-	return Div(num, Int(2))
+	return strings.Join(parts, "\\:")
 }

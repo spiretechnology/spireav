@@ -7,37 +7,37 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// NullSinkBuilder corresponds to the "nullsink" FFmpeg filter.
+// NullsinkBuilder Do absolutely nothing with the input video.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#nullsink
-type NullSinkBuilder interface {
+type NullsinkBuilder interface {
 	filter.Filter
 }
 
-// NullSink creates a new NullSinkBuilder to configure the "nullsink" filter.
-func NullSink(opts ...filter.Option) NullSinkBuilder {
-	return &implNullSinkBuilder{
-		f: filter.New("nullsink", 0, opts...),
+// Nullsink creates a new NullsinkBuilder to configure the "nullsink" filter.
+func Nullsink(opts ...filter.Option) NullsinkBuilder {
+	return &implNullsinkBuilder{
+		f: filter.New("nullsink", 1, opts...),
 	}
 }
 
-type implNullSinkBuilder struct {
+type implNullsinkBuilder struct {
 	f filter.Filter
 }
 
-func (b *implNullSinkBuilder) String() string {
-	return b.f.String()
+func (nullsinkBuilder *implNullsinkBuilder) String() string {
+	return nullsinkBuilder.f.String()
 }
 
-func (b *implNullSinkBuilder) Outputs() int {
-	return b.f.Outputs()
+func (nullsinkBuilder *implNullsinkBuilder) Outputs() int {
+	return nullsinkBuilder.f.Outputs()
 }
 
-func (b *implNullSinkBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (nullsinkBuilder *implNullsinkBuilder) With(key string, value expr.Expr) filter.Filter {
+	return nullsinkBuilder.withOption(key, value)
 }
 
-func (b *implNullSinkBuilder) withOption(key string, value expr.Expr) NullSinkBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (nullsinkBuilder *implNullsinkBuilder) withOption(key string, value expr.Expr) NullsinkBuilder {
+	bCopy := *nullsinkBuilder
+	bCopy.f = nullsinkBuilder.f.With(key, value)
 	return &bCopy
 }

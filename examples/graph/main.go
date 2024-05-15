@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/spiretechnology/spireav"
+	"github.com/spiretechnology/spireav/filter/expr"
 	"github.com/spiretechnology/spireav/filter/filters"
 	"github.com/spiretechnology/spireav/output"
 )
@@ -20,14 +21,14 @@ func main() {
 	)
 
 	// Create a text overlay node
-	textOverlay := g.Filter(filters.DrawText().Text("SpireAV Test"))
+	textOverlay := g.Filter(filters.Drawtext().Text("SpireAV Test"))
 
 	// Create a text overlay node
-	scaleNode := g.Filter(filters.Scale().WidthInt(200).HeightInt(200).IgnoreAspectRatio())
+	scaleNode := g.Filter(filters.Scale().WExpr(expr.Int(200)).HExpr(expr.Int(200)))
 
 	// Link together the nodes to create a video processing pipeline
-	spireav.Pipeline(inputNode, scaleNode, textOverlay, outputNode)
-	inputNode.Stream(1).Pipe(outputNode, 1)
+	spireav.Pipeline(inputNode.Video(0), scaleNode, textOverlay).Pipe(outputNode, 0)
+	inputNode.Audio(0).Pipe(outputNode, 1)
 
 	// Create a progress handler function
 	progressFunc := func(progress spireav.Progress) {

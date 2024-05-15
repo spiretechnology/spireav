@@ -7,22 +7,32 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// RotateBuilder corresponds to the "rotate" FFmpeg filter.
+// RotateBuilder Rotate the input image.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#rotate
 type RotateBuilder interface {
 	filter.Filter
-	// Angle sets the "a" option on the filter.
-	Angle(angle expr.Expr) RotateBuilder
-	// FillColor sets the "c" option on the filter.
-	FillColor(fillColor string) RotateBuilder
-	// OutputWidth sets the "out_w" option on the filter.
-	OutputWidth(outputWidth expr.Expr) RotateBuilder
-	// OutputWidthInt sets the "out_w" option on the filter.
-	OutputWidthInt(outputWidth int) RotateBuilder
-	// OutputHeight sets the "out_h" option on the filter.
-	OutputHeight(outputHeight expr.Expr) RotateBuilder
-	// OutputHeightInt sets the "out_h" option on the filter.
-	OutputHeightInt(outputHeight int) RotateBuilder
+	// Angle set angle (in radians) (default "0").
+	Angle(angle string) RotateBuilder
+	// AngleExpr set angle (in radians) (default "0").
+	AngleExpr(angle expr.Expr) RotateBuilder
+	// A set angle (in radians) (default "0").
+	A(a string) RotateBuilder
+	// AExpr set angle (in radians) (default "0").
+	AExpr(a expr.Expr) RotateBuilder
+	// OutW set output width expression (default "iw").
+	OutW(outW string) RotateBuilder
+	// Ow set output width expression (default "iw").
+	Ow(ow string) RotateBuilder
+	// OutH set output height expression (default "ih").
+	OutH(outH string) RotateBuilder
+	// Oh set output height expression (default "ih").
+	Oh(oh string) RotateBuilder
+	// Fillcolor set background fill color (default "black").
+	Fillcolor(fillcolor string) RotateBuilder
+	// C set background fill color (default "black").
+	C(c string) RotateBuilder
+	// Bilinear use bilinear interpolation (default true).
+	Bilinear(bilinear bool) RotateBuilder
 }
 
 // Rotate creates a new RotateBuilder to configure the "rotate" filter.
@@ -36,44 +46,64 @@ type implRotateBuilder struct {
 	f filter.Filter
 }
 
-func (b *implRotateBuilder) String() string {
-	return b.f.String()
+func (rotateBuilder *implRotateBuilder) String() string {
+	return rotateBuilder.f.String()
 }
 
-func (b *implRotateBuilder) Outputs() int {
-	return b.f.Outputs()
+func (rotateBuilder *implRotateBuilder) Outputs() int {
+	return rotateBuilder.f.Outputs()
 }
 
-func (b *implRotateBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (rotateBuilder *implRotateBuilder) With(key string, value expr.Expr) filter.Filter {
+	return rotateBuilder.withOption(key, value)
 }
 
-func (b *implRotateBuilder) withOption(key string, value expr.Expr) RotateBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (rotateBuilder *implRotateBuilder) withOption(key string, value expr.Expr) RotateBuilder {
+	bCopy := *rotateBuilder
+	bCopy.f = rotateBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implRotateBuilder) Angle(angle expr.Expr) RotateBuilder {
-	return b.withOption("a", angle)
+func (rotateBuilder *implRotateBuilder) Angle(angle string) RotateBuilder {
+	return rotateBuilder.withOption("angle", expr.String(angle))
 }
 
-func (b *implRotateBuilder) FillColor(fillColor string) RotateBuilder {
-	return b.withOption("c", expr.String(fillColor))
+func (rotateBuilder *implRotateBuilder) AngleExpr(angle expr.Expr) RotateBuilder {
+	return rotateBuilder.withOption("angle", angle)
 }
 
-func (b *implRotateBuilder) OutputWidth(outputWidth expr.Expr) RotateBuilder {
-	return b.withOption("out_w", outputWidth)
+func (rotateBuilder *implRotateBuilder) A(a string) RotateBuilder {
+	return rotateBuilder.withOption("a", expr.String(a))
 }
 
-func (b *implRotateBuilder) OutputWidthInt(outputWidth int) RotateBuilder {
-	return b.withOption("out_w", expr.Int(outputWidth))
+func (rotateBuilder *implRotateBuilder) AExpr(a expr.Expr) RotateBuilder {
+	return rotateBuilder.withOption("a", a)
 }
 
-func (b *implRotateBuilder) OutputHeight(outputHeight expr.Expr) RotateBuilder {
-	return b.withOption("out_h", outputHeight)
+func (rotateBuilder *implRotateBuilder) OutW(outW string) RotateBuilder {
+	return rotateBuilder.withOption("out_w", expr.String(outW))
 }
 
-func (b *implRotateBuilder) OutputHeightInt(outputHeight int) RotateBuilder {
-	return b.withOption("out_h", expr.Int(outputHeight))
+func (rotateBuilder *implRotateBuilder) Ow(ow string) RotateBuilder {
+	return rotateBuilder.withOption("ow", expr.String(ow))
+}
+
+func (rotateBuilder *implRotateBuilder) OutH(outH string) RotateBuilder {
+	return rotateBuilder.withOption("out_h", expr.String(outH))
+}
+
+func (rotateBuilder *implRotateBuilder) Oh(oh string) RotateBuilder {
+	return rotateBuilder.withOption("oh", expr.String(oh))
+}
+
+func (rotateBuilder *implRotateBuilder) Fillcolor(fillcolor string) RotateBuilder {
+	return rotateBuilder.withOption("fillcolor", expr.String(fillcolor))
+}
+
+func (rotateBuilder *implRotateBuilder) C(c string) RotateBuilder {
+	return rotateBuilder.withOption("c", expr.String(c))
+}
+
+func (rotateBuilder *implRotateBuilder) Bilinear(bilinear bool) RotateBuilder {
+	return rotateBuilder.withOption("bilinear", expr.Bool(bilinear))
 }

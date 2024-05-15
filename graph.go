@@ -13,7 +13,7 @@ import (
 // The most common use of Graph is to transcode video, overlay timecode or watermarks, adjust resolutions, etc.
 type Graph interface {
 	Runnable
-	Input(filename string) NodeReadable
+	Input(filename string) InputNodeReadable
 	Filter(filter filter.Filter) NodeReadable
 	Output(filename string, opts ...output.Option) Node
 }
@@ -36,7 +36,7 @@ type implGraph struct {
 	links   []graphLink
 }
 
-func (g *implGraph) Input(filename string) NodeReadable {
+func (g *implGraph) Input(filename string) InputNodeReadable {
 	node := &inputNode{
 		graph:      g,
 		inputIndex: len(g.inputs),

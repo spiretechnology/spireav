@@ -3,59 +3,85 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// SMPTEBarsBuilder corresponds to the "smptebars" FFmpeg filter.
+// SmptebarsBuilder Generate SMPTE color bars.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#smptebars
-type SMPTEBarsBuilder interface {
+type SmptebarsBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) SMPTEBarsBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) SMPTEBarsBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) SMPTEBarsBuilder
+	// Size set video size (default "320x240").
+	Size(size expr.Size) SmptebarsBuilder
+	// S set video size (default "320x240").
+	S(s expr.Size) SmptebarsBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) SmptebarsBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) SmptebarsBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) SmptebarsBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) SmptebarsBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) SmptebarsBuilder
 }
 
-// SMPTEBars creates a new SMPTEBarsBuilder to configure the "smptebars" filter.
-func SMPTEBars(opts ...filter.Option) SMPTEBarsBuilder {
-	return &implSMPTEBarsBuilder{
+// Smptebars creates a new SmptebarsBuilder to configure the "smptebars" filter.
+func Smptebars(opts ...filter.Option) SmptebarsBuilder {
+	return &implSmptebarsBuilder{
 		f: filter.New("smptebars", 1, opts...),
 	}
 }
 
-type implSMPTEBarsBuilder struct {
+type implSmptebarsBuilder struct {
 	f filter.Filter
 }
 
-func (b *implSMPTEBarsBuilder) String() string {
-	return b.f.String()
+func (smptebarsBuilder *implSmptebarsBuilder) String() string {
+	return smptebarsBuilder.f.String()
 }
 
-func (b *implSMPTEBarsBuilder) Outputs() int {
-	return b.f.Outputs()
+func (smptebarsBuilder *implSmptebarsBuilder) Outputs() int {
+	return smptebarsBuilder.f.Outputs()
 }
 
-func (b *implSMPTEBarsBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (smptebarsBuilder *implSmptebarsBuilder) With(key string, value expr.Expr) filter.Filter {
+	return smptebarsBuilder.withOption(key, value)
 }
 
-func (b *implSMPTEBarsBuilder) withOption(key string, value expr.Expr) SMPTEBarsBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (smptebarsBuilder *implSmptebarsBuilder) withOption(key string, value expr.Expr) SmptebarsBuilder {
+	bCopy := *smptebarsBuilder
+	bCopy.f = smptebarsBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implSMPTEBarsBuilder) Size(width, height int) SMPTEBarsBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (smptebarsBuilder *implSmptebarsBuilder) Size(size expr.Size) SmptebarsBuilder {
+	return smptebarsBuilder.withOption("size", size)
 }
 
-func (b *implSMPTEBarsBuilder) FrameRate(frameRate expr.Expr) SMPTEBarsBuilder {
-	return b.withOption("r", frameRate)
+func (smptebarsBuilder *implSmptebarsBuilder) S(s expr.Size) SmptebarsBuilder {
+	return smptebarsBuilder.withOption("s", s)
 }
 
-func (b *implSMPTEBarsBuilder) Duration(duration string) SMPTEBarsBuilder {
-	return b.withOption("d", expr.String(duration))
+func (smptebarsBuilder *implSmptebarsBuilder) Rate(rate expr.Rational) SmptebarsBuilder {
+	return smptebarsBuilder.withOption("rate", rate)
+}
+
+func (smptebarsBuilder *implSmptebarsBuilder) R(r expr.Rational) SmptebarsBuilder {
+	return smptebarsBuilder.withOption("r", r)
+}
+
+func (smptebarsBuilder *implSmptebarsBuilder) Duration(duration time.Duration) SmptebarsBuilder {
+	return smptebarsBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (smptebarsBuilder *implSmptebarsBuilder) D(d time.Duration) SmptebarsBuilder {
+	return smptebarsBuilder.withOption("d", expr.Duration(d))
+}
+
+func (smptebarsBuilder *implSmptebarsBuilder) Sar(sar expr.Rational) SmptebarsBuilder {
+	return smptebarsBuilder.withOption("sar", sar)
 }

@@ -3,59 +3,91 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// TestSource2Builder corresponds to the "testsrc2" FFmpeg filter.
+// Testsrc2Builder Generate another test pattern.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#testsrc2
-type TestSource2Builder interface {
+type Testsrc2Builder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) TestSource2Builder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) TestSource2Builder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) TestSource2Builder
+	// Size set video size (default "320x240").
+	Size(size expr.Size) Testsrc2Builder
+	// S set video size (default "320x240").
+	S(s expr.Size) Testsrc2Builder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) Testsrc2Builder
+	// R set video rate (default "25").
+	R(r expr.Rational) Testsrc2Builder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) Testsrc2Builder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) Testsrc2Builder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) Testsrc2Builder
+	// Alpha set global alpha (opacity) (from 0 to 255) (default 255).
+	Alpha(alpha int) Testsrc2Builder
 }
 
-// TestSource2 creates a new TestSource2Builder to configure the "testsrc2" filter.
-func TestSource2(opts ...filter.Option) TestSource2Builder {
-	return &implTestSource2Builder{
+// Testsrc2 creates a new Testsrc2Builder to configure the "testsrc2" filter.
+func Testsrc2(opts ...filter.Option) Testsrc2Builder {
+	return &implTestsrc2Builder{
 		f: filter.New("testsrc2", 1, opts...),
 	}
 }
 
-type implTestSource2Builder struct {
+type implTestsrc2Builder struct {
 	f filter.Filter
 }
 
-func (b *implTestSource2Builder) String() string {
-	return b.f.String()
+func (testsrc2Builder *implTestsrc2Builder) String() string {
+	return testsrc2Builder.f.String()
 }
 
-func (b *implTestSource2Builder) Outputs() int {
-	return b.f.Outputs()
+func (testsrc2Builder *implTestsrc2Builder) Outputs() int {
+	return testsrc2Builder.f.Outputs()
 }
 
-func (b *implTestSource2Builder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (testsrc2Builder *implTestsrc2Builder) With(key string, value expr.Expr) filter.Filter {
+	return testsrc2Builder.withOption(key, value)
 }
 
-func (b *implTestSource2Builder) withOption(key string, value expr.Expr) TestSource2Builder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (testsrc2Builder *implTestsrc2Builder) withOption(key string, value expr.Expr) Testsrc2Builder {
+	bCopy := *testsrc2Builder
+	bCopy.f = testsrc2Builder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implTestSource2Builder) Size(width, height int) TestSource2Builder {
-	return b.withOption("s", expr.Size(width, height))
+func (testsrc2Builder *implTestsrc2Builder) Size(size expr.Size) Testsrc2Builder {
+	return testsrc2Builder.withOption("size", size)
 }
 
-func (b *implTestSource2Builder) FrameRate(frameRate expr.Expr) TestSource2Builder {
-	return b.withOption("r", frameRate)
+func (testsrc2Builder *implTestsrc2Builder) S(s expr.Size) Testsrc2Builder {
+	return testsrc2Builder.withOption("s", s)
 }
 
-func (b *implTestSource2Builder) Duration(duration string) TestSource2Builder {
-	return b.withOption("d", expr.String(duration))
+func (testsrc2Builder *implTestsrc2Builder) Rate(rate expr.Rational) Testsrc2Builder {
+	return testsrc2Builder.withOption("rate", rate)
+}
+
+func (testsrc2Builder *implTestsrc2Builder) R(r expr.Rational) Testsrc2Builder {
+	return testsrc2Builder.withOption("r", r)
+}
+
+func (testsrc2Builder *implTestsrc2Builder) Duration(duration time.Duration) Testsrc2Builder {
+	return testsrc2Builder.withOption("duration", expr.Duration(duration))
+}
+
+func (testsrc2Builder *implTestsrc2Builder) D(d time.Duration) Testsrc2Builder {
+	return testsrc2Builder.withOption("d", expr.Duration(d))
+}
+
+func (testsrc2Builder *implTestsrc2Builder) Sar(sar expr.Rational) Testsrc2Builder {
+	return testsrc2Builder.withOption("sar", sar)
+}
+
+func (testsrc2Builder *implTestsrc2Builder) Alpha(alpha int) Testsrc2Builder {
+	return testsrc2Builder.withOption("alpha", expr.Int(alpha))
 }

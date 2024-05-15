@@ -7,29 +7,37 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// CropBuilder corresponds to the "crop" FFmpeg filter.
+// CropBuilder Crop the input video.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#crop
 type CropBuilder interface {
 	filter.Filter
-	// PosX sets the "x" option on the filter.
-	PosX(posX expr.Expr) CropBuilder
-	// PosXInt sets the "x" option on the filter.
-	PosXInt(posX int) CropBuilder
-	// PosY sets the "y" option on the filter.
-	PosY(posY expr.Expr) CropBuilder
-	// PosYInt sets the "y" option on the filter.
-	PosYInt(posY int) CropBuilder
-	// Width sets the "w" option on the filter.
-	Width(width expr.Expr) CropBuilder
-	// WidthInt sets the "w" option on the filter.
-	WidthInt(width int) CropBuilder
-	// Height sets the "h" option on the filter.
-	Height(height expr.Expr) CropBuilder
-	// HeightInt sets the "h" option on the filter.
-	HeightInt(height int) CropBuilder
-	// KeepAspectRatio sets the "keep_aspect" option on the filter.
-	KeepAspectRatio(keepAspectRatio bool) CropBuilder
-	// Exact sets the "exact" option on the filter.
+	// OutW set the width crop area expression (default "iw").
+	OutW(outW string) CropBuilder
+	// OutWExpr set the width crop area expression (default "iw").
+	OutWExpr(outW expr.Expr) CropBuilder
+	// W set the width crop area expression (default "iw").
+	W(w string) CropBuilder
+	// WExpr set the width crop area expression (default "iw").
+	WExpr(w expr.Expr) CropBuilder
+	// OutH set the height crop area expression (default "ih").
+	OutH(outH string) CropBuilder
+	// OutHExpr set the height crop area expression (default "ih").
+	OutHExpr(outH expr.Expr) CropBuilder
+	// H set the height crop area expression (default "ih").
+	H(h string) CropBuilder
+	// HExpr set the height crop area expression (default "ih").
+	HExpr(h expr.Expr) CropBuilder
+	// X set the x crop area expression (default "(in_w-out_w)/2").
+	X(x string) CropBuilder
+	// XExpr set the x crop area expression (default "(in_w-out_w)/2").
+	XExpr(x expr.Expr) CropBuilder
+	// Y set the y crop area expression (default "(in_h-out_h)/2").
+	Y(y string) CropBuilder
+	// YExpr set the y crop area expression (default "(in_h-out_h)/2").
+	YExpr(y expr.Expr) CropBuilder
+	// KeepAspect keep aspect ratio (default false).
+	KeepAspect(keepAspect bool) CropBuilder
+	// Exact do exact cropping (default false).
 	Exact(exact bool) CropBuilder
 }
 
@@ -44,60 +52,76 @@ type implCropBuilder struct {
 	f filter.Filter
 }
 
-func (b *implCropBuilder) String() string {
-	return b.f.String()
+func (cropBuilder *implCropBuilder) String() string {
+	return cropBuilder.f.String()
 }
 
-func (b *implCropBuilder) Outputs() int {
-	return b.f.Outputs()
+func (cropBuilder *implCropBuilder) Outputs() int {
+	return cropBuilder.f.Outputs()
 }
 
-func (b *implCropBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (cropBuilder *implCropBuilder) With(key string, value expr.Expr) filter.Filter {
+	return cropBuilder.withOption(key, value)
 }
 
-func (b *implCropBuilder) withOption(key string, value expr.Expr) CropBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (cropBuilder *implCropBuilder) withOption(key string, value expr.Expr) CropBuilder {
+	bCopy := *cropBuilder
+	bCopy.f = cropBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implCropBuilder) PosX(posX expr.Expr) CropBuilder {
-	return b.withOption("x", posX)
+func (cropBuilder *implCropBuilder) OutW(outW string) CropBuilder {
+	return cropBuilder.withOption("out_w", expr.String(outW))
 }
 
-func (b *implCropBuilder) PosXInt(posX int) CropBuilder {
-	return b.withOption("x", expr.Int(posX))
+func (cropBuilder *implCropBuilder) OutWExpr(outW expr.Expr) CropBuilder {
+	return cropBuilder.withOption("out_w", outW)
 }
 
-func (b *implCropBuilder) PosY(posY expr.Expr) CropBuilder {
-	return b.withOption("y", posY)
+func (cropBuilder *implCropBuilder) W(w string) CropBuilder {
+	return cropBuilder.withOption("w", expr.String(w))
 }
 
-func (b *implCropBuilder) PosYInt(posY int) CropBuilder {
-	return b.withOption("y", expr.Int(posY))
+func (cropBuilder *implCropBuilder) WExpr(w expr.Expr) CropBuilder {
+	return cropBuilder.withOption("w", w)
 }
 
-func (b *implCropBuilder) Width(width expr.Expr) CropBuilder {
-	return b.withOption("w", width)
+func (cropBuilder *implCropBuilder) OutH(outH string) CropBuilder {
+	return cropBuilder.withOption("out_h", expr.String(outH))
 }
 
-func (b *implCropBuilder) WidthInt(width int) CropBuilder {
-	return b.withOption("w", expr.Int(width))
+func (cropBuilder *implCropBuilder) OutHExpr(outH expr.Expr) CropBuilder {
+	return cropBuilder.withOption("out_h", outH)
 }
 
-func (b *implCropBuilder) Height(height expr.Expr) CropBuilder {
-	return b.withOption("h", height)
+func (cropBuilder *implCropBuilder) H(h string) CropBuilder {
+	return cropBuilder.withOption("h", expr.String(h))
 }
 
-func (b *implCropBuilder) HeightInt(height int) CropBuilder {
-	return b.withOption("h", expr.Int(height))
+func (cropBuilder *implCropBuilder) HExpr(h expr.Expr) CropBuilder {
+	return cropBuilder.withOption("h", h)
 }
 
-func (b *implCropBuilder) KeepAspectRatio(keepAspectRatio bool) CropBuilder {
-	return b.withOption("keep_aspect", expr.Bool(keepAspectRatio))
+func (cropBuilder *implCropBuilder) X(x string) CropBuilder {
+	return cropBuilder.withOption("x", expr.String(x))
 }
 
-func (b *implCropBuilder) Exact(exact bool) CropBuilder {
-	return b.withOption("exact", expr.Bool(exact))
+func (cropBuilder *implCropBuilder) XExpr(x expr.Expr) CropBuilder {
+	return cropBuilder.withOption("x", x)
+}
+
+func (cropBuilder *implCropBuilder) Y(y string) CropBuilder {
+	return cropBuilder.withOption("y", expr.String(y))
+}
+
+func (cropBuilder *implCropBuilder) YExpr(y expr.Expr) CropBuilder {
+	return cropBuilder.withOption("y", y)
+}
+
+func (cropBuilder *implCropBuilder) KeepAspect(keepAspect bool) CropBuilder {
+	return cropBuilder.withOption("keep_aspect", expr.Bool(keepAspect))
+}
+
+func (cropBuilder *implCropBuilder) Exact(exact bool) CropBuilder {
+	return cropBuilder.withOption("exact", expr.Bool(exact))
 }

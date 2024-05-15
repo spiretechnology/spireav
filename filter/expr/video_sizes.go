@@ -1,0 +1,57 @@
+package expr
+
+var (
+	SizeNTSC     = Size{Width: 720, Height: 480}
+	SizePAL      = Size{Width: 720, Height: 576}
+	SizeQNTSC    = Size{Width: 352, Height: 240}
+	SizeQPAL     = Size{Width: 352, Height: 288}
+	SizeSNTSC    = Size{Width: 640, Height: 480}
+	SizeSPAL     = Size{Width: 768, Height: 576}
+	SizeFilm     = Size{Width: 352, Height: 240}
+	SizeNTSCFilm = Size{Width: 352, Height: 240}
+	SizeSQCIF    = Size{Width: 128, Height: 96}
+	SizeQCIF     = Size{Width: 176, Height: 144}
+	SizeCIF      = Size{Width: 352, Height: 288}
+	Size4CIF     = Size{Width: 704, Height: 576}
+	Size16CIF    = Size{Width: 1408, Height: 1152}
+	SizeQQVGA    = Size{Width: 160, Height: 120}
+	SizeQVGA     = Size{Width: 320, Height: 240}
+	SizeVGA      = Size{Width: 640, Height: 480}
+	SizeSVGA     = Size{Width: 800, Height: 600}
+	SizeXGA      = Size{Width: 1024, Height: 768}
+	SizeUXGA     = Size{Width: 1600, Height: 1200}
+	SizeQXGA     = Size{Width: 2048, Height: 1536}
+	SizeSXGA     = Size{Width: 1280, Height: 1024}
+	SizeQSXGA    = Size{Width: 2560, Height: 2048}
+	SizeHSXGA    = Size{Width: 5120, Height: 4096}
+	SizeWVGA     = Size{Width: 852, Height: 480}
+	SizeWXGA     = Size{Width: 1366, Height: 768}
+	SizeWXSGA    = Size{Width: 1600, Height: 1024}
+	SizeWUXGA    = Size{Width: 1920, Height: 1200}
+	SizeWOXGA    = Size{Width: 2560, Height: 1600}
+	SizeWQSXGA   = Size{Width: 3200, Height: 2048}
+	SizeWQUXGA   = Size{Width: 3840, Height: 2400}
+	SizeWHSXGA   = Size{Width: 6400, Height: 4096}
+	SizeWHUXGA   = Size{Width: 7680, Height: 4800}
+	SizeCGA      = Size{Width: 320, Height: 200}
+	SizeEGA      = Size{Width: 640, Height: 350}
+	SizeHD480    = Size{Width: 852, Height: 480}
+	SizeHD720    = Size{Width: 1280, Height: 720}
+	SizeHD1080   = Size{Width: 1920, Height: 1080}
+	Size2K       = Size{Width: 2048, Height: 1080}
+	Size2KFlat   = Size{Width: 1998, Height: 1080}
+	Size2KScope  = Size{Width: 2048, Height: 858}
+	Size4K       = Size{Width: 4096, Height: 2160}
+	Size4KFlat   = Size{Width: 3996, Height: 2160}
+	Size4KScope  = Size{Width: 4096, Height: 1716}
+	SizeNHD      = Size{Width: 640, Height: 360}
+	SizeHQVGA    = Size{Width: 240, Height: 160}
+	SizeWQVGA    = Size{Width: 400, Height: 240}
+	SizeFWQVGA   = Size{Width: 432, Height: 240}
+	SizeHVGA     = Size{Width: 480, Height: 320}
+	SizeQHD      = Size{Width: 960, Height: 540}
+	Size2KDCI    = Size{Width: 2048, Height: 1080}
+	Size4KDCI    = Size{Width: 4096, Height: 2160}
+	SizeUHD2160  = Size{Width: 3840, Height: 2160}
+	SizeUHD4320  = Size{Width: 7680, Height: 4320}
+)

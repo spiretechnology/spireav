@@ -7,79 +7,133 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// GenericEquationBuilder corresponds to the "geq" FFmpeg filter.
+// GeqBuilder Apply generic equation to each pixel.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#geq
-type GenericEquationBuilder interface {
+type GeqBuilder interface {
 	filter.Filter
-	// Luma sets the "luma" option on the filter.
-	Luma(luma expr.Expr) GenericEquationBuilder
-	// ChrominanceBlue sets the "cb" option on the filter.
-	ChrominanceBlue(chrominanceBlue expr.Expr) GenericEquationBuilder
-	// ChrominanceRed sets the "cr" option on the filter.
-	ChrominanceRed(chrominanceRed expr.Expr) GenericEquationBuilder
-	// Alpha sets the "a" option on the filter.
-	Alpha(alpha expr.Expr) GenericEquationBuilder
-	// Red sets the "r" option on the filter.
-	Red(red expr.Expr) GenericEquationBuilder
-	// Green sets the "g" option on the filter.
-	Green(green expr.Expr) GenericEquationBuilder
-	// Blue sets the "b" option on the filter.
-	Blue(blue expr.Expr) GenericEquationBuilder
+	// LumExpr set luminance expression.
+	LumExpr(lumExpr string) GeqBuilder
+	// Lum set luminance expression.
+	Lum(lum string) GeqBuilder
+	// CbExpr set chroma blue expression.
+	CbExpr(cbExpr string) GeqBuilder
+	// Cb set chroma blue expression.
+	Cb(cb string) GeqBuilder
+	// CrExpr set chroma red expression.
+	CrExpr(crExpr string) GeqBuilder
+	// Cr set chroma red expression.
+	Cr(cr string) GeqBuilder
+	// AlphaExpr set alpha expression.
+	AlphaExpr(alphaExpr string) GeqBuilder
+	// A set alpha expression.
+	A(a string) GeqBuilder
+	// RedExpr set red expression.
+	RedExpr(redExpr string) GeqBuilder
+	// R set red expression.
+	R(r string) GeqBuilder
+	// GreenExpr set green expression.
+	GreenExpr(greenExpr string) GeqBuilder
+	// G set green expression.
+	G(g string) GeqBuilder
+	// BlueExpr set blue expression.
+	BlueExpr(blueExpr string) GeqBuilder
+	// B set blue expression.
+	B(b string) GeqBuilder
+	// Interpolation set interpolation method (from 0 to 1) (default bilinear).
+	Interpolation(interpolation int) GeqBuilder
+	// I set interpolation method (from 0 to 1) (default bilinear).
+	I(i int) GeqBuilder
 }
 
-// GenericEquation creates a new GenericEquationBuilder to configure the "geq" filter.
-func GenericEquation(opts ...filter.Option) GenericEquationBuilder {
-	return &implGenericEquationBuilder{
+// Geq creates a new GeqBuilder to configure the "geq" filter.
+func Geq(opts ...filter.Option) GeqBuilder {
+	return &implGeqBuilder{
 		f: filter.New("geq", 1, opts...),
 	}
 }
 
-type implGenericEquationBuilder struct {
+type implGeqBuilder struct {
 	f filter.Filter
 }
 
-func (b *implGenericEquationBuilder) String() string {
-	return b.f.String()
+func (geqBuilder *implGeqBuilder) String() string {
+	return geqBuilder.f.String()
 }
 
-func (b *implGenericEquationBuilder) Outputs() int {
-	return b.f.Outputs()
+func (geqBuilder *implGeqBuilder) Outputs() int {
+	return geqBuilder.f.Outputs()
 }
 
-func (b *implGenericEquationBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (geqBuilder *implGeqBuilder) With(key string, value expr.Expr) filter.Filter {
+	return geqBuilder.withOption(key, value)
 }
 
-func (b *implGenericEquationBuilder) withOption(key string, value expr.Expr) GenericEquationBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (geqBuilder *implGeqBuilder) withOption(key string, value expr.Expr) GeqBuilder {
+	bCopy := *geqBuilder
+	bCopy.f = geqBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implGenericEquationBuilder) Luma(luma expr.Expr) GenericEquationBuilder {
-	return b.withOption("luma", luma)
+func (geqBuilder *implGeqBuilder) LumExpr(lumExpr string) GeqBuilder {
+	return geqBuilder.withOption("lum_expr", expr.String(lumExpr))
 }
 
-func (b *implGenericEquationBuilder) ChrominanceBlue(chrominanceBlue expr.Expr) GenericEquationBuilder {
-	return b.withOption("cb", chrominanceBlue)
+func (geqBuilder *implGeqBuilder) Lum(lum string) GeqBuilder {
+	return geqBuilder.withOption("lum", expr.String(lum))
 }
 
-func (b *implGenericEquationBuilder) ChrominanceRed(chrominanceRed expr.Expr) GenericEquationBuilder {
-	return b.withOption("cr", chrominanceRed)
+func (geqBuilder *implGeqBuilder) CbExpr(cbExpr string) GeqBuilder {
+	return geqBuilder.withOption("cb_expr", expr.String(cbExpr))
 }
 
-func (b *implGenericEquationBuilder) Alpha(alpha expr.Expr) GenericEquationBuilder {
-	return b.withOption("a", alpha)
+func (geqBuilder *implGeqBuilder) Cb(cb string) GeqBuilder {
+	return geqBuilder.withOption("cb", expr.String(cb))
 }
 
-func (b *implGenericEquationBuilder) Red(red expr.Expr) GenericEquationBuilder {
-	return b.withOption("r", red)
+func (geqBuilder *implGeqBuilder) CrExpr(crExpr string) GeqBuilder {
+	return geqBuilder.withOption("cr_expr", expr.String(crExpr))
 }
 
-func (b *implGenericEquationBuilder) Green(green expr.Expr) GenericEquationBuilder {
-	return b.withOption("g", green)
+func (geqBuilder *implGeqBuilder) Cr(cr string) GeqBuilder {
+	return geqBuilder.withOption("cr", expr.String(cr))
 }
 
-func (b *implGenericEquationBuilder) Blue(blue expr.Expr) GenericEquationBuilder {
-	return b.withOption("b", blue)
+func (geqBuilder *implGeqBuilder) AlphaExpr(alphaExpr string) GeqBuilder {
+	return geqBuilder.withOption("alpha_expr", expr.String(alphaExpr))
+}
+
+func (geqBuilder *implGeqBuilder) A(a string) GeqBuilder {
+	return geqBuilder.withOption("a", expr.String(a))
+}
+
+func (geqBuilder *implGeqBuilder) RedExpr(redExpr string) GeqBuilder {
+	return geqBuilder.withOption("red_expr", expr.String(redExpr))
+}
+
+func (geqBuilder *implGeqBuilder) R(r string) GeqBuilder {
+	return geqBuilder.withOption("r", expr.String(r))
+}
+
+func (geqBuilder *implGeqBuilder) GreenExpr(greenExpr string) GeqBuilder {
+	return geqBuilder.withOption("green_expr", expr.String(greenExpr))
+}
+
+func (geqBuilder *implGeqBuilder) G(g string) GeqBuilder {
+	return geqBuilder.withOption("g", expr.String(g))
+}
+
+func (geqBuilder *implGeqBuilder) BlueExpr(blueExpr string) GeqBuilder {
+	return geqBuilder.withOption("blue_expr", expr.String(blueExpr))
+}
+
+func (geqBuilder *implGeqBuilder) B(b string) GeqBuilder {
+	return geqBuilder.withOption("b", expr.String(b))
+}
+
+func (geqBuilder *implGeqBuilder) Interpolation(interpolation int) GeqBuilder {
+	return geqBuilder.withOption("interpolation", expr.Int(interpolation))
+}
+
+func (geqBuilder *implGeqBuilder) I(i int) GeqBuilder {
+	return geqBuilder.withOption("i", expr.Int(i))
 }

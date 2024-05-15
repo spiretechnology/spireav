@@ -104,7 +104,7 @@ func formatTransformOptions(opts map[string]string) string {
 
 // formatTransformOptionValue formats a single value to ensure it's properly escaped and quote-wrapped
 func formatTransformOptionValue(value string) string {
-	if strings.Contains(value, ":") && !strings.HasPrefix(value, "'") {
+	if strings.ContainsAny(value, ":,()") && !strings.HasPrefix(value, "'") {
 		return fmt.Sprintf("'%s'", value)
 	}
 	return value

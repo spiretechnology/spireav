@@ -3,59 +3,85 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// ColorChartBuilder corresponds to the "colorchart" FFmpeg filter.
+// ColorchartBuilder Generate color checker chart.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#colorchart
-type ColorChartBuilder interface {
+type ColorchartBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) ColorChartBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) ColorChartBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) ColorChartBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) ColorchartBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) ColorchartBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) ColorchartBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) ColorchartBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) ColorchartBuilder
+	// PatchSize set the single patch size (default "64x64").
+	PatchSize(patchSize expr.Size) ColorchartBuilder
+	// Preset set the color checker chart preset (from 0 to 1) (default reference).
+	Preset(preset int) ColorchartBuilder
 }
 
-// ColorChart creates a new ColorChartBuilder to configure the "colorchart" filter.
-func ColorChart(opts ...filter.Option) ColorChartBuilder {
-	return &implColorChartBuilder{
+// Colorchart creates a new ColorchartBuilder to configure the "colorchart" filter.
+func Colorchart(opts ...filter.Option) ColorchartBuilder {
+	return &implColorchartBuilder{
 		f: filter.New("colorchart", 1, opts...),
 	}
 }
 
-type implColorChartBuilder struct {
+type implColorchartBuilder struct {
 	f filter.Filter
 }
 
-func (b *implColorChartBuilder) String() string {
-	return b.f.String()
+func (colorchartBuilder *implColorchartBuilder) String() string {
+	return colorchartBuilder.f.String()
 }
 
-func (b *implColorChartBuilder) Outputs() int {
-	return b.f.Outputs()
+func (colorchartBuilder *implColorchartBuilder) Outputs() int {
+	return colorchartBuilder.f.Outputs()
 }
 
-func (b *implColorChartBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (colorchartBuilder *implColorchartBuilder) With(key string, value expr.Expr) filter.Filter {
+	return colorchartBuilder.withOption(key, value)
 }
 
-func (b *implColorChartBuilder) withOption(key string, value expr.Expr) ColorChartBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (colorchartBuilder *implColorchartBuilder) withOption(key string, value expr.Expr) ColorchartBuilder {
+	bCopy := *colorchartBuilder
+	bCopy.f = colorchartBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implColorChartBuilder) Size(width, height int) ColorChartBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (colorchartBuilder *implColorchartBuilder) Rate(rate expr.Rational) ColorchartBuilder {
+	return colorchartBuilder.withOption("rate", rate)
 }
 
-func (b *implColorChartBuilder) FrameRate(frameRate expr.Expr) ColorChartBuilder {
-	return b.withOption("r", frameRate)
+func (colorchartBuilder *implColorchartBuilder) R(r expr.Rational) ColorchartBuilder {
+	return colorchartBuilder.withOption("r", r)
 }
 
-func (b *implColorChartBuilder) Duration(duration string) ColorChartBuilder {
-	return b.withOption("d", expr.String(duration))
+func (colorchartBuilder *implColorchartBuilder) Duration(duration time.Duration) ColorchartBuilder {
+	return colorchartBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (colorchartBuilder *implColorchartBuilder) D(d time.Duration) ColorchartBuilder {
+	return colorchartBuilder.withOption("d", expr.Duration(d))
+}
+
+func (colorchartBuilder *implColorchartBuilder) Sar(sar expr.Rational) ColorchartBuilder {
+	return colorchartBuilder.withOption("sar", sar)
+}
+
+func (colorchartBuilder *implColorchartBuilder) PatchSize(patchSize expr.Size) ColorchartBuilder {
+	return colorchartBuilder.withOption("patch_size", patchSize)
+}
+
+func (colorchartBuilder *implColorchartBuilder) Preset(preset int) ColorchartBuilder {
+	return colorchartBuilder.withOption("preset", expr.Int(preset))
 }

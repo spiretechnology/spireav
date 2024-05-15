@@ -3,22 +3,38 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// ColorBuilder corresponds to the "color" FFmpeg filter.
+// ColorBuilder Provide an uniformly colored input.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#color
 type ColorBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) ColorBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) ColorBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) ColorBuilder
-	// Color sets the "c" option on the filter.
-	Color(color string) ColorBuilder
+	// Color set color (default "black").
+	Color(color expr.Color) ColorBuilder
+	// ColorExpr set color (default "black").
+	ColorExpr(color expr.Expr) ColorBuilder
+	// C set color (default "black").
+	C(c expr.Color) ColorBuilder
+	// CExpr set color (default "black").
+	CExpr(c expr.Expr) ColorBuilder
+	// Size set video size (default "320x240").
+	Size(size expr.Size) ColorBuilder
+	// S set video size (default "320x240").
+	S(s expr.Size) ColorBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) ColorBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) ColorBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) ColorBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) ColorBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) ColorBuilder
 }
 
 // Color creates a new ColorBuilder to configure the "color" filter.
@@ -32,36 +48,64 @@ type implColorBuilder struct {
 	f filter.Filter
 }
 
-func (b *implColorBuilder) String() string {
-	return b.f.String()
+func (colorBuilder *implColorBuilder) String() string {
+	return colorBuilder.f.String()
 }
 
-func (b *implColorBuilder) Outputs() int {
-	return b.f.Outputs()
+func (colorBuilder *implColorBuilder) Outputs() int {
+	return colorBuilder.f.Outputs()
 }
 
-func (b *implColorBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (colorBuilder *implColorBuilder) With(key string, value expr.Expr) filter.Filter {
+	return colorBuilder.withOption(key, value)
 }
 
-func (b *implColorBuilder) withOption(key string, value expr.Expr) ColorBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (colorBuilder *implColorBuilder) withOption(key string, value expr.Expr) ColorBuilder {
+	bCopy := *colorBuilder
+	bCopy.f = colorBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implColorBuilder) Size(width, height int) ColorBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (colorBuilder *implColorBuilder) Color(color expr.Color) ColorBuilder {
+	return colorBuilder.withOption("color", color)
 }
 
-func (b *implColorBuilder) FrameRate(frameRate expr.Expr) ColorBuilder {
-	return b.withOption("r", frameRate)
+func (colorBuilder *implColorBuilder) ColorExpr(color expr.Expr) ColorBuilder {
+	return colorBuilder.withOption("color", color)
 }
 
-func (b *implColorBuilder) Duration(duration string) ColorBuilder {
-	return b.withOption("d", expr.String(duration))
+func (colorBuilder *implColorBuilder) C(c expr.Color) ColorBuilder {
+	return colorBuilder.withOption("c", c)
 }
 
-func (b *implColorBuilder) Color(color string) ColorBuilder {
-	return b.withOption("c", expr.String(color))
+func (colorBuilder *implColorBuilder) CExpr(c expr.Expr) ColorBuilder {
+	return colorBuilder.withOption("c", c)
+}
+
+func (colorBuilder *implColorBuilder) Size(size expr.Size) ColorBuilder {
+	return colorBuilder.withOption("size", size)
+}
+
+func (colorBuilder *implColorBuilder) S(s expr.Size) ColorBuilder {
+	return colorBuilder.withOption("s", s)
+}
+
+func (colorBuilder *implColorBuilder) Rate(rate expr.Rational) ColorBuilder {
+	return colorBuilder.withOption("rate", rate)
+}
+
+func (colorBuilder *implColorBuilder) R(r expr.Rational) ColorBuilder {
+	return colorBuilder.withOption("r", r)
+}
+
+func (colorBuilder *implColorBuilder) Duration(duration time.Duration) ColorBuilder {
+	return colorBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (colorBuilder *implColorBuilder) D(d time.Duration) ColorBuilder {
+	return colorBuilder.withOption("d", expr.Duration(d))
+}
+
+func (colorBuilder *implColorBuilder) Sar(sar expr.Rational) ColorBuilder {
+	return colorBuilder.withOption("sar", sar)
 }

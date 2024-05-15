@@ -3,59 +3,79 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// HaldCLUTBuilder corresponds to the "haldclutsrc" FFmpeg filter.
+// HaldclutsrcBuilder Provide an identity Hald CLUT.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#haldclutsrc
-type HaldCLUTBuilder interface {
+type HaldclutsrcBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) HaldCLUTBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) HaldCLUTBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) HaldCLUTBuilder
+	// Level set level (from 2 to 16) (default 6).
+	Level(level int) HaldclutsrcBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) HaldclutsrcBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) HaldclutsrcBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) HaldclutsrcBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) HaldclutsrcBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) HaldclutsrcBuilder
 }
 
-// HaldCLUT creates a new HaldCLUTBuilder to configure the "haldclutsrc" filter.
-func HaldCLUT(opts ...filter.Option) HaldCLUTBuilder {
-	return &implHaldCLUTBuilder{
+// Haldclutsrc creates a new HaldclutsrcBuilder to configure the "haldclutsrc" filter.
+func Haldclutsrc(opts ...filter.Option) HaldclutsrcBuilder {
+	return &implHaldclutsrcBuilder{
 		f: filter.New("haldclutsrc", 1, opts...),
 	}
 }
 
-type implHaldCLUTBuilder struct {
+type implHaldclutsrcBuilder struct {
 	f filter.Filter
 }
 
-func (b *implHaldCLUTBuilder) String() string {
-	return b.f.String()
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) String() string {
+	return haldclutsrcBuilder.f.String()
 }
 
-func (b *implHaldCLUTBuilder) Outputs() int {
-	return b.f.Outputs()
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) Outputs() int {
+	return haldclutsrcBuilder.f.Outputs()
 }
 
-func (b *implHaldCLUTBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) With(key string, value expr.Expr) filter.Filter {
+	return haldclutsrcBuilder.withOption(key, value)
 }
 
-func (b *implHaldCLUTBuilder) withOption(key string, value expr.Expr) HaldCLUTBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) withOption(key string, value expr.Expr) HaldclutsrcBuilder {
+	bCopy := *haldclutsrcBuilder
+	bCopy.f = haldclutsrcBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implHaldCLUTBuilder) Size(width, height int) HaldCLUTBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) Level(level int) HaldclutsrcBuilder {
+	return haldclutsrcBuilder.withOption("level", expr.Int(level))
 }
 
-func (b *implHaldCLUTBuilder) FrameRate(frameRate expr.Expr) HaldCLUTBuilder {
-	return b.withOption("r", frameRate)
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) Rate(rate expr.Rational) HaldclutsrcBuilder {
+	return haldclutsrcBuilder.withOption("rate", rate)
 }
 
-func (b *implHaldCLUTBuilder) Duration(duration string) HaldCLUTBuilder {
-	return b.withOption("d", expr.String(duration))
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) R(r expr.Rational) HaldclutsrcBuilder {
+	return haldclutsrcBuilder.withOption("r", r)
+}
+
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) Duration(duration time.Duration) HaldclutsrcBuilder {
+	return haldclutsrcBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) D(d time.Duration) HaldclutsrcBuilder {
+	return haldclutsrcBuilder.withOption("d", expr.Duration(d))
+}
+
+func (haldclutsrcBuilder *implHaldclutsrcBuilder) Sar(sar expr.Rational) HaldclutsrcBuilder {
+	return haldclutsrcBuilder.withOption("sar", sar)
 }

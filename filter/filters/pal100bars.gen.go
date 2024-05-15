@@ -3,59 +3,85 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// PAL100BarsBuilder corresponds to the "pal100bars" FFmpeg filter.
+// Pal100barsBuilder Generate PAL 100% color bars.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#pal100bars
-type PAL100BarsBuilder interface {
+type Pal100barsBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) PAL100BarsBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) PAL100BarsBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) PAL100BarsBuilder
+	// Size set video size (default "320x240").
+	Size(size expr.Size) Pal100barsBuilder
+	// S set video size (default "320x240").
+	S(s expr.Size) Pal100barsBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) Pal100barsBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) Pal100barsBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) Pal100barsBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) Pal100barsBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) Pal100barsBuilder
 }
 
-// PAL100Bars creates a new PAL100BarsBuilder to configure the "pal100bars" filter.
-func PAL100Bars(opts ...filter.Option) PAL100BarsBuilder {
-	return &implPAL100BarsBuilder{
+// Pal100bars creates a new Pal100barsBuilder to configure the "pal100bars" filter.
+func Pal100bars(opts ...filter.Option) Pal100barsBuilder {
+	return &implPal100barsBuilder{
 		f: filter.New("pal100bars", 1, opts...),
 	}
 }
 
-type implPAL100BarsBuilder struct {
+type implPal100barsBuilder struct {
 	f filter.Filter
 }
 
-func (b *implPAL100BarsBuilder) String() string {
-	return b.f.String()
+func (pal100barsBuilder *implPal100barsBuilder) String() string {
+	return pal100barsBuilder.f.String()
 }
 
-func (b *implPAL100BarsBuilder) Outputs() int {
-	return b.f.Outputs()
+func (pal100barsBuilder *implPal100barsBuilder) Outputs() int {
+	return pal100barsBuilder.f.Outputs()
 }
 
-func (b *implPAL100BarsBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (pal100barsBuilder *implPal100barsBuilder) With(key string, value expr.Expr) filter.Filter {
+	return pal100barsBuilder.withOption(key, value)
 }
 
-func (b *implPAL100BarsBuilder) withOption(key string, value expr.Expr) PAL100BarsBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (pal100barsBuilder *implPal100barsBuilder) withOption(key string, value expr.Expr) Pal100barsBuilder {
+	bCopy := *pal100barsBuilder
+	bCopy.f = pal100barsBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implPAL100BarsBuilder) Size(width, height int) PAL100BarsBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (pal100barsBuilder *implPal100barsBuilder) Size(size expr.Size) Pal100barsBuilder {
+	return pal100barsBuilder.withOption("size", size)
 }
 
-func (b *implPAL100BarsBuilder) FrameRate(frameRate expr.Expr) PAL100BarsBuilder {
-	return b.withOption("r", frameRate)
+func (pal100barsBuilder *implPal100barsBuilder) S(s expr.Size) Pal100barsBuilder {
+	return pal100barsBuilder.withOption("s", s)
 }
 
-func (b *implPAL100BarsBuilder) Duration(duration string) PAL100BarsBuilder {
-	return b.withOption("d", expr.String(duration))
+func (pal100barsBuilder *implPal100barsBuilder) Rate(rate expr.Rational) Pal100barsBuilder {
+	return pal100barsBuilder.withOption("rate", rate)
+}
+
+func (pal100barsBuilder *implPal100barsBuilder) R(r expr.Rational) Pal100barsBuilder {
+	return pal100barsBuilder.withOption("r", r)
+}
+
+func (pal100barsBuilder *implPal100barsBuilder) Duration(duration time.Duration) Pal100barsBuilder {
+	return pal100barsBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (pal100barsBuilder *implPal100barsBuilder) D(d time.Duration) Pal100barsBuilder {
+	return pal100barsBuilder.withOption("d", expr.Duration(d))
+}
+
+func (pal100barsBuilder *implPal100barsBuilder) Sar(sar expr.Rational) Pal100barsBuilder {
+	return pal100barsBuilder.withOption("sar", sar)
 }

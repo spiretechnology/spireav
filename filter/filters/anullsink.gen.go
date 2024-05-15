@@ -7,37 +7,37 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// AudioNullSinkBuilder corresponds to the "anullsink" FFmpeg filter.
+// AnullsinkBuilder Do absolutely nothing with the input audio.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#anullsink
-type AudioNullSinkBuilder interface {
+type AnullsinkBuilder interface {
 	filter.Filter
 }
 
-// AudioNullSink creates a new AudioNullSinkBuilder to configure the "anullsink" filter.
-func AudioNullSink(opts ...filter.Option) AudioNullSinkBuilder {
-	return &implAudioNullSinkBuilder{
-		f: filter.New("anullsink", 0, opts...),
+// Anullsink creates a new AnullsinkBuilder to configure the "anullsink" filter.
+func Anullsink(opts ...filter.Option) AnullsinkBuilder {
+	return &implAnullsinkBuilder{
+		f: filter.New("anullsink", 1, opts...),
 	}
 }
 
-type implAudioNullSinkBuilder struct {
+type implAnullsinkBuilder struct {
 	f filter.Filter
 }
 
-func (b *implAudioNullSinkBuilder) String() string {
-	return b.f.String()
+func (anullsinkBuilder *implAnullsinkBuilder) String() string {
+	return anullsinkBuilder.f.String()
 }
 
-func (b *implAudioNullSinkBuilder) Outputs() int {
-	return b.f.Outputs()
+func (anullsinkBuilder *implAnullsinkBuilder) Outputs() int {
+	return anullsinkBuilder.f.Outputs()
 }
 
-func (b *implAudioNullSinkBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (anullsinkBuilder *implAnullsinkBuilder) With(key string, value expr.Expr) filter.Filter {
+	return anullsinkBuilder.withOption(key, value)
 }
 
-func (b *implAudioNullSinkBuilder) withOption(key string, value expr.Expr) AudioNullSinkBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (anullsinkBuilder *implAnullsinkBuilder) withOption(key string, value expr.Expr) AnullsinkBuilder {
+	bCopy := *anullsinkBuilder
+	bCopy.f = anullsinkBuilder.f.With(key, value)
 	return &bCopy
 }

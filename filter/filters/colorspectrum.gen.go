@@ -3,59 +3,91 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// ColorSpectrumBuilder corresponds to the "colorspectrum" FFmpeg filter.
+// ColorspectrumBuilder Generate colors spectrum.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#colorspectrum
-type ColorSpectrumBuilder interface {
+type ColorspectrumBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) ColorSpectrumBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) ColorSpectrumBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) ColorSpectrumBuilder
+	// Size set video size (default "320x240").
+	Size(size expr.Size) ColorspectrumBuilder
+	// S set video size (default "320x240").
+	S(s expr.Size) ColorspectrumBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) ColorspectrumBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) ColorspectrumBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) ColorspectrumBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) ColorspectrumBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) ColorspectrumBuilder
+	// Type set the color spectrum type (from 0 to 2) (default black).
+	Type(typ int) ColorspectrumBuilder
 }
 
-// ColorSpectrum creates a new ColorSpectrumBuilder to configure the "colorspectrum" filter.
-func ColorSpectrum(opts ...filter.Option) ColorSpectrumBuilder {
-	return &implColorSpectrumBuilder{
+// Colorspectrum creates a new ColorspectrumBuilder to configure the "colorspectrum" filter.
+func Colorspectrum(opts ...filter.Option) ColorspectrumBuilder {
+	return &implColorspectrumBuilder{
 		f: filter.New("colorspectrum", 1, opts...),
 	}
 }
 
-type implColorSpectrumBuilder struct {
+type implColorspectrumBuilder struct {
 	f filter.Filter
 }
 
-func (b *implColorSpectrumBuilder) String() string {
-	return b.f.String()
+func (colorspectrumBuilder *implColorspectrumBuilder) String() string {
+	return colorspectrumBuilder.f.String()
 }
 
-func (b *implColorSpectrumBuilder) Outputs() int {
-	return b.f.Outputs()
+func (colorspectrumBuilder *implColorspectrumBuilder) Outputs() int {
+	return colorspectrumBuilder.f.Outputs()
 }
 
-func (b *implColorSpectrumBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (colorspectrumBuilder *implColorspectrumBuilder) With(key string, value expr.Expr) filter.Filter {
+	return colorspectrumBuilder.withOption(key, value)
 }
 
-func (b *implColorSpectrumBuilder) withOption(key string, value expr.Expr) ColorSpectrumBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (colorspectrumBuilder *implColorspectrumBuilder) withOption(key string, value expr.Expr) ColorspectrumBuilder {
+	bCopy := *colorspectrumBuilder
+	bCopy.f = colorspectrumBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implColorSpectrumBuilder) Size(width, height int) ColorSpectrumBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (colorspectrumBuilder *implColorspectrumBuilder) Size(size expr.Size) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("size", size)
 }
 
-func (b *implColorSpectrumBuilder) FrameRate(frameRate expr.Expr) ColorSpectrumBuilder {
-	return b.withOption("r", frameRate)
+func (colorspectrumBuilder *implColorspectrumBuilder) S(s expr.Size) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("s", s)
 }
 
-func (b *implColorSpectrumBuilder) Duration(duration string) ColorSpectrumBuilder {
-	return b.withOption("d", expr.String(duration))
+func (colorspectrumBuilder *implColorspectrumBuilder) Rate(rate expr.Rational) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("rate", rate)
+}
+
+func (colorspectrumBuilder *implColorspectrumBuilder) R(r expr.Rational) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("r", r)
+}
+
+func (colorspectrumBuilder *implColorspectrumBuilder) Duration(duration time.Duration) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (colorspectrumBuilder *implColorspectrumBuilder) D(d time.Duration) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("d", expr.Duration(d))
+}
+
+func (colorspectrumBuilder *implColorspectrumBuilder) Sar(sar expr.Rational) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("sar", sar)
+}
+
+func (colorspectrumBuilder *implColorspectrumBuilder) Type(typ int) ColorspectrumBuilder {
+	return colorspectrumBuilder.withOption("type", expr.Int(typ))
 }

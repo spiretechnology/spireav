@@ -3,59 +3,85 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// SMPTEHDBarsBuilder corresponds to the "smptehdbars" FFmpeg filter.
+// SmptehdbarsBuilder Generate SMPTE HD color bars.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#smptehdbars
-type SMPTEHDBarsBuilder interface {
+type SmptehdbarsBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) SMPTEHDBarsBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) SMPTEHDBarsBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) SMPTEHDBarsBuilder
+	// Size set video size (default "320x240").
+	Size(size expr.Size) SmptehdbarsBuilder
+	// S set video size (default "320x240").
+	S(s expr.Size) SmptehdbarsBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) SmptehdbarsBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) SmptehdbarsBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) SmptehdbarsBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) SmptehdbarsBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) SmptehdbarsBuilder
 }
 
-// SMPTEHDBars creates a new SMPTEHDBarsBuilder to configure the "smptehdbars" filter.
-func SMPTEHDBars(opts ...filter.Option) SMPTEHDBarsBuilder {
-	return &implSMPTEHDBarsBuilder{
+// Smptehdbars creates a new SmptehdbarsBuilder to configure the "smptehdbars" filter.
+func Smptehdbars(opts ...filter.Option) SmptehdbarsBuilder {
+	return &implSmptehdbarsBuilder{
 		f: filter.New("smptehdbars", 1, opts...),
 	}
 }
 
-type implSMPTEHDBarsBuilder struct {
+type implSmptehdbarsBuilder struct {
 	f filter.Filter
 }
 
-func (b *implSMPTEHDBarsBuilder) String() string {
-	return b.f.String()
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) String() string {
+	return smptehdbarsBuilder.f.String()
 }
 
-func (b *implSMPTEHDBarsBuilder) Outputs() int {
-	return b.f.Outputs()
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) Outputs() int {
+	return smptehdbarsBuilder.f.Outputs()
 }
 
-func (b *implSMPTEHDBarsBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) With(key string, value expr.Expr) filter.Filter {
+	return smptehdbarsBuilder.withOption(key, value)
 }
 
-func (b *implSMPTEHDBarsBuilder) withOption(key string, value expr.Expr) SMPTEHDBarsBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) withOption(key string, value expr.Expr) SmptehdbarsBuilder {
+	bCopy := *smptehdbarsBuilder
+	bCopy.f = smptehdbarsBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implSMPTEHDBarsBuilder) Size(width, height int) SMPTEHDBarsBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) Size(size expr.Size) SmptehdbarsBuilder {
+	return smptehdbarsBuilder.withOption("size", size)
 }
 
-func (b *implSMPTEHDBarsBuilder) FrameRate(frameRate expr.Expr) SMPTEHDBarsBuilder {
-	return b.withOption("r", frameRate)
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) S(s expr.Size) SmptehdbarsBuilder {
+	return smptehdbarsBuilder.withOption("s", s)
 }
 
-func (b *implSMPTEHDBarsBuilder) Duration(duration string) SMPTEHDBarsBuilder {
-	return b.withOption("d", expr.String(duration))
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) Rate(rate expr.Rational) SmptehdbarsBuilder {
+	return smptehdbarsBuilder.withOption("rate", rate)
+}
+
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) R(r expr.Rational) SmptehdbarsBuilder {
+	return smptehdbarsBuilder.withOption("r", r)
+}
+
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) Duration(duration time.Duration) SmptehdbarsBuilder {
+	return smptehdbarsBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) D(d time.Duration) SmptehdbarsBuilder {
+	return smptehdbarsBuilder.withOption("d", expr.Duration(d))
+}
+
+func (smptehdbarsBuilder *implSmptehdbarsBuilder) Sar(sar expr.Rational) SmptehdbarsBuilder {
+	return smptehdbarsBuilder.withOption("sar", sar)
 }

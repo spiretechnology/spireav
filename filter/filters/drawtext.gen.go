@@ -7,127 +7,367 @@ import (
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// DrawTextBuilder corresponds to the "drawtext" FFmpeg filter.
+// DrawtextBuilder Draw text on top of video frames using libfreetype library.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#drawtext
-type DrawTextBuilder interface {
+type DrawtextBuilder interface {
 	filter.Filter
-	// PosX sets the "x" option on the filter.
-	PosX(posX expr.Expr) DrawTextBuilder
-	// PosXInt sets the "x" option on the filter.
-	PosXInt(posX int) DrawTextBuilder
-	// PosY sets the "y" option on the filter.
-	PosY(posY expr.Expr) DrawTextBuilder
-	// PosYInt sets the "y" option on the filter.
-	PosYInt(posY int) DrawTextBuilder
-	// FontColor sets the "fontcolor" option on the filter.
-	FontColor(fontColor expr.Expr) DrawTextBuilder
-	// FontColorString sets the "fontcolor" option on the filter.
-	FontColorString(fontColor string) DrawTextBuilder
-	// FontFile sets the "fontfile" option on the filter.
-	FontFile(fontFile string) DrawTextBuilder
-	// FontSize sets the "fontsize" option on the filter.
-	FontSize(fontSize expr.Expr) DrawTextBuilder
-	// FontSizeInt sets the "fontsize" option on the filter.
-	FontSizeInt(fontSize int) DrawTextBuilder
-	// Text sets the "text" option on the filter.
-	Text(text string) DrawTextBuilder
-	// Timecode sets the "timecode" option on the filter.
-	Timecode(timecode string) DrawTextBuilder
-	// TimecodeRate sets the "timecode_rate" option on the filter.
-	TimecodeRate(timecodeRate string) DrawTextBuilder
-	// Box sets the "box" option on the filter.
-	Box(box bool) DrawTextBuilder
-	// BoxColor sets the "boxcolor" option on the filter.
-	BoxColor(boxColor expr.Expr) DrawTextBuilder
-	// BoxColorString sets the "boxcolor" option on the filter.
-	BoxColorString(boxColor string) DrawTextBuilder
+	// Fontfile set font file.
+	Fontfile(fontfile string) DrawtextBuilder
+	// Text set text.
+	Text(text string) DrawtextBuilder
+	// TextExpr set text.
+	TextExpr(text expr.Expr) DrawtextBuilder
+	// Textfile set text file.
+	Textfile(textfile string) DrawtextBuilder
+	// Fontcolor set foreground color (default "black").
+	Fontcolor(fontcolor expr.Color) DrawtextBuilder
+	// FontcolorExpr set foreground color (default "black").
+	FontcolorExpr(fontcolor expr.Expr) DrawtextBuilder
+	// Boxcolor set box color (default "white").
+	Boxcolor(boxcolor expr.Color) DrawtextBuilder
+	// BoxcolorExpr set box color (default "white").
+	BoxcolorExpr(boxcolor expr.Expr) DrawtextBuilder
+	// Bordercolor set border color (default "black").
+	Bordercolor(bordercolor expr.Color) DrawtextBuilder
+	// BordercolorExpr set border color (default "black").
+	BordercolorExpr(bordercolor expr.Expr) DrawtextBuilder
+	// Shadowcolor set shadow color (default "black").
+	Shadowcolor(shadowcolor expr.Color) DrawtextBuilder
+	// ShadowcolorExpr set shadow color (default "black").
+	ShadowcolorExpr(shadowcolor expr.Expr) DrawtextBuilder
+	// Box set box (default false).
+	Box(box bool) DrawtextBuilder
+	// BoxExpr set box (default false).
+	BoxExpr(box expr.Expr) DrawtextBuilder
+	// Boxborderw set box borders width (default "0").
+	Boxborderw(boxborderw string) DrawtextBuilder
+	// BoxborderwExpr set box borders width (default "0").
+	BoxborderwExpr(boxborderw expr.Expr) DrawtextBuilder
+	// LineSpacing set line spacing in pixels (from INT_MIN to INT_MAX) (default 0).
+	LineSpacing(lineSpacing int) DrawtextBuilder
+	// LineSpacingExpr set line spacing in pixels (from INT_MIN to INT_MAX) (default 0).
+	LineSpacingExpr(lineSpacing expr.Expr) DrawtextBuilder
+	// Fontsize set font size.
+	Fontsize(fontsize string) DrawtextBuilder
+	// FontsizeExpr set font size.
+	FontsizeExpr(fontsize expr.Expr) DrawtextBuilder
+	// TextAlign set text alignment (default 0).
+	TextAlign(textAlign string) DrawtextBuilder
+	// TextAlignExpr set text alignment (default 0).
+	TextAlignExpr(textAlign expr.Expr) DrawtextBuilder
+	// X set x expression (default "0").
+	X(x string) DrawtextBuilder
+	// XExpr set x expression (default "0").
+	XExpr(x expr.Expr) DrawtextBuilder
+	// Y set y expression (default "0").
+	Y(y string) DrawtextBuilder
+	// YExpr set y expression (default "0").
+	YExpr(y expr.Expr) DrawtextBuilder
+	// Boxw set box width (from 0 to INT_MAX) (default 0).
+	Boxw(boxw int) DrawtextBuilder
+	// BoxwExpr set box width (from 0 to INT_MAX) (default 0).
+	BoxwExpr(boxw expr.Expr) DrawtextBuilder
+	// Boxh set box height (from 0 to INT_MAX) (default 0).
+	Boxh(boxh int) DrawtextBuilder
+	// BoxhExpr set box height (from 0 to INT_MAX) (default 0).
+	BoxhExpr(boxh expr.Expr) DrawtextBuilder
+	// Shadowx set shadow x offset (from INT_MIN to INT_MAX) (default 0).
+	Shadowx(shadowx int) DrawtextBuilder
+	// ShadowxExpr set shadow x offset (from INT_MIN to INT_MAX) (default 0).
+	ShadowxExpr(shadowx expr.Expr) DrawtextBuilder
+	// Shadowy set shadow y offset (from INT_MIN to INT_MAX) (default 0).
+	Shadowy(shadowy int) DrawtextBuilder
+	// ShadowyExpr set shadow y offset (from INT_MIN to INT_MAX) (default 0).
+	ShadowyExpr(shadowy expr.Expr) DrawtextBuilder
+	// Borderw set border width (from INT_MIN to INT_MAX) (default 0).
+	Borderw(borderw int) DrawtextBuilder
+	// BorderwExpr set border width (from INT_MIN to INT_MAX) (default 0).
+	BorderwExpr(borderw expr.Expr) DrawtextBuilder
+	// Tabsize set tab size (from 0 to INT_MAX) (default 4).
+	Tabsize(tabsize int) DrawtextBuilder
+	// TabsizeExpr set tab size (from 0 to INT_MAX) (default 4).
+	TabsizeExpr(tabsize expr.Expr) DrawtextBuilder
+	// Basetime set base time (from I64_MIN to I64_MAX) (default I64_MIN).
+	Basetime(basetime int64) DrawtextBuilder
+	// Font Font name (default "Sans").
+	Font(font string) DrawtextBuilder
+	// Expansion set the expansion mode (from 0 to 2) (default normal).
+	Expansion(expansion int) DrawtextBuilder
+	// YAlign set the y alignment (from 0 to 2) (default text).
+	YAlign(yAlign int) DrawtextBuilder
+	// YAlignExpr set the y alignment (from 0 to 2) (default text).
+	YAlignExpr(yAlign expr.Expr) DrawtextBuilder
+	// Timecode set initial timecode.
+	Timecode(timecode string) DrawtextBuilder
+	// Tc24hmax set 24 hours max (timecode only) (default false).
+	Tc24hmax(tc24hmax bool) DrawtextBuilder
+	// TimecodeRate set rate (timecode only) (from 0 to INT_MAX) (default 0/1).
+	TimecodeRate(timecodeRate expr.Rational) DrawtextBuilder
+	// R set rate (timecode only) (from 0 to INT_MAX) (default 0/1).
+	R(r expr.Rational) DrawtextBuilder
+	// Rate set rate (timecode only) (from 0 to INT_MAX) (default 0/1).
+	Rate(rate expr.Rational) DrawtextBuilder
+	// Reload reload text file at specified frame interval (from 0 to INT_MAX) (default 0).
+	Reload(reload int) DrawtextBuilder
+	// Alpha apply alpha while rendering (default "1").
+	Alpha(alpha string) DrawtextBuilder
+	// AlphaExpr apply alpha while rendering (default "1").
+	AlphaExpr(alpha expr.Expr) DrawtextBuilder
+	// FixBounds check and fix text coords to avoid clipping (default false).
+	FixBounds(fixBounds bool) DrawtextBuilder
+	// StartNumber start frame number for n/frame_num variable (from 0 to INT_MAX) (default 0).
+	StartNumber(startNumber int) DrawtextBuilder
+	// TextSource the source of text.
+	TextSource(textSource string) DrawtextBuilder
+	// FtLoadFlags set font loading flags for libfreetype (default 0).
+	FtLoadFlags(ftLoadFlags string) DrawtextBuilder
 }
 
-// DrawText creates a new DrawTextBuilder to configure the "drawtext" filter.
-func DrawText(opts ...filter.Option) DrawTextBuilder {
-	return &implDrawTextBuilder{
+// Drawtext creates a new DrawtextBuilder to configure the "drawtext" filter.
+func Drawtext(opts ...filter.Option) DrawtextBuilder {
+	return &implDrawtextBuilder{
 		f: filter.New("drawtext", 1, opts...),
 	}
 }
 
-type implDrawTextBuilder struct {
+type implDrawtextBuilder struct {
 	f filter.Filter
 }
 
-func (b *implDrawTextBuilder) String() string {
-	return b.f.String()
+func (drawtextBuilder *implDrawtextBuilder) String() string {
+	return drawtextBuilder.f.String()
 }
 
-func (b *implDrawTextBuilder) Outputs() int {
-	return b.f.Outputs()
+func (drawtextBuilder *implDrawtextBuilder) Outputs() int {
+	return drawtextBuilder.f.Outputs()
 }
 
-func (b *implDrawTextBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (drawtextBuilder *implDrawtextBuilder) With(key string, value expr.Expr) filter.Filter {
+	return drawtextBuilder.withOption(key, value)
 }
 
-func (b *implDrawTextBuilder) withOption(key string, value expr.Expr) DrawTextBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (drawtextBuilder *implDrawtextBuilder) withOption(key string, value expr.Expr) DrawtextBuilder {
+	bCopy := *drawtextBuilder
+	bCopy.f = drawtextBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implDrawTextBuilder) PosX(posX expr.Expr) DrawTextBuilder {
-	return b.withOption("x", posX)
+func (drawtextBuilder *implDrawtextBuilder) Fontfile(fontfile string) DrawtextBuilder {
+	return drawtextBuilder.withOption("fontfile", expr.String(fontfile))
 }
 
-func (b *implDrawTextBuilder) PosXInt(posX int) DrawTextBuilder {
-	return b.withOption("x", expr.Int(posX))
+func (drawtextBuilder *implDrawtextBuilder) Text(text string) DrawtextBuilder {
+	return drawtextBuilder.withOption("text", expr.String(text))
 }
 
-func (b *implDrawTextBuilder) PosY(posY expr.Expr) DrawTextBuilder {
-	return b.withOption("y", posY)
+func (drawtextBuilder *implDrawtextBuilder) TextExpr(text expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("text", text)
 }
 
-func (b *implDrawTextBuilder) PosYInt(posY int) DrawTextBuilder {
-	return b.withOption("y", expr.Int(posY))
+func (drawtextBuilder *implDrawtextBuilder) Textfile(textfile string) DrawtextBuilder {
+	return drawtextBuilder.withOption("textfile", expr.String(textfile))
 }
 
-func (b *implDrawTextBuilder) FontColor(fontColor expr.Expr) DrawTextBuilder {
-	return b.withOption("fontcolor", fontColor)
+func (drawtextBuilder *implDrawtextBuilder) Fontcolor(fontcolor expr.Color) DrawtextBuilder {
+	return drawtextBuilder.withOption("fontcolor", fontcolor)
 }
 
-func (b *implDrawTextBuilder) FontColorString(fontColor string) DrawTextBuilder {
-	return b.withOption("fontcolor", expr.String(fontColor))
+func (drawtextBuilder *implDrawtextBuilder) FontcolorExpr(fontcolor expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("fontcolor", fontcolor)
 }
 
-func (b *implDrawTextBuilder) FontFile(fontFile string) DrawTextBuilder {
-	return b.withOption("fontfile", expr.String(fontFile))
+func (drawtextBuilder *implDrawtextBuilder) Boxcolor(boxcolor expr.Color) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxcolor", boxcolor)
 }
 
-func (b *implDrawTextBuilder) FontSize(fontSize expr.Expr) DrawTextBuilder {
-	return b.withOption("fontsize", fontSize)
+func (drawtextBuilder *implDrawtextBuilder) BoxcolorExpr(boxcolor expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxcolor", boxcolor)
 }
 
-func (b *implDrawTextBuilder) FontSizeInt(fontSize int) DrawTextBuilder {
-	return b.withOption("fontsize", expr.Int(fontSize))
+func (drawtextBuilder *implDrawtextBuilder) Bordercolor(bordercolor expr.Color) DrawtextBuilder {
+	return drawtextBuilder.withOption("bordercolor", bordercolor)
 }
 
-func (b *implDrawTextBuilder) Text(text string) DrawTextBuilder {
-	return b.withOption("text", expr.String(text))
+func (drawtextBuilder *implDrawtextBuilder) BordercolorExpr(bordercolor expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("bordercolor", bordercolor)
 }
 
-func (b *implDrawTextBuilder) Timecode(timecode string) DrawTextBuilder {
-	return b.withOption("timecode", expr.String(timecode))
+func (drawtextBuilder *implDrawtextBuilder) Shadowcolor(shadowcolor expr.Color) DrawtextBuilder {
+	return drawtextBuilder.withOption("shadowcolor", shadowcolor)
 }
 
-func (b *implDrawTextBuilder) TimecodeRate(timecodeRate string) DrawTextBuilder {
-	return b.withOption("timecode_rate", expr.String(timecodeRate))
+func (drawtextBuilder *implDrawtextBuilder) ShadowcolorExpr(shadowcolor expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("shadowcolor", shadowcolor)
 }
 
-func (b *implDrawTextBuilder) Box(box bool) DrawTextBuilder {
-	return b.withOption("box", expr.Bool(box))
+func (drawtextBuilder *implDrawtextBuilder) Box(box bool) DrawtextBuilder {
+	return drawtextBuilder.withOption("box", expr.Bool(box))
 }
 
-func (b *implDrawTextBuilder) BoxColor(boxColor expr.Expr) DrawTextBuilder {
-	return b.withOption("boxcolor", boxColor)
+func (drawtextBuilder *implDrawtextBuilder) BoxExpr(box expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("box", box)
 }
 
-func (b *implDrawTextBuilder) BoxColorString(boxColor string) DrawTextBuilder {
-	return b.withOption("boxcolor", expr.String(boxColor))
+func (drawtextBuilder *implDrawtextBuilder) Boxborderw(boxborderw string) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxborderw", expr.String(boxborderw))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) BoxborderwExpr(boxborderw expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxborderw", boxborderw)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) LineSpacing(lineSpacing int) DrawtextBuilder {
+	return drawtextBuilder.withOption("line_spacing", expr.Int(lineSpacing))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) LineSpacingExpr(lineSpacing expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("line_spacing", lineSpacing)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Fontsize(fontsize string) DrawtextBuilder {
+	return drawtextBuilder.withOption("fontsize", expr.String(fontsize))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) FontsizeExpr(fontsize expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("fontsize", fontsize)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) TextAlign(textAlign string) DrawtextBuilder {
+	return drawtextBuilder.withOption("text_align", expr.String(textAlign))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) TextAlignExpr(textAlign expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("text_align", textAlign)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) X(x string) DrawtextBuilder {
+	return drawtextBuilder.withOption("x", expr.String(x))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) XExpr(x expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("x", x)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Y(y string) DrawtextBuilder {
+	return drawtextBuilder.withOption("y", expr.String(y))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) YExpr(y expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("y", y)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Boxw(boxw int) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxw", expr.Int(boxw))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) BoxwExpr(boxw expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxw", boxw)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Boxh(boxh int) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxh", expr.Int(boxh))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) BoxhExpr(boxh expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("boxh", boxh)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Shadowx(shadowx int) DrawtextBuilder {
+	return drawtextBuilder.withOption("shadowx", expr.Int(shadowx))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) ShadowxExpr(shadowx expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("shadowx", shadowx)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Shadowy(shadowy int) DrawtextBuilder {
+	return drawtextBuilder.withOption("shadowy", expr.Int(shadowy))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) ShadowyExpr(shadowy expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("shadowy", shadowy)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Borderw(borderw int) DrawtextBuilder {
+	return drawtextBuilder.withOption("borderw", expr.Int(borderw))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) BorderwExpr(borderw expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("borderw", borderw)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Tabsize(tabsize int) DrawtextBuilder {
+	return drawtextBuilder.withOption("tabsize", expr.Int(tabsize))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) TabsizeExpr(tabsize expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("tabsize", tabsize)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Basetime(basetime int64) DrawtextBuilder {
+	return drawtextBuilder.withOption("basetime", expr.Int64(basetime))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Font(font string) DrawtextBuilder {
+	return drawtextBuilder.withOption("font", expr.String(font))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Expansion(expansion int) DrawtextBuilder {
+	return drawtextBuilder.withOption("expansion", expr.Int(expansion))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) YAlign(yAlign int) DrawtextBuilder {
+	return drawtextBuilder.withOption("y_align", expr.Int(yAlign))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) YAlignExpr(yAlign expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("y_align", yAlign)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Timecode(timecode string) DrawtextBuilder {
+	return drawtextBuilder.withOption("timecode", expr.String(timecode))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Tc24hmax(tc24hmax bool) DrawtextBuilder {
+	return drawtextBuilder.withOption("tc24hmax", expr.Bool(tc24hmax))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) TimecodeRate(timecodeRate expr.Rational) DrawtextBuilder {
+	return drawtextBuilder.withOption("timecode_rate", timecodeRate)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) R(r expr.Rational) DrawtextBuilder {
+	return drawtextBuilder.withOption("r", r)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Rate(rate expr.Rational) DrawtextBuilder {
+	return drawtextBuilder.withOption("rate", rate)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Reload(reload int) DrawtextBuilder {
+	return drawtextBuilder.withOption("reload", expr.Int(reload))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Alpha(alpha string) DrawtextBuilder {
+	return drawtextBuilder.withOption("alpha", expr.String(alpha))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) AlphaExpr(alpha expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("alpha", alpha)
+}
+
+func (drawtextBuilder *implDrawtextBuilder) FixBounds(fixBounds bool) DrawtextBuilder {
+	return drawtextBuilder.withOption("fix_bounds", expr.Bool(fixBounds))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) StartNumber(startNumber int) DrawtextBuilder {
+	return drawtextBuilder.withOption("start_number", expr.Int(startNumber))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) TextSource(textSource string) DrawtextBuilder {
+	return drawtextBuilder.withOption("text_source", expr.String(textSource))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) FtLoadFlags(ftLoadFlags string) DrawtextBuilder {
+	return drawtextBuilder.withOption("ft_load_flags", expr.String(ftLoadFlags))
 }

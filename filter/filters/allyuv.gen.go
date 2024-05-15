@@ -3,59 +3,73 @@
 package filters
 
 import (
+	"time"
+
 	"github.com/spiretechnology/spireav/filter"
 	"github.com/spiretechnology/spireav/filter/expr"
 )
 
-// AllYUVBuilder corresponds to the "allyuv" FFmpeg filter.
+// AllyuvBuilder Generate all yuv colors.
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#allyuv
-type AllYUVBuilder interface {
+type AllyuvBuilder interface {
 	filter.Filter
-	// Size sets the "s" option on the filter.
-	Size(width, height int) AllYUVBuilder
-	// FrameRate sets the "r" option on the filter.
-	FrameRate(frameRate expr.Expr) AllYUVBuilder
-	// Duration sets the "d" option on the filter.
-	Duration(duration string) AllYUVBuilder
+	// Rate set video rate (default "25").
+	Rate(rate expr.Rational) AllyuvBuilder
+	// R set video rate (default "25").
+	R(r expr.Rational) AllyuvBuilder
+	// Duration set video duration (default -0.000001).
+	Duration(duration time.Duration) AllyuvBuilder
+	// D set video duration (default -0.000001).
+	D(d time.Duration) AllyuvBuilder
+	// Sar set video sample aspect ratio (from 0 to INT_MAX) (default 1/1).
+	Sar(sar expr.Rational) AllyuvBuilder
 }
 
-// AllYUV creates a new AllYUVBuilder to configure the "allyuv" filter.
-func AllYUV(opts ...filter.Option) AllYUVBuilder {
-	return &implAllYUVBuilder{
+// Allyuv creates a new AllyuvBuilder to configure the "allyuv" filter.
+func Allyuv(opts ...filter.Option) AllyuvBuilder {
+	return &implAllyuvBuilder{
 		f: filter.New("allyuv", 1, opts...),
 	}
 }
 
-type implAllYUVBuilder struct {
+type implAllyuvBuilder struct {
 	f filter.Filter
 }
 
-func (b *implAllYUVBuilder) String() string {
-	return b.f.String()
+func (allyuvBuilder *implAllyuvBuilder) String() string {
+	return allyuvBuilder.f.String()
 }
 
-func (b *implAllYUVBuilder) Outputs() int {
-	return b.f.Outputs()
+func (allyuvBuilder *implAllyuvBuilder) Outputs() int {
+	return allyuvBuilder.f.Outputs()
 }
 
-func (b *implAllYUVBuilder) With(key string, value expr.Expr) filter.Filter {
-	return b.withOption(key, value)
+func (allyuvBuilder *implAllyuvBuilder) With(key string, value expr.Expr) filter.Filter {
+	return allyuvBuilder.withOption(key, value)
 }
 
-func (b *implAllYUVBuilder) withOption(key string, value expr.Expr) AllYUVBuilder {
-	bCopy := *b
-	bCopy.f = b.f.With(key, value)
+func (allyuvBuilder *implAllyuvBuilder) withOption(key string, value expr.Expr) AllyuvBuilder {
+	bCopy := *allyuvBuilder
+	bCopy.f = allyuvBuilder.f.With(key, value)
 	return &bCopy
 }
 
-func (b *implAllYUVBuilder) Size(width, height int) AllYUVBuilder {
-	return b.withOption("s", expr.Size(width, height))
+func (allyuvBuilder *implAllyuvBuilder) Rate(rate expr.Rational) AllyuvBuilder {
+	return allyuvBuilder.withOption("rate", rate)
 }
 
-func (b *implAllYUVBuilder) FrameRate(frameRate expr.Expr) AllYUVBuilder {
-	return b.withOption("r", frameRate)
+func (allyuvBuilder *implAllyuvBuilder) R(r expr.Rational) AllyuvBuilder {
+	return allyuvBuilder.withOption("r", r)
 }
 
-func (b *implAllYUVBuilder) Duration(duration string) AllYUVBuilder {
-	return b.withOption("d", expr.String(duration))
+func (allyuvBuilder *implAllyuvBuilder) Duration(duration time.Duration) AllyuvBuilder {
+	return allyuvBuilder.withOption("duration", expr.Duration(duration))
+}
+
+func (allyuvBuilder *implAllyuvBuilder) D(d time.Duration) AllyuvBuilder {
+	return allyuvBuilder.withOption("d", expr.Duration(d))
+}
+
+func (allyuvBuilder *implAllyuvBuilder) Sar(sar expr.Rational) AllyuvBuilder {
+	return allyuvBuilder.withOption("sar", sar)
 }
