@@ -109,6 +109,10 @@ func (d Double) String() string {
 // Color is a color literal in an expression.
 type Color string
 
+func (c Color) WithOpacity(opacity float64) Color {
+	return Color(fmt.Sprintf("%s@%0.2f", c, opacity))
+}
+
 func (c Color) String() string {
 	return string(c)
 }

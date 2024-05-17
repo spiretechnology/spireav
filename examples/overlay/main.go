@@ -15,21 +15,27 @@ func main() {
 	// Create a new graph
 	g := spireav.New()
 
-	background := g.Filter(filters.Nullsrc().Duration(10 * time.Second).Size(expr.Size{Width: 1280, Height: 720}))
-
 	foreground := g.Input("reference-media/BigBuckBunny.mp4")
-	scaleForeground := g.Filter(filters.Scale().WidthExpr(expr.Int(200)).HeightExpr(expr.Int(200)))
-	foreground.Video(0).Pipe(scaleForeground, 0)
 
-	rotateForeground := g.Filter(filters.Rotate().Angle("t*PI/4"))
-	scaleForeground.Pipe(rotateForeground, 0)
+	// Scale and rotate the foreground video
+	scaleAndRotate := spireav.Pipeline(
+		g.Filter(filters.Scale().WidthExpr(expr.Int(200)).HeightExpr(expr.Int(200))),
+		g.Filter(
+			filters.Rotate().
+				// AngleExpr("t*PI/4").
+				AngleExpr(expr.Div(expr.Mul(expr.Var("t"), expr.PI), expr.Int(4))).
+				Fillcolor(expr.ColorBlack.WithOpacity(0.0).String())),
+	)
+	foreground.Video(0).Pipe(scaleAndRotate, 0)
 
+	// Overlay the scaled and rotated foreground video on top of a solid background
 	overlayFilter := g.Filter(filters.Overlay().X("0").Y("0"))
+	background := g.Filter(filters.Color().Color(expr.ColorRed).Duration(10 * time.Second).Size(expr.Size{Width: 1280, Height: 720}))
 	background.Pipe(overlayFilter, 0)
-	rotateForeground.Pipe(overlayFilter, 1)
+	scaleAndRotate.Pipe(overlayFilter, 1)
 
+	// Create the output file
 	outputFile := g.Output("reference-outputs/out-overlay.mp4", output.WithFormatMP4())
-
 	overlayFilter.Pipe(outputFile, 0)
 	foreground.Audio(0).Pipe(outputFile, 1)
 

@@ -20,14 +20,21 @@ func main() {
 		output.WithFormatMP4(),
 	)
 
-	// Create a text overlay node
-	textOverlay := g.Filter(filters.Drawtext().Text("SpireAV Test"))
+	// Create a pipeline of filters
+	scaleAndOverlay := spireav.Pipeline(
+		// Scale the video to 200x200
+		g.Filter(filters.Scale().WExpr(expr.Int(200)).HExpr(expr.Int(200))),
+		// Overlay text on the video
+		g.Filter(filters.Drawtext().Text("SpireAV Test")),
+	)
 
-	// Create a text overlay node
-	scaleNode := g.Filter(filters.Scale().WExpr(expr.Int(200)).HExpr(expr.Int(200)))
+	// Pass the video into the pipeline
+	inputNode.Video(0).Pipe(scaleAndOverlay, 0)
 
-	// Link together the nodes to create a video processing pipeline
-	spireav.Pipeline(inputNode.Video(0), scaleNode, textOverlay).Pipe(outputNode, 0)
+	// Pass the pipeline output to the output file
+	scaleAndOverlay.Pipe(outputNode, 0)
+
+	// Pass the audio directly to the output file
 	inputNode.Audio(0).Pipe(outputNode, 1)
 
 	// Create a progress handler function

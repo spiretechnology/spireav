@@ -34,13 +34,3 @@ type Stream interface {
 	MapLabel() string
 	Pipe(to Node, toIndex int)
 }
-
-func Pipeline(nodes ...Pipeable) Pipeable {
-	if len(nodes) == 0 {
-		return nil
-	}
-	for i := 0; i < len(nodes)-1; i++ {
-		nodes[i].Pipe(nodes[i+1], 0)
-	}
-	return nodes[len(nodes)-1]
-}

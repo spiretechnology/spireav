@@ -61,5 +61,9 @@ func (ins *inputNodeStream) MapLabel() string {
 }
 
 func (ins *inputNodeStream) Pipe(to Node, toIndex int) {
-	ins.node.graph.addLink(ins, to, toIndex)
+	if toPipeline, ok := to.(*implPipeline); ok {
+		ins.node.graph.addLink(ins, toPipeline.left, toIndex)
+	} else {
+		ins.node.graph.addLink(ins, to, toIndex)
+	}
 }
