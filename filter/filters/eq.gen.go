@@ -45,6 +45,8 @@ type EqBuilder interface {
 	GammaWeightExpr(gammaWeight expr.Expr) EqBuilder
 	// Eval specify when to evaluate expressions (from 0 to 1) (default init).
 	Eval(eval int) EqBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) EqBuilder
 }
 
 // Eq creates a new EqBuilder to configure the "eq" filter.
@@ -142,4 +144,8 @@ func (eqBuilder *implEqBuilder) GammaWeightExpr(gammaWeight expr.Expr) EqBuilder
 
 func (eqBuilder *implEqBuilder) Eval(eval int) EqBuilder {
 	return eqBuilder.withOption("eval", expr.Int(eval))
+}
+
+func (eqBuilder *implEqBuilder) Enable(enable expr.Expr) EqBuilder {
+	return eqBuilder.withOption("enable", enable)
 }

@@ -15,6 +15,8 @@ type UnpremultiplyBuilder interface {
 	Planes(planes int) UnpremultiplyBuilder
 	// Inplace enable inplace mode (default false).
 	Inplace(inplace bool) UnpremultiplyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) UnpremultiplyBuilder
 }
 
 // Unpremultiply creates a new UnpremultiplyBuilder to configure the "unpremultiply" filter.
@@ -52,4 +54,8 @@ func (unpremultiplyBuilder *implUnpremultiplyBuilder) Planes(planes int) Unpremu
 
 func (unpremultiplyBuilder *implUnpremultiplyBuilder) Inplace(inplace bool) UnpremultiplyBuilder {
 	return unpremultiplyBuilder.withOption("inplace", expr.Bool(inplace))
+}
+
+func (unpremultiplyBuilder *implUnpremultiplyBuilder) Enable(enable expr.Expr) UnpremultiplyBuilder {
+	return unpremultiplyBuilder.withOption("enable", enable)
 }

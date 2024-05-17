@@ -47,6 +47,8 @@ type ChromanrBuilder interface {
 	Distance(distance int) ChromanrBuilder
 	// DistanceExpr set distance type (from 0 to 1) (default manhattan).
 	DistanceExpr(distance expr.Expr) ChromanrBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ChromanrBuilder
 }
 
 // Chromanr creates a new ChromanrBuilder to configure the "chromanr" filter.
@@ -148,4 +150,8 @@ func (chromanrBuilder *implChromanrBuilder) Distance(distance int) ChromanrBuild
 
 func (chromanrBuilder *implChromanrBuilder) DistanceExpr(distance expr.Expr) ChromanrBuilder {
 	return chromanrBuilder.withOption("distance", distance)
+}
+
+func (chromanrBuilder *implChromanrBuilder) Enable(enable expr.Expr) ChromanrBuilder {
+	return chromanrBuilder.withOption("enable", enable)
 }

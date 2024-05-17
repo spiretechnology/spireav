@@ -69,6 +69,8 @@ type AfadeBuilder interface {
 	Unity(unity float64) AfadeBuilder
 	// UnityExpr set the unity gain (from 0 to 1) (default 1).
 	UnityExpr(unity expr.Expr) AfadeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AfadeBuilder
 }
 
 // Afade creates a new AfadeBuilder to configure the "afade" filter.
@@ -210,4 +212,8 @@ func (afadeBuilder *implAfadeBuilder) Unity(unity float64) AfadeBuilder {
 
 func (afadeBuilder *implAfadeBuilder) UnityExpr(unity expr.Expr) AfadeBuilder {
 	return afadeBuilder.withOption("unity", unity)
+}
+
+func (afadeBuilder *implAfadeBuilder) Enable(enable expr.Expr) AfadeBuilder {
+	return afadeBuilder.withOption("enable", enable)
 }

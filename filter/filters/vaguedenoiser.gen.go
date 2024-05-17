@@ -23,6 +23,8 @@ type VaguedenoiserBuilder interface {
 	Planes(planes int) VaguedenoiserBuilder
 	// Type set threshold type (from 0 to 1) (default universal).
 	Type(typ int) VaguedenoiserBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VaguedenoiserBuilder
 }
 
 // Vaguedenoiser creates a new VaguedenoiserBuilder to configure the "vaguedenoiser" filter.
@@ -76,4 +78,8 @@ func (vaguedenoiserBuilder *implVaguedenoiserBuilder) Planes(planes int) Vaguede
 
 func (vaguedenoiserBuilder *implVaguedenoiserBuilder) Type(typ int) VaguedenoiserBuilder {
 	return vaguedenoiserBuilder.withOption("type", expr.Int(typ))
+}
+
+func (vaguedenoiserBuilder *implVaguedenoiserBuilder) Enable(enable expr.Expr) VaguedenoiserBuilder {
+	return vaguedenoiserBuilder.withOption("enable", enable)
 }

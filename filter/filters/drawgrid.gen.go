@@ -55,6 +55,8 @@ type DrawgridBuilder interface {
 	Replace(replace bool) DrawgridBuilder
 	// ReplaceExpr replace color & alpha (default false).
 	ReplaceExpr(replace expr.Expr) DrawgridBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DrawgridBuilder
 }
 
 // Drawgrid creates a new DrawgridBuilder to configure the "drawgrid" filter.
@@ -172,4 +174,8 @@ func (drawgridBuilder *implDrawgridBuilder) Replace(replace bool) DrawgridBuilde
 
 func (drawgridBuilder *implDrawgridBuilder) ReplaceExpr(replace expr.Expr) DrawgridBuilder {
 	return drawgridBuilder.withOption("replace", replace)
+}
+
+func (drawgridBuilder *implDrawgridBuilder) Enable(enable expr.Expr) DrawgridBuilder {
+	return drawgridBuilder.withOption("enable", enable)
 }

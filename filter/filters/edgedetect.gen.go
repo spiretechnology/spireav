@@ -18,7 +18,9 @@ type EdgedetectBuilder interface {
 	// Mode set mode (from 0 to 2) (default wires).
 	Mode(mode int) EdgedetectBuilder
 	// Planes set planes to filter (default y+u+v+r+g+b).
-	Planes(planes string) EdgedetectBuilder
+	Planes(planes ...string) EdgedetectBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) EdgedetectBuilder
 }
 
 // Edgedetect creates a new EdgedetectBuilder to configure the "edgedetect" filter.
@@ -62,6 +64,10 @@ func (edgedetectBuilder *implEdgedetectBuilder) Mode(mode int) EdgedetectBuilder
 	return edgedetectBuilder.withOption("mode", expr.Int(mode))
 }
 
-func (edgedetectBuilder *implEdgedetectBuilder) Planes(planes string) EdgedetectBuilder {
-	return edgedetectBuilder.withOption("planes", expr.String(planes))
+func (edgedetectBuilder *implEdgedetectBuilder) Planes(planes ...string) EdgedetectBuilder {
+	return edgedetectBuilder.withOption("planes", expr.Flags(planes))
+}
+
+func (edgedetectBuilder *implEdgedetectBuilder) Enable(enable expr.Expr) EdgedetectBuilder {
+	return edgedetectBuilder.withOption("enable", enable)
 }

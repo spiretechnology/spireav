@@ -23,6 +23,8 @@ type ColorholdBuilder interface {
 	Blend(blend float32) ColorholdBuilder
 	// BlendExpr set the colorhold blend value (from 0 to 1) (default 0).
 	BlendExpr(blend expr.Expr) ColorholdBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorholdBuilder
 }
 
 // Colorhold creates a new ColorholdBuilder to configure the "colorhold" filter.
@@ -76,4 +78,8 @@ func (colorholdBuilder *implColorholdBuilder) Blend(blend float32) ColorholdBuil
 
 func (colorholdBuilder *implColorholdBuilder) BlendExpr(blend expr.Expr) ColorholdBuilder {
 	return colorholdBuilder.withOption("blend", blend)
+}
+
+func (colorholdBuilder *implColorholdBuilder) Enable(enable expr.Expr) ColorholdBuilder {
+	return colorholdBuilder.withOption("enable", enable)
 }

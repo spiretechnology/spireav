@@ -31,6 +31,8 @@ type HsvkeyBuilder interface {
 	Blend(blend float32) HsvkeyBuilder
 	// BlendExpr set the hsvkey blend value (from 0 to 1) (default 0).
 	BlendExpr(blend expr.Expr) HsvkeyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HsvkeyBuilder
 }
 
 // Hsvkey creates a new HsvkeyBuilder to configure the "hsvkey" filter.
@@ -100,4 +102,8 @@ func (hsvkeyBuilder *implHsvkeyBuilder) Blend(blend float32) HsvkeyBuilder {
 
 func (hsvkeyBuilder *implHsvkeyBuilder) BlendExpr(blend expr.Expr) HsvkeyBuilder {
 	return hsvkeyBuilder.withOption("blend", blend)
+}
+
+func (hsvkeyBuilder *implHsvkeyBuilder) Enable(enable expr.Expr) HsvkeyBuilder {
+	return hsvkeyBuilder.withOption("enable", enable)
 }

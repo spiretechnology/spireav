@@ -12,21 +12,13 @@ import (
 type PseudocolorBuilder interface {
 	filter.Filter
 	// C0 set component #0 expression (default "val").
-	C0(c0 string) PseudocolorBuilder
-	// C0Expr set component #0 expression (default "val").
-	C0Expr(c0 expr.Expr) PseudocolorBuilder
+	C0(c0 expr.Expr) PseudocolorBuilder
 	// C1 set component #1 expression (default "val").
-	C1(c1 string) PseudocolorBuilder
-	// C1Expr set component #1 expression (default "val").
-	C1Expr(c1 expr.Expr) PseudocolorBuilder
+	C1(c1 expr.Expr) PseudocolorBuilder
 	// C2 set component #2 expression (default "val").
-	C2(c2 string) PseudocolorBuilder
-	// C2Expr set component #2 expression (default "val").
-	C2Expr(c2 expr.Expr) PseudocolorBuilder
+	C2(c2 expr.Expr) PseudocolorBuilder
 	// C3 set component #3 expression (default "val").
-	C3(c3 string) PseudocolorBuilder
-	// C3Expr set component #3 expression (default "val").
-	C3Expr(c3 expr.Expr) PseudocolorBuilder
+	C3(c3 expr.Expr) PseudocolorBuilder
 	// Index set component as base (from 0 to 3) (default 0).
 	Index(index int) PseudocolorBuilder
 	// IndexExpr set component as base (from 0 to 3) (default 0).
@@ -47,6 +39,8 @@ type PseudocolorBuilder interface {
 	Opacity(opacity float32) PseudocolorBuilder
 	// OpacityExpr set pseudocolor opacity (from 0 to 1) (default 1).
 	OpacityExpr(opacity expr.Expr) PseudocolorBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PseudocolorBuilder
 }
 
 // Pseudocolor creates a new PseudocolorBuilder to configure the "pseudocolor" filter.
@@ -78,35 +72,19 @@ func (pseudocolorBuilder *implPseudocolorBuilder) withOption(key string, value e
 	return &bCopy
 }
 
-func (pseudocolorBuilder *implPseudocolorBuilder) C0(c0 string) PseudocolorBuilder {
-	return pseudocolorBuilder.withOption("c0", expr.String(c0))
-}
-
-func (pseudocolorBuilder *implPseudocolorBuilder) C0Expr(c0 expr.Expr) PseudocolorBuilder {
+func (pseudocolorBuilder *implPseudocolorBuilder) C0(c0 expr.Expr) PseudocolorBuilder {
 	return pseudocolorBuilder.withOption("c0", c0)
 }
 
-func (pseudocolorBuilder *implPseudocolorBuilder) C1(c1 string) PseudocolorBuilder {
-	return pseudocolorBuilder.withOption("c1", expr.String(c1))
-}
-
-func (pseudocolorBuilder *implPseudocolorBuilder) C1Expr(c1 expr.Expr) PseudocolorBuilder {
+func (pseudocolorBuilder *implPseudocolorBuilder) C1(c1 expr.Expr) PseudocolorBuilder {
 	return pseudocolorBuilder.withOption("c1", c1)
 }
 
-func (pseudocolorBuilder *implPseudocolorBuilder) C2(c2 string) PseudocolorBuilder {
-	return pseudocolorBuilder.withOption("c2", expr.String(c2))
-}
-
-func (pseudocolorBuilder *implPseudocolorBuilder) C2Expr(c2 expr.Expr) PseudocolorBuilder {
+func (pseudocolorBuilder *implPseudocolorBuilder) C2(c2 expr.Expr) PseudocolorBuilder {
 	return pseudocolorBuilder.withOption("c2", c2)
 }
 
-func (pseudocolorBuilder *implPseudocolorBuilder) C3(c3 string) PseudocolorBuilder {
-	return pseudocolorBuilder.withOption("c3", expr.String(c3))
-}
-
-func (pseudocolorBuilder *implPseudocolorBuilder) C3Expr(c3 expr.Expr) PseudocolorBuilder {
+func (pseudocolorBuilder *implPseudocolorBuilder) C3(c3 expr.Expr) PseudocolorBuilder {
 	return pseudocolorBuilder.withOption("c3", c3)
 }
 
@@ -148,4 +126,8 @@ func (pseudocolorBuilder *implPseudocolorBuilder) Opacity(opacity float32) Pseud
 
 func (pseudocolorBuilder *implPseudocolorBuilder) OpacityExpr(opacity expr.Expr) PseudocolorBuilder {
 	return pseudocolorBuilder.withOption("opacity", opacity)
+}
+
+func (pseudocolorBuilder *implPseudocolorBuilder) Enable(enable expr.Expr) PseudocolorBuilder {
+	return pseudocolorBuilder.withOption("enable", enable)
 }

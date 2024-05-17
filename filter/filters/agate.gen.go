@@ -59,6 +59,8 @@ type AgateBuilder interface {
 	LevelSc(levelSc float64) AgateBuilder
 	// LevelScExpr set sidechain gain (from 0.015625 to 64) (default 1).
 	LevelScExpr(levelSc expr.Expr) AgateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AgateBuilder
 }
 
 // Agate creates a new AgateBuilder to configure the "agate" filter.
@@ -184,4 +186,8 @@ func (agateBuilder *implAgateBuilder) LevelSc(levelSc float64) AgateBuilder {
 
 func (agateBuilder *implAgateBuilder) LevelScExpr(levelSc expr.Expr) AgateBuilder {
 	return agateBuilder.withOption("level_sc", levelSc)
+}
+
+func (agateBuilder *implAgateBuilder) Enable(enable expr.Expr) AgateBuilder {
+	return agateBuilder.withOption("enable", enable)
 }

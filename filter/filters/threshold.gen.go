@@ -15,6 +15,8 @@ type ThresholdBuilder interface {
 	Planes(planes int) ThresholdBuilder
 	// PlanesExpr set planes to filter (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) ThresholdBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ThresholdBuilder
 }
 
 // Threshold creates a new ThresholdBuilder to configure the "threshold" filter.
@@ -52,4 +54,8 @@ func (thresholdBuilder *implThresholdBuilder) Planes(planes int) ThresholdBuilde
 
 func (thresholdBuilder *implThresholdBuilder) PlanesExpr(planes expr.Expr) ThresholdBuilder {
 	return thresholdBuilder.withOption("planes", planes)
+}
+
+func (thresholdBuilder *implThresholdBuilder) Enable(enable expr.Expr) ThresholdBuilder {
+	return thresholdBuilder.withOption("enable", enable)
 }

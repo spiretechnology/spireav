@@ -39,6 +39,8 @@ type ColorspaceBuilder interface {
 	Iprimaries(iprimaries int) ColorspaceBuilder
 	// Itrc Input transfer characteristics (from 0 to 18) (default 2).
 	Itrc(itrc int) ColorspaceBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorspaceBuilder
 }
 
 // Colorspace creates a new ColorspaceBuilder to configure the "colorspace" filter.
@@ -124,4 +126,8 @@ func (colorspaceBuilder *implColorspaceBuilder) Iprimaries(iprimaries int) Color
 
 func (colorspaceBuilder *implColorspaceBuilder) Itrc(itrc int) ColorspaceBuilder {
 	return colorspaceBuilder.withOption("itrc", expr.Int(itrc))
+}
+
+func (colorspaceBuilder *implColorspaceBuilder) Enable(enable expr.Expr) ColorspaceBuilder {
+	return colorspaceBuilder.withOption("enable", enable)
 }

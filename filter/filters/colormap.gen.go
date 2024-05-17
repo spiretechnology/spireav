@@ -27,6 +27,8 @@ type ColormapBuilder interface {
 	Kernel(kernel int) ColormapBuilder
 	// KernelExpr set the kernel used for measuring color difference (from 0 to 1) (default euclidean).
 	KernelExpr(kernel expr.Expr) ColormapBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColormapBuilder
 }
 
 // Colormap creates a new ColormapBuilder to configure the "colormap" filter.
@@ -88,4 +90,8 @@ func (colormapBuilder *implColormapBuilder) Kernel(kernel int) ColormapBuilder {
 
 func (colormapBuilder *implColormapBuilder) KernelExpr(kernel expr.Expr) ColormapBuilder {
 	return colormapBuilder.withOption("kernel", kernel)
+}
+
+func (colormapBuilder *implColormapBuilder) Enable(enable expr.Expr) ColormapBuilder {
+	return colormapBuilder.withOption("enable", enable)
 }

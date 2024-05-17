@@ -23,6 +23,8 @@ type LimiterBuilder interface {
 	Planes(planes int) LimiterBuilder
 	// PlanesExpr set planes (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) LimiterBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LimiterBuilder
 }
 
 // Limiter creates a new LimiterBuilder to configure the "limiter" filter.
@@ -76,4 +78,8 @@ func (limiterBuilder *implLimiterBuilder) Planes(planes int) LimiterBuilder {
 
 func (limiterBuilder *implLimiterBuilder) PlanesExpr(planes expr.Expr) LimiterBuilder {
 	return limiterBuilder.withOption("planes", planes)
+}
+
+func (limiterBuilder *implLimiterBuilder) Enable(enable expr.Expr) LimiterBuilder {
+	return limiterBuilder.withOption("enable", enable)
 }

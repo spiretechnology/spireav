@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#frei0r
 type Frei0rBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Frei0rBuilder
 }
 
 // Frei0r creates a new Frei0rBuilder to configure the "frei0r" filter.
@@ -40,4 +42,8 @@ func (frei0rBuilder *implFrei0rBuilder) withOption(key string, value expr.Expr) 
 	bCopy := *frei0rBuilder
 	bCopy.f = frei0rBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (frei0rBuilder *implFrei0rBuilder) Enable(enable expr.Expr) Frei0rBuilder {
+	return frei0rBuilder.withOption("enable", enable)
 }

@@ -27,6 +27,8 @@ type ColorizeBuilder interface {
 	Mix(mix float32) ColorizeBuilder
 	// MixExpr set the mix of source lightness (from 0 to 1) (default 1).
 	MixExpr(mix expr.Expr) ColorizeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorizeBuilder
 }
 
 // Colorize creates a new ColorizeBuilder to configure the "colorize" filter.
@@ -88,4 +90,8 @@ func (colorizeBuilder *implColorizeBuilder) Mix(mix float32) ColorizeBuilder {
 
 func (colorizeBuilder *implColorizeBuilder) MixExpr(mix expr.Expr) ColorizeBuilder {
 	return colorizeBuilder.withOption("mix", mix)
+}
+
+func (colorizeBuilder *implColorizeBuilder) Enable(enable expr.Expr) ColorizeBuilder {
+	return colorizeBuilder.withOption("enable", enable)
 }

@@ -47,6 +47,8 @@ type SilenceremoveBuilder interface {
 	Window(window time.Duration) SilenceremoveBuilder
 	// Timestamp set how every output frame timestamp is processed (from 0 to 1) (default write).
 	Timestamp(timestamp int) SilenceremoveBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SilenceremoveBuilder
 }
 
 // Silenceremove creates a new SilenceremoveBuilder to configure the "silenceremove" filter.
@@ -144,4 +146,8 @@ func (silenceremoveBuilder *implSilenceremoveBuilder) Window(window time.Duratio
 
 func (silenceremoveBuilder *implSilenceremoveBuilder) Timestamp(timestamp int) SilenceremoveBuilder {
 	return silenceremoveBuilder.withOption("timestamp", expr.Int(timestamp))
+}
+
+func (silenceremoveBuilder *implSilenceremoveBuilder) Enable(enable expr.Expr) SilenceremoveBuilder {
+	return silenceremoveBuilder.withOption("enable", enable)
 }

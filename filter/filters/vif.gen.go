@@ -19,6 +19,8 @@ type VifBuilder interface {
 	Repeatlast(repeatlast bool) VifBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) VifBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VifBuilder
 }
 
 // Vif creates a new VifBuilder to configure the "vif" filter.
@@ -64,4 +66,8 @@ func (vifBuilder *implVifBuilder) Repeatlast(repeatlast bool) VifBuilder {
 
 func (vifBuilder *implVifBuilder) TsSyncMode(tsSyncMode int) VifBuilder {
 	return vifBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (vifBuilder *implVifBuilder) Enable(enable expr.Expr) VifBuilder {
+	return vifBuilder.withOption("enable", enable)
 }

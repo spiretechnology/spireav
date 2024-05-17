@@ -47,6 +47,8 @@ type AsubboostBuilder interface {
 	Channels(channels string) AsubboostBuilder
 	// ChannelsExpr set channels to filter (default "all").
 	ChannelsExpr(channels expr.Expr) AsubboostBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AsubboostBuilder
 }
 
 // Asubboost creates a new AsubboostBuilder to configure the "asubboost" filter.
@@ -148,4 +150,8 @@ func (asubboostBuilder *implAsubboostBuilder) Channels(channels string) Asubboos
 
 func (asubboostBuilder *implAsubboostBuilder) ChannelsExpr(channels expr.Expr) AsubboostBuilder {
 	return asubboostBuilder.withOption("channels", channels)
+}
+
+func (asubboostBuilder *implAsubboostBuilder) Enable(enable expr.Expr) AsubboostBuilder {
+	return asubboostBuilder.withOption("enable", enable)
 }

@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#asdr
 type AsdrBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AsdrBuilder
 }
 
 // Asdr creates a new AsdrBuilder to configure the "asdr" filter.
@@ -40,4 +42,8 @@ func (asdrBuilder *implAsdrBuilder) withOption(key string, value expr.Expr) Asdr
 	bCopy := *asdrBuilder
 	bCopy.f = asdrBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (asdrBuilder *implAsdrBuilder) Enable(enable expr.Expr) AsdrBuilder {
+	return asdrBuilder.withOption("enable", enable)
 }

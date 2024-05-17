@@ -27,6 +27,8 @@ type GblurBuilder interface {
 	SigmaV(sigmaV float32) GblurBuilder
 	// SigmaVExpr set vertical sigma (from -1 to 1024) (default -1).
 	SigmaVExpr(sigmaV expr.Expr) GblurBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) GblurBuilder
 }
 
 // Gblur creates a new GblurBuilder to configure the "gblur" filter.
@@ -88,4 +90,8 @@ func (gblurBuilder *implGblurBuilder) SigmaV(sigmaV float32) GblurBuilder {
 
 func (gblurBuilder *implGblurBuilder) SigmaVExpr(sigmaV expr.Expr) GblurBuilder {
 	return gblurBuilder.withOption("sigmaV", sigmaV)
+}
+
+func (gblurBuilder *implGblurBuilder) Enable(enable expr.Expr) GblurBuilder {
+	return gblurBuilder.withOption("enable", enable)
 }

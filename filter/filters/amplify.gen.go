@@ -34,9 +34,11 @@ type AmplifyBuilder interface {
 	// HighExpr set high limit for amplification (from 0 to 65535) (default 65535).
 	HighExpr(high expr.Expr) AmplifyBuilder
 	// Planes set what planes to filter (default 7).
-	Planes(planes string) AmplifyBuilder
+	Planes(planes ...string) AmplifyBuilder
 	// PlanesExpr set what planes to filter (default 7).
 	PlanesExpr(planes expr.Expr) AmplifyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AmplifyBuilder
 }
 
 // Amplify creates a new AmplifyBuilder to configure the "amplify" filter.
@@ -112,10 +114,14 @@ func (amplifyBuilder *implAmplifyBuilder) HighExpr(high expr.Expr) AmplifyBuilde
 	return amplifyBuilder.withOption("high", high)
 }
 
-func (amplifyBuilder *implAmplifyBuilder) Planes(planes string) AmplifyBuilder {
-	return amplifyBuilder.withOption("planes", expr.String(planes))
+func (amplifyBuilder *implAmplifyBuilder) Planes(planes ...string) AmplifyBuilder {
+	return amplifyBuilder.withOption("planes", expr.Flags(planes))
 }
 
 func (amplifyBuilder *implAmplifyBuilder) PlanesExpr(planes expr.Expr) AmplifyBuilder {
 	return amplifyBuilder.withOption("planes", planes)
+}
+
+func (amplifyBuilder *implAmplifyBuilder) Enable(enable expr.Expr) AmplifyBuilder {
+	return amplifyBuilder.withOption("enable", enable)
 }

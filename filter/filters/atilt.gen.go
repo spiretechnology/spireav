@@ -31,6 +31,8 @@ type AtiltBuilder interface {
 	Level(level float64) AtiltBuilder
 	// LevelExpr set input level (from 0 to 4) (default 1).
 	LevelExpr(level expr.Expr) AtiltBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AtiltBuilder
 }
 
 // Atilt creates a new AtiltBuilder to configure the "atilt" filter.
@@ -100,4 +102,8 @@ func (atiltBuilder *implAtiltBuilder) Level(level float64) AtiltBuilder {
 
 func (atiltBuilder *implAtiltBuilder) LevelExpr(level expr.Expr) AtiltBuilder {
 	return atiltBuilder.withOption("level", level)
+}
+
+func (atiltBuilder *implAtiltBuilder) Enable(enable expr.Expr) AtiltBuilder {
+	return atiltBuilder.withOption("enable", enable)
 }

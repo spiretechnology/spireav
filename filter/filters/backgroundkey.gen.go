@@ -23,6 +23,8 @@ type BackgroundkeyBuilder interface {
 	Blend(blend float32) BackgroundkeyBuilder
 	// BlendExpr set the blend value (from 0 to 1) (default 0).
 	BlendExpr(blend expr.Expr) BackgroundkeyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BackgroundkeyBuilder
 }
 
 // Backgroundkey creates a new BackgroundkeyBuilder to configure the "backgroundkey" filter.
@@ -76,4 +78,8 @@ func (backgroundkeyBuilder *implBackgroundkeyBuilder) Blend(blend float32) Backg
 
 func (backgroundkeyBuilder *implBackgroundkeyBuilder) BlendExpr(blend expr.Expr) BackgroundkeyBuilder {
 	return backgroundkeyBuilder.withOption("blend", blend)
+}
+
+func (backgroundkeyBuilder *implBackgroundkeyBuilder) Enable(enable expr.Expr) BackgroundkeyBuilder {
+	return backgroundkeyBuilder.withOption("enable", enable)
 }

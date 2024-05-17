@@ -16,9 +16,11 @@ type CasBuilder interface {
 	// StrengthExpr set the sharpening strength (from 0 to 1) (default 0).
 	StrengthExpr(strength expr.Expr) CasBuilder
 	// Planes set what planes to filter (default 7).
-	Planes(planes string) CasBuilder
+	Planes(planes ...string) CasBuilder
 	// PlanesExpr set what planes to filter (default 7).
 	PlanesExpr(planes expr.Expr) CasBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CasBuilder
 }
 
 // Cas creates a new CasBuilder to configure the "cas" filter.
@@ -58,10 +60,14 @@ func (casBuilder *implCasBuilder) StrengthExpr(strength expr.Expr) CasBuilder {
 	return casBuilder.withOption("strength", strength)
 }
 
-func (casBuilder *implCasBuilder) Planes(planes string) CasBuilder {
-	return casBuilder.withOption("planes", expr.String(planes))
+func (casBuilder *implCasBuilder) Planes(planes ...string) CasBuilder {
+	return casBuilder.withOption("planes", expr.Flags(planes))
 }
 
 func (casBuilder *implCasBuilder) PlanesExpr(planes expr.Expr) CasBuilder {
 	return casBuilder.withOption("planes", planes)
+}
+
+func (casBuilder *implCasBuilder) Enable(enable expr.Expr) CasBuilder {
+	return casBuilder.withOption("enable", enable)
 }

@@ -27,6 +27,8 @@ type MonochromeBuilder interface {
 	High(high float32) MonochromeBuilder
 	// HighExpr set the highlights strength (from 0 to 1) (default 0).
 	HighExpr(high expr.Expr) MonochromeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MonochromeBuilder
 }
 
 // Monochrome creates a new MonochromeBuilder to configure the "monochrome" filter.
@@ -88,4 +90,8 @@ func (monochromeBuilder *implMonochromeBuilder) High(high float32) MonochromeBui
 
 func (monochromeBuilder *implMonochromeBuilder) HighExpr(high expr.Expr) MonochromeBuilder {
 	return monochromeBuilder.withOption("high", high)
+}
+
+func (monochromeBuilder *implMonochromeBuilder) Enable(enable expr.Expr) MonochromeBuilder {
+	return monochromeBuilder.withOption("enable", enable)
 }

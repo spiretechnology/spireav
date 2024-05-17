@@ -75,6 +75,8 @@ type AllpassBuilder interface {
 	Precision(precision int) AllpassBuilder
 	// R set filtering precision (from -1 to 3) (default auto).
 	R(r int) AllpassBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AllpassBuilder
 }
 
 // Allpass creates a new AllpassBuilder to configure the "allpass" filter.
@@ -232,4 +234,8 @@ func (allpassBuilder *implAllpassBuilder) Precision(precision int) AllpassBuilde
 
 func (allpassBuilder *implAllpassBuilder) R(r int) AllpassBuilder {
 	return allpassBuilder.withOption("r", expr.Int(r))
+}
+
+func (allpassBuilder *implAllpassBuilder) Enable(enable expr.Expr) AllpassBuilder {
+	return allpassBuilder.withOption("enable", enable)
 }

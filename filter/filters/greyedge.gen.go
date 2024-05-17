@@ -17,6 +17,8 @@ type GreyedgeBuilder interface {
 	Minknorm(minknorm int) GreyedgeBuilder
 	// Sigma set sigma (from 0 to 1024) (default 1).
 	Sigma(sigma float64) GreyedgeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) GreyedgeBuilder
 }
 
 // Greyedge creates a new GreyedgeBuilder to configure the "greyedge" filter.
@@ -58,4 +60,8 @@ func (greyedgeBuilder *implGreyedgeBuilder) Minknorm(minknorm int) GreyedgeBuild
 
 func (greyedgeBuilder *implGreyedgeBuilder) Sigma(sigma float64) GreyedgeBuilder {
 	return greyedgeBuilder.withOption("sigma", expr.Double(sigma))
+}
+
+func (greyedgeBuilder *implGreyedgeBuilder) Enable(enable expr.Expr) GreyedgeBuilder {
+	return greyedgeBuilder.withOption("enable", enable)
 }

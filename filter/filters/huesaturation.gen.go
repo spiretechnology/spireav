@@ -24,7 +24,7 @@ type HuesaturationBuilder interface {
 	// IntensityExpr set the intensity shift (from -1 to 1) (default 0).
 	IntensityExpr(intensity expr.Expr) HuesaturationBuilder
 	// Colors set colors range (default r+y+g+c+b+m+a).
-	Colors(colors string) HuesaturationBuilder
+	Colors(colors ...string) HuesaturationBuilder
 	// ColorsExpr set colors range (default r+y+g+c+b+m+a).
 	ColorsExpr(colors expr.Expr) HuesaturationBuilder
 	// Strength set the filtering strength (from 0 to 100) (default 1).
@@ -47,6 +47,8 @@ type HuesaturationBuilder interface {
 	Lightness(lightness bool) HuesaturationBuilder
 	// LightnessExpr set the preserve lightness (default false).
 	LightnessExpr(lightness expr.Expr) HuesaturationBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HuesaturationBuilder
 }
 
 // Huesaturation creates a new HuesaturationBuilder to configure the "huesaturation" filter.
@@ -102,8 +104,8 @@ func (huesaturationBuilder *implHuesaturationBuilder) IntensityExpr(intensity ex
 	return huesaturationBuilder.withOption("intensity", intensity)
 }
 
-func (huesaturationBuilder *implHuesaturationBuilder) Colors(colors string) HuesaturationBuilder {
-	return huesaturationBuilder.withOption("colors", expr.String(colors))
+func (huesaturationBuilder *implHuesaturationBuilder) Colors(colors ...string) HuesaturationBuilder {
+	return huesaturationBuilder.withOption("colors", expr.Flags(colors))
 }
 
 func (huesaturationBuilder *implHuesaturationBuilder) ColorsExpr(colors expr.Expr) HuesaturationBuilder {
@@ -148,4 +150,8 @@ func (huesaturationBuilder *implHuesaturationBuilder) Lightness(lightness bool) 
 
 func (huesaturationBuilder *implHuesaturationBuilder) LightnessExpr(lightness expr.Expr) HuesaturationBuilder {
 	return huesaturationBuilder.withOption("lightness", lightness)
+}
+
+func (huesaturationBuilder *implHuesaturationBuilder) Enable(enable expr.Expr) HuesaturationBuilder {
+	return huesaturationBuilder.withOption("enable", enable)
 }

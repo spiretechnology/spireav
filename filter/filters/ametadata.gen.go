@@ -20,11 +20,13 @@ type AmetadataBuilder interface {
 	// Function function for comparing values (from 0 to 6) (default same_str).
 	Function(function int) AmetadataBuilder
 	// Expr set expression for expr function.
-	Expr(expression string) AmetadataBuilder
+	Expr(expression expr.Expr) AmetadataBuilder
 	// File set file where to print metadata information.
 	File(file string) AmetadataBuilder
 	// Direct reduce buffering when printing to user-set file or pipe (default false).
 	Direct(direct bool) AmetadataBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AmetadataBuilder
 }
 
 // Ametadata creates a new AmetadataBuilder to configure the "ametadata" filter.
@@ -72,8 +74,8 @@ func (ametadataBuilder *implAmetadataBuilder) Function(function int) AmetadataBu
 	return ametadataBuilder.withOption("function", expr.Int(function))
 }
 
-func (ametadataBuilder *implAmetadataBuilder) Expr(expression string) AmetadataBuilder {
-	return ametadataBuilder.withOption("expr", expr.String(expression))
+func (ametadataBuilder *implAmetadataBuilder) Expr(expression expr.Expr) AmetadataBuilder {
+	return ametadataBuilder.withOption("expr", expression)
 }
 
 func (ametadataBuilder *implAmetadataBuilder) File(file string) AmetadataBuilder {
@@ -82,4 +84,8 @@ func (ametadataBuilder *implAmetadataBuilder) File(file string) AmetadataBuilder
 
 func (ametadataBuilder *implAmetadataBuilder) Direct(direct bool) AmetadataBuilder {
 	return ametadataBuilder.withOption("direct", expr.Bool(direct))
+}
+
+func (ametadataBuilder *implAmetadataBuilder) Enable(enable expr.Expr) AmetadataBuilder {
+	return ametadataBuilder.withOption("enable", enable)
 }

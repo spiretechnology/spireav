@@ -15,6 +15,8 @@ type DcshiftBuilder interface {
 	Shift(shift float64) DcshiftBuilder
 	// Limitergain set limiter gain (from 0 to 1) (default 0).
 	Limitergain(limitergain float64) DcshiftBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DcshiftBuilder
 }
 
 // Dcshift creates a new DcshiftBuilder to configure the "dcshift" filter.
@@ -52,4 +54,8 @@ func (dcshiftBuilder *implDcshiftBuilder) Shift(shift float64) DcshiftBuilder {
 
 func (dcshiftBuilder *implDcshiftBuilder) Limitergain(limitergain float64) DcshiftBuilder {
 	return dcshiftBuilder.withOption("limitergain", expr.Double(limitergain))
+}
+
+func (dcshiftBuilder *implDcshiftBuilder) Enable(enable expr.Expr) DcshiftBuilder {
+	return dcshiftBuilder.withOption("enable", enable)
 }

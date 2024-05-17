@@ -12,7 +12,7 @@ import (
 type HwmapBuilder interface {
 	filter.Filter
 	// Mode Frame mapping mode (default read+write).
-	Mode(mode string) HwmapBuilder
+	Mode(mode ...string) HwmapBuilder
 	// DeriveDevice Derive a new device of this type.
 	DeriveDevice(deriveDevice string) HwmapBuilder
 	// Reverse Map in reverse (create and allocate in the sink) (from 0 to 1) (default 0).
@@ -48,8 +48,8 @@ func (hwmapBuilder *implHwmapBuilder) withOption(key string, value expr.Expr) Hw
 	return &bCopy
 }
 
-func (hwmapBuilder *implHwmapBuilder) Mode(mode string) HwmapBuilder {
-	return hwmapBuilder.withOption("mode", expr.String(mode))
+func (hwmapBuilder *implHwmapBuilder) Mode(mode ...string) HwmapBuilder {
+	return hwmapBuilder.withOption("mode", expr.Flags(mode))
 }
 
 func (hwmapBuilder *implHwmapBuilder) DeriveDevice(deriveDevice string) HwmapBuilder {

@@ -47,6 +47,8 @@ type UnsharpBuilder interface {
 	AlphaAmount(alphaAmount float32) UnsharpBuilder
 	// Aa set alpha effect strength (from -2 to 5) (default 0).
 	Aa(aa float32) UnsharpBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) UnsharpBuilder
 }
 
 // Unsharp creates a new UnsharpBuilder to configure the "unsharp" filter.
@@ -148,4 +150,8 @@ func (unsharpBuilder *implUnsharpBuilder) AlphaAmount(alphaAmount float32) Unsha
 
 func (unsharpBuilder *implUnsharpBuilder) Aa(aa float32) UnsharpBuilder {
 	return unsharpBuilder.withOption("aa", expr.Float(aa))
+}
+
+func (unsharpBuilder *implUnsharpBuilder) Enable(enable expr.Expr) UnsharpBuilder {
+	return unsharpBuilder.withOption("enable", enable)
 }

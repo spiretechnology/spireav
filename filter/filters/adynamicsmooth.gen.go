@@ -19,6 +19,8 @@ type AdynamicsmoothBuilder interface {
 	Basefreq(basefreq float64) AdynamicsmoothBuilder
 	// BasefreqExpr set base frequency (from 2 to 1e+06) (default 22050).
 	BasefreqExpr(basefreq expr.Expr) AdynamicsmoothBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdynamicsmoothBuilder
 }
 
 // Adynamicsmooth creates a new AdynamicsmoothBuilder to configure the "adynamicsmooth" filter.
@@ -64,4 +66,8 @@ func (adynamicsmoothBuilder *implAdynamicsmoothBuilder) Basefreq(basefreq float6
 
 func (adynamicsmoothBuilder *implAdynamicsmoothBuilder) BasefreqExpr(basefreq expr.Expr) AdynamicsmoothBuilder {
 	return adynamicsmoothBuilder.withOption("basefreq", basefreq)
+}
+
+func (adynamicsmoothBuilder *implAdynamicsmoothBuilder) Enable(enable expr.Expr) AdynamicsmoothBuilder {
+	return adynamicsmoothBuilder.withOption("enable", enable)
 }

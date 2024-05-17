@@ -17,6 +17,8 @@ type HisteqBuilder interface {
 	Intensity(intensity float32) HisteqBuilder
 	// Antibanding set the antibanding level (from 0 to 2) (default none).
 	Antibanding(antibanding int) HisteqBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HisteqBuilder
 }
 
 // Histeq creates a new HisteqBuilder to configure the "histeq" filter.
@@ -58,4 +60,8 @@ func (histeqBuilder *implHisteqBuilder) Intensity(intensity float32) HisteqBuild
 
 func (histeqBuilder *implHisteqBuilder) Antibanding(antibanding int) HisteqBuilder {
 	return histeqBuilder.withOption("antibanding", expr.Int(antibanding))
+}
+
+func (histeqBuilder *implHisteqBuilder) Enable(enable expr.Expr) HisteqBuilder {
+	return histeqBuilder.withOption("enable", enable)
 }

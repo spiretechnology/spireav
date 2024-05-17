@@ -22,7 +22,7 @@ type Ebur128Builder interface {
 	// Metadata inject metadata in the filtergraph (default false).
 	Metadata(metadata bool) Ebur128Builder
 	// Peak set peak mode (default 0).
-	Peak(peak string) Ebur128Builder
+	Peak(peak ...string) Ebur128Builder
 	// Dualmono treat mono input files as dual-mono (default false).
 	Dualmono(dualmono bool) Ebur128Builder
 	// Panlaw set a specific pan law for dual-mono files (from -10 to 0) (default -3.0103).
@@ -96,8 +96,8 @@ func (ebur128Builder *implEbur128Builder) Metadata(metadata bool) Ebur128Builder
 	return ebur128Builder.withOption("metadata", expr.Bool(metadata))
 }
 
-func (ebur128Builder *implEbur128Builder) Peak(peak string) Ebur128Builder {
-	return ebur128Builder.withOption("peak", expr.String(peak))
+func (ebur128Builder *implEbur128Builder) Peak(peak ...string) Ebur128Builder {
+	return ebur128Builder.withOption("peak", expr.Flags(peak))
 }
 
 func (ebur128Builder *implEbur128Builder) Dualmono(dualmono bool) Ebur128Builder {

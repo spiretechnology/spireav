@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// optionMappings creates better Go method names for some filter options that are ambiguous.
 var optionMappings = map[string]map[string]string{
 	"hue": {
 		"h": "hue_degrees",
@@ -18,19 +19,12 @@ var optionMappings = map[string]map[string]string{
 		"s": "saturation",
 		"b": "brightness",
 	},
-	"drawtext": {
-		"fontcolor_expr": "",
-	},
-}
-
-var excludedFilters = map[string]struct{}{
-	"abuffersink": {},
-	"buffersink":  {},
 }
 
 func generateFilters(filters []Filter) error {
 	for _, filter := range filters {
-		if _, ok := excludedFilters[filter.Name]; ok {
+		// Exclude sink filters (abuffersink, buffersink)
+		if filter.NumOutputs != nil && *filter.NumOutputs == 0 {
 			continue
 		}
 		if err := generateFilter(filter); err != nil {
@@ -84,7 +78,7 @@ func writeFilterFile(file io.Writer, filter Filter) error {
 	stdlibImports := []string{}
 
 	// Compile a slice of all the option methods
-	var methods []optionMethod
+	var allMethods []optionMethod
 	for _, option := range filter.Options {
 		if option.Name == "outputs" {
 			continue
@@ -94,7 +88,27 @@ func writeFilterFile(file io.Writer, filter Filter) error {
 				continue
 			}
 		}
-		methods = append(methods, optionToMethods(filter, option)...)
+		allMethods = append(allMethods, optionToMethods(filter, option)...)
+	}
+
+	// Deduplicate the methods
+	var methods []optionMethod
+	methodsAdded := make(map[string]struct{})
+	for i, method := range allMethods {
+		if _, ok := methodsAdded[method.funcName]; ok {
+			continue
+		}
+		var hasHigherPriority bool
+		for j, other := range allMethods {
+			if i != j && other.funcName == method.funcName && other.priority > method.priority {
+				hasHigherPriority = true
+				break
+			}
+		}
+		if !hasHigherPriority {
+			methods = append(methods, method)
+			methodsAdded[method.funcName] = struct{}{}
+		}
 	}
 
 	// Combine the imports from all the methods
@@ -226,38 +240,84 @@ func ucfirst(str string) string {
 }
 
 type optionMethod struct {
-	option  FilterOption
-	comment string
-	header  string
-	toExpr  string
-	imports []string
+	funcName string
+	option   FilterOption
+	comment  string
+	header   string
+	toExpr   string
+	imports  []string
+	priority int
 }
 
 func optionToMethods(filter Filter, option FilterOption) []optionMethod {
 	var methods []optionMethod
 
-	// Add the base method
-	baseMethod, err := optionToMethod(filter, option)
-	if err != nil {
-		log.Printf("Filter (%s): %s", filter.Name, err)
-	} else {
-		methods = append(methods, baseMethod)
-	}
+	// The ffmpeg CLI doesn't tell us for sure if an option supports expression evaluation or not.
+	// We have to guess based on the option type and description.
+	// So we have three cases:
+	// 1. The option is definitely an expression.
+	// 2. The option might be an expression.
+	// 3. The option is definitely not an expression.
 
-	// If it supports expressions, add an expression-specific method
-	if option.FlagRuntimeParam {
-		exprMethod, err := optionExpressionToMethod(filter, option)
+	if option.Expression {
+		// If there is an inferred type
+		if option.InferredExpressionType != "" {
+			copiedOption := option
+			copiedOption.Type = option.InferredExpressionType
+			inferredExprMethod, err := optionToMethod(filter, copiedOption, "")
+			if err != nil {
+				log.Printf("Filter (%s): %s", filter.Name, err)
+			} else {
+				inferredExprMethod.priority = 0
+				methods = append(methods, inferredExprMethod)
+			}
+		}
+		// If it's definitely an expression, add one method:
+		// - "x" => X(expr.Expr)
+		suffix := ""
+		if option.InferredExpressionType != "" {
+			suffix = "Expr"
+		}
+		exprMethod, err := optionExpressionToMethod(filter, option, suffix)
 		if err != nil {
 			log.Printf("Filter (%s): %s", filter.Name, err)
 		} else {
+			exprMethod.priority = 1
 			methods = append(methods, exprMethod)
+		}
+	} else if option.FlagRuntimeParam {
+		// If it's maybe an expression, add both. For example:
+		// - Fontcolor(str string)
+		// - FontcolorExpr(expr.Expr)
+		baseMethod, err := optionToMethod(filter, option, "")
+		if err != nil {
+			log.Printf("Filter (%s): %s", filter.Name, err)
+		} else {
+			baseMethod.priority = 0
+			methods = append(methods, baseMethod)
+		}
+		exprMethod, err := optionExpressionToMethod(filter, option, "Expr")
+		if err != nil {
+			log.Printf("Filter (%s): %s", filter.Name, err)
+		} else {
+			exprMethod.priority = 0
+			methods = append(methods, exprMethod)
+		}
+	} else {
+		// If it's definitely not an expression
+		baseMethod, err := optionToMethod(filter, option, "")
+		if err != nil {
+			log.Printf("Filter (%s): %s", filter.Name, err)
+		} else {
+			baseMethod.priority = 1
+			methods = append(methods, baseMethod)
 		}
 	}
 	return methods
 }
 
-func optionToMethod(filter Filter, option FilterOption) (optionMethod, error) {
-	funcName := cleanFuncName(filter.Name, option.Name)
+func optionToMethod(filter Filter, option FilterOption, suffix string) (optionMethod, error) {
+	funcName := cleanFuncName(filter.Name, option.Name) + suffix
 	argName := cleanArgName(snakeToCamel(option.Name))
 
 	goType, imports, err := option.Type.GoType()
@@ -270,6 +330,7 @@ func optionToMethod(filter Filter, option FilterOption) (optionMethod, error) {
 	}
 
 	var method optionMethod
+	method.funcName = funcName
 	method.option = option
 	method.comment = fmt.Sprintf("%s %s.", funcName, option.Description)
 	method.header = fmt.Sprintf("%s(%s %s)", funcName, argName, goType)
@@ -278,14 +339,15 @@ func optionToMethod(filter Filter, option FilterOption) (optionMethod, error) {
 	return method, nil
 }
 
-func optionExpressionToMethod(filter Filter, option FilterOption) (optionMethod, error) {
-	funcName := cleanFuncName(filter.Name, option.Name) + "Expr"
+func optionExpressionToMethod(filter Filter, option FilterOption, suffix string) (optionMethod, error) {
+	funcName := cleanFuncName(filter.Name, option.Name) + suffix
 	argName := cleanArgName(snakeToCamel(option.Name))
 
 	goType := "expr.Expr"
 	toExpr := argName
 
 	var method optionMethod
+	method.funcName = funcName
 	method.option = option
 	method.comment = fmt.Sprintf("%s %s.", funcName, strings.TrimSuffix(option.Description, "."))
 	method.header = fmt.Sprintf("%s(%s %s)", funcName, argName, goType)
@@ -310,7 +372,7 @@ func (t OptionType) GoType() (string, []string, error) {
 		return "time.Duration", []string{"time"}, nil
 	case "boolean":
 		return "bool", nil, nil
-	case "string", "flags":
+	case "string":
 		return "string", nil, nil
 	case "image_size":
 		return "expr.Size", nil, nil
@@ -326,6 +388,8 @@ func (t OptionType) GoType() (string, []string, error) {
 		return "expr.ChannelLayout", nil, nil
 	case "dictionary":
 		return "expr.Dictionary", nil, nil
+	case "flags":
+		return "...string", nil, nil
 	default:
 		return "", nil, fmt.Errorf("unsupported option type: %s", t)
 	}
@@ -345,7 +409,7 @@ func (t OptionType) ToExpr(name string) (string, error) {
 		return fmt.Sprintf("expr.Duration(%s)", name), nil
 	case "boolean":
 		return fmt.Sprintf("expr.Bool(%s)", name), nil
-	case "string", "flags":
+	case "string":
 		return fmt.Sprintf("expr.String(%s)", name), nil
 	case "image_size":
 		return name, nil
@@ -361,6 +425,8 @@ func (t OptionType) ToExpr(name string) (string, error) {
 		return name, nil
 	case "dictionary":
 		return name, nil
+	case "flags":
+		return fmt.Sprintf("expr.Flags(%s)", name), nil
 	default:
 		return "", fmt.Errorf("unsupported option type: %s", t)
 	}

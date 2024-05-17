@@ -39,6 +39,8 @@ type ApsyclipBuilder interface {
 	Level(level bool) ApsyclipBuilder
 	// LevelExpr set auto level (default false).
 	LevelExpr(level expr.Expr) ApsyclipBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ApsyclipBuilder
 }
 
 // Apsyclip creates a new ApsyclipBuilder to configure the "apsyclip" filter.
@@ -124,4 +126,8 @@ func (apsyclipBuilder *implApsyclipBuilder) Level(level bool) ApsyclipBuilder {
 
 func (apsyclipBuilder *implApsyclipBuilder) LevelExpr(level expr.Expr) ApsyclipBuilder {
 	return apsyclipBuilder.withOption("level", level)
+}
+
+func (apsyclipBuilder *implApsyclipBuilder) Enable(enable expr.Expr) ApsyclipBuilder {
+	return apsyclipBuilder.withOption("enable", enable)
 }

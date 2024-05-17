@@ -31,6 +31,8 @@ type Readeia608Builder interface {
 	Lp(lp bool) Readeia608Builder
 	// LpExpr lowpass line prior to processing (default true).
 	LpExpr(lp expr.Expr) Readeia608Builder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Readeia608Builder
 }
 
 // Readeia608 creates a new Readeia608Builder to configure the "readeia608" filter.
@@ -100,4 +102,8 @@ func (readeia608Builder *implReadeia608Builder) Lp(lp bool) Readeia608Builder {
 
 func (readeia608Builder *implReadeia608Builder) LpExpr(lp expr.Expr) Readeia608Builder {
 	return readeia608Builder.withOption("lp", lp)
+}
+
+func (readeia608Builder *implReadeia608Builder) Enable(enable expr.Expr) Readeia608Builder {
+	return readeia608Builder.withOption("enable", enable)
 }

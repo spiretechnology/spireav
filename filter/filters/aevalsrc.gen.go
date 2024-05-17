@@ -14,7 +14,7 @@ import (
 type AevalsrcBuilder interface {
 	filter.Filter
 	// Exprs set the '|'-separated list of channels expressions.
-	Exprs(exprs string) AevalsrcBuilder
+	Exprs(exprs expr.Expr) AevalsrcBuilder
 	// NbSamples set the number of samples per requested frame (from 0 to INT_MAX) (default 1024).
 	NbSamples(nbSamples int) AevalsrcBuilder
 	// N set the number of samples per requested frame (from 0 to INT_MAX) (default 1024).
@@ -62,8 +62,8 @@ func (aevalsrcBuilder *implAevalsrcBuilder) withOption(key string, value expr.Ex
 	return &bCopy
 }
 
-func (aevalsrcBuilder *implAevalsrcBuilder) Exprs(exprs string) AevalsrcBuilder {
-	return aevalsrcBuilder.withOption("exprs", expr.String(exprs))
+func (aevalsrcBuilder *implAevalsrcBuilder) Exprs(exprs expr.Expr) AevalsrcBuilder {
+	return aevalsrcBuilder.withOption("exprs", exprs)
 }
 
 func (aevalsrcBuilder *implAevalsrcBuilder) NbSamples(nbSamples int) AevalsrcBuilder {

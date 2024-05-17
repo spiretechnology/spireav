@@ -12,15 +12,25 @@ import (
 type ZoompanBuilder interface {
 	filter.Filter
 	// Zoom set the zoom expression (default "1").
-	Zoom(zoom string) ZoompanBuilder
+	Zoom(zoom int) ZoompanBuilder
+	// ZoomExpr set the zoom expression (default "1").
+	ZoomExpr(zoom expr.Expr) ZoompanBuilder
 	// Z set the zoom expression (default "1").
-	Z(z string) ZoompanBuilder
+	Z(z int) ZoompanBuilder
+	// ZExpr set the zoom expression (default "1").
+	ZExpr(z expr.Expr) ZoompanBuilder
 	// X set the x expression (default "0").
-	X(x string) ZoompanBuilder
+	X(x int) ZoompanBuilder
+	// XExpr set the x expression (default "0").
+	XExpr(x expr.Expr) ZoompanBuilder
 	// Y set the y expression (default "0").
-	Y(y string) ZoompanBuilder
+	Y(y int) ZoompanBuilder
+	// YExpr set the y expression (default "0").
+	YExpr(y expr.Expr) ZoompanBuilder
 	// D set the duration expression (default "90").
-	D(d string) ZoompanBuilder
+	D(d int) ZoompanBuilder
+	// DExpr set the duration expression (default "90").
+	DExpr(d expr.Expr) ZoompanBuilder
 	// S set the output image size (default "hd720").
 	S(s expr.Size) ZoompanBuilder
 	// Fps set the output framerate (default "25").
@@ -56,24 +66,44 @@ func (zoompanBuilder *implZoompanBuilder) withOption(key string, value expr.Expr
 	return &bCopy
 }
 
-func (zoompanBuilder *implZoompanBuilder) Zoom(zoom string) ZoompanBuilder {
-	return zoompanBuilder.withOption("zoom", expr.String(zoom))
+func (zoompanBuilder *implZoompanBuilder) Zoom(zoom int) ZoompanBuilder {
+	return zoompanBuilder.withOption("zoom", expr.Int(zoom))
 }
 
-func (zoompanBuilder *implZoompanBuilder) Z(z string) ZoompanBuilder {
-	return zoompanBuilder.withOption("z", expr.String(z))
+func (zoompanBuilder *implZoompanBuilder) ZoomExpr(zoom expr.Expr) ZoompanBuilder {
+	return zoompanBuilder.withOption("zoom", zoom)
 }
 
-func (zoompanBuilder *implZoompanBuilder) X(x string) ZoompanBuilder {
-	return zoompanBuilder.withOption("x", expr.String(x))
+func (zoompanBuilder *implZoompanBuilder) Z(z int) ZoompanBuilder {
+	return zoompanBuilder.withOption("z", expr.Int(z))
 }
 
-func (zoompanBuilder *implZoompanBuilder) Y(y string) ZoompanBuilder {
-	return zoompanBuilder.withOption("y", expr.String(y))
+func (zoompanBuilder *implZoompanBuilder) ZExpr(z expr.Expr) ZoompanBuilder {
+	return zoompanBuilder.withOption("z", z)
 }
 
-func (zoompanBuilder *implZoompanBuilder) D(d string) ZoompanBuilder {
-	return zoompanBuilder.withOption("d", expr.String(d))
+func (zoompanBuilder *implZoompanBuilder) X(x int) ZoompanBuilder {
+	return zoompanBuilder.withOption("x", expr.Int(x))
+}
+
+func (zoompanBuilder *implZoompanBuilder) XExpr(x expr.Expr) ZoompanBuilder {
+	return zoompanBuilder.withOption("x", x)
+}
+
+func (zoompanBuilder *implZoompanBuilder) Y(y int) ZoompanBuilder {
+	return zoompanBuilder.withOption("y", expr.Int(y))
+}
+
+func (zoompanBuilder *implZoompanBuilder) YExpr(y expr.Expr) ZoompanBuilder {
+	return zoompanBuilder.withOption("y", y)
+}
+
+func (zoompanBuilder *implZoompanBuilder) D(d int) ZoompanBuilder {
+	return zoompanBuilder.withOption("d", expr.Int(d))
+}
+
+func (zoompanBuilder *implZoompanBuilder) DExpr(d expr.Expr) ZoompanBuilder {
+	return zoompanBuilder.withOption("d", d)
 }
 
 func (zoompanBuilder *implZoompanBuilder) S(s expr.Size) ZoompanBuilder {

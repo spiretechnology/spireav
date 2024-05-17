@@ -15,6 +15,8 @@ type SidedataBuilder interface {
 	Mode(mode int) SidedataBuilder
 	// Type set side data type (from -1 to INT_MAX) (default -1).
 	Type(typ int) SidedataBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SidedataBuilder
 }
 
 // Sidedata creates a new SidedataBuilder to configure the "sidedata" filter.
@@ -52,4 +54,8 @@ func (sidedataBuilder *implSidedataBuilder) Mode(mode int) SidedataBuilder {
 
 func (sidedataBuilder *implSidedataBuilder) Type(typ int) SidedataBuilder {
 	return sidedataBuilder.withOption("type", expr.Int(typ))
+}
+
+func (sidedataBuilder *implSidedataBuilder) Enable(enable expr.Expr) SidedataBuilder {
+	return sidedataBuilder.withOption("enable", enable)
 }

@@ -19,6 +19,8 @@ type AdenormBuilder interface {
 	Type(typ int) AdenormBuilder
 	// TypeExpr set type (from 0 to 3) (default dc).
 	TypeExpr(typ expr.Expr) AdenormBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdenormBuilder
 }
 
 // Adenorm creates a new AdenormBuilder to configure the "adenorm" filter.
@@ -64,4 +66,8 @@ func (adenormBuilder *implAdenormBuilder) Type(typ int) AdenormBuilder {
 
 func (adenormBuilder *implAdenormBuilder) TypeExpr(typ expr.Expr) AdenormBuilder {
 	return adenormBuilder.withOption("type", typ)
+}
+
+func (adenormBuilder *implAdenormBuilder) Enable(enable expr.Expr) AdenormBuilder {
+	return adenormBuilder.withOption("enable", enable)
 }

@@ -17,6 +17,8 @@ type AdelayBuilder interface {
 	DelaysExpr(delays expr.Expr) AdelayBuilder
 	// All use last available delay for remained channels (default false).
 	All(all bool) AdelayBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdelayBuilder
 }
 
 // Adelay creates a new AdelayBuilder to configure the "adelay" filter.
@@ -58,4 +60,8 @@ func (adelayBuilder *implAdelayBuilder) DelaysExpr(delays expr.Expr) AdelayBuild
 
 func (adelayBuilder *implAdelayBuilder) All(all bool) AdelayBuilder {
 	return adelayBuilder.withOption("all", expr.Bool(all))
+}
+
+func (adelayBuilder *implAdelayBuilder) Enable(enable expr.Expr) AdelayBuilder {
+	return adelayBuilder.withOption("enable", enable)
 }

@@ -59,6 +59,8 @@ type DebandBuilder interface {
 	C(c bool) DebandBuilder
 	// CExpr set plane coupling (default false).
 	CExpr(c expr.Expr) DebandBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DebandBuilder
 }
 
 // Deband creates a new DebandBuilder to configure the "deband" filter.
@@ -184,4 +186,8 @@ func (debandBuilder *implDebandBuilder) C(c bool) DebandBuilder {
 
 func (debandBuilder *implDebandBuilder) CExpr(c expr.Expr) DebandBuilder {
 	return debandBuilder.withOption("c", c)
+}
+
+func (debandBuilder *implDebandBuilder) Enable(enable expr.Expr) DebandBuilder {
+	return debandBuilder.withOption("enable", enable)
 }

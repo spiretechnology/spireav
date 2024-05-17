@@ -17,6 +17,8 @@ type YadifVideotoolboxBuilder interface {
 	Parity(parity int) YadifVideotoolboxBuilder
 	// Deint specify which frames to deinterlace (from 0 to 1) (default all).
 	Deint(deint int) YadifVideotoolboxBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) YadifVideotoolboxBuilder
 }
 
 // YadifVideotoolbox creates a new YadifVideotoolboxBuilder to configure the "yadif_videotoolbox" filter.
@@ -58,4 +60,8 @@ func (yadif_videotoolboxBuilder *implYadifVideotoolboxBuilder) Parity(parity int
 
 func (yadif_videotoolboxBuilder *implYadifVideotoolboxBuilder) Deint(deint int) YadifVideotoolboxBuilder {
 	return yadif_videotoolboxBuilder.withOption("deint", expr.Int(deint))
+}
+
+func (yadif_videotoolboxBuilder *implYadifVideotoolboxBuilder) Enable(enable expr.Expr) YadifVideotoolboxBuilder {
+	return yadif_videotoolboxBuilder.withOption("enable", enable)
 }

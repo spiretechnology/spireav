@@ -23,6 +23,8 @@ type XcorrelateBuilder interface {
 	Repeatlast(repeatlast bool) XcorrelateBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) XcorrelateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) XcorrelateBuilder
 }
 
 // Xcorrelate creates a new XcorrelateBuilder to configure the "xcorrelate" filter.
@@ -76,4 +78,8 @@ func (xcorrelateBuilder *implXcorrelateBuilder) Repeatlast(repeatlast bool) Xcor
 
 func (xcorrelateBuilder *implXcorrelateBuilder) TsSyncMode(tsSyncMode int) XcorrelateBuilder {
 	return xcorrelateBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (xcorrelateBuilder *implXcorrelateBuilder) Enable(enable expr.Expr) XcorrelateBuilder {
+	return xcorrelateBuilder.withOption("enable", enable)
 }

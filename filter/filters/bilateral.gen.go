@@ -23,6 +23,8 @@ type BilateralBuilder interface {
 	Planes(planes int) BilateralBuilder
 	// PlanesExpr set planes to filter (from 0 to 15) (default 1).
 	PlanesExpr(planes expr.Expr) BilateralBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BilateralBuilder
 }
 
 // Bilateral creates a new BilateralBuilder to configure the "bilateral" filter.
@@ -76,4 +78,8 @@ func (bilateralBuilder *implBilateralBuilder) Planes(planes int) BilateralBuilde
 
 func (bilateralBuilder *implBilateralBuilder) PlanesExpr(planes expr.Expr) BilateralBuilder {
 	return bilateralBuilder.withOption("planes", planes)
+}
+
+func (bilateralBuilder *implBilateralBuilder) Enable(enable expr.Expr) BilateralBuilder {
+	return bilateralBuilder.withOption("enable", enable)
 }

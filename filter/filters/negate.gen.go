@@ -12,13 +12,15 @@ import (
 type NegateBuilder interface {
 	filter.Filter
 	// Components set components to negate (default y+u+v+r+g+b).
-	Components(components string) NegateBuilder
+	Components(components ...string) NegateBuilder
 	// ComponentsExpr set components to negate (default y+u+v+r+g+b).
 	ComponentsExpr(components expr.Expr) NegateBuilder
 	// NegateAlpha (default false).
 	NegateAlpha(negateAlpha bool) NegateBuilder
 	// NegateAlphaExpr (default false).
 	NegateAlphaExpr(negateAlpha expr.Expr) NegateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) NegateBuilder
 }
 
 // Negate creates a new NegateBuilder to configure the "negate" filter.
@@ -50,8 +52,8 @@ func (negateBuilder *implNegateBuilder) withOption(key string, value expr.Expr) 
 	return &bCopy
 }
 
-func (negateBuilder *implNegateBuilder) Components(components string) NegateBuilder {
-	return negateBuilder.withOption("components", expr.String(components))
+func (negateBuilder *implNegateBuilder) Components(components ...string) NegateBuilder {
+	return negateBuilder.withOption("components", expr.Flags(components))
 }
 
 func (negateBuilder *implNegateBuilder) ComponentsExpr(components expr.Expr) NegateBuilder {
@@ -64,4 +66,8 @@ func (negateBuilder *implNegateBuilder) NegateAlpha(negateAlpha bool) NegateBuil
 
 func (negateBuilder *implNegateBuilder) NegateAlphaExpr(negateAlpha expr.Expr) NegateBuilder {
 	return negateBuilder.withOption("negate_alpha", negateAlpha)
+}
+
+func (negateBuilder *implNegateBuilder) Enable(enable expr.Expr) NegateBuilder {
+	return negateBuilder.withOption("enable", enable)
 }

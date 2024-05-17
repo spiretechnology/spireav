@@ -12,15 +12,17 @@ import (
 type AfftfiltBuilder interface {
 	filter.Filter
 	// Real set channels real expressions (default "re").
-	Real(real string) AfftfiltBuilder
+	Real(real expr.Expr) AfftfiltBuilder
 	// Imag set channels imaginary expressions (default "im").
-	Imag(imag string) AfftfiltBuilder
+	Imag(imag expr.Expr) AfftfiltBuilder
 	// WinSize set window size (from 16 to 131072) (default 4096).
 	WinSize(winSize int) AfftfiltBuilder
 	// WinFunc set window function (from 0 to 20) (default hann).
 	WinFunc(winFunc int) AfftfiltBuilder
 	// Overlap set window overlap (from 0 to 1) (default 0.75).
 	Overlap(overlap float32) AfftfiltBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AfftfiltBuilder
 }
 
 // Afftfilt creates a new AfftfiltBuilder to configure the "afftfilt" filter.
@@ -52,12 +54,12 @@ func (afftfiltBuilder *implAfftfiltBuilder) withOption(key string, value expr.Ex
 	return &bCopy
 }
 
-func (afftfiltBuilder *implAfftfiltBuilder) Real(real string) AfftfiltBuilder {
-	return afftfiltBuilder.withOption("real", expr.String(real))
+func (afftfiltBuilder *implAfftfiltBuilder) Real(real expr.Expr) AfftfiltBuilder {
+	return afftfiltBuilder.withOption("real", real)
 }
 
-func (afftfiltBuilder *implAfftfiltBuilder) Imag(imag string) AfftfiltBuilder {
-	return afftfiltBuilder.withOption("imag", expr.String(imag))
+func (afftfiltBuilder *implAfftfiltBuilder) Imag(imag expr.Expr) AfftfiltBuilder {
+	return afftfiltBuilder.withOption("imag", imag)
 }
 
 func (afftfiltBuilder *implAfftfiltBuilder) WinSize(winSize int) AfftfiltBuilder {
@@ -70,4 +72,8 @@ func (afftfiltBuilder *implAfftfiltBuilder) WinFunc(winFunc int) AfftfiltBuilder
 
 func (afftfiltBuilder *implAfftfiltBuilder) Overlap(overlap float32) AfftfiltBuilder {
 	return afftfiltBuilder.withOption("overlap", expr.Float(overlap))
+}
+
+func (afftfiltBuilder *implAfftfiltBuilder) Enable(enable expr.Expr) AfftfiltBuilder {
+	return afftfiltBuilder.withOption("enable", enable)
 }

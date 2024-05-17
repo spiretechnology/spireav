@@ -17,6 +17,8 @@ type TmidequalizerBuilder interface {
 	Sigma(sigma float32) TmidequalizerBuilder
 	// Planes set planes (from 0 to 15) (default 15).
 	Planes(planes int) TmidequalizerBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) TmidequalizerBuilder
 }
 
 // Tmidequalizer creates a new TmidequalizerBuilder to configure the "tmidequalizer" filter.
@@ -58,4 +60,8 @@ func (tmidequalizerBuilder *implTmidequalizerBuilder) Sigma(sigma float32) Tmide
 
 func (tmidequalizerBuilder *implTmidequalizerBuilder) Planes(planes int) TmidequalizerBuilder {
 	return tmidequalizerBuilder.withOption("planes", expr.Int(planes))
+}
+
+func (tmidequalizerBuilder *implTmidequalizerBuilder) Enable(enable expr.Expr) TmidequalizerBuilder {
+	return tmidequalizerBuilder.withOption("enable", enable)
 }

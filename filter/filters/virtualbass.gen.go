@@ -17,6 +17,8 @@ type VirtualbassBuilder interface {
 	Strength(strength float64) VirtualbassBuilder
 	// StrengthExpr set virtual bass strength (from 0.5 to 3) (default 3).
 	StrengthExpr(strength expr.Expr) VirtualbassBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VirtualbassBuilder
 }
 
 // Virtualbass creates a new VirtualbassBuilder to configure the "virtualbass" filter.
@@ -58,4 +60,8 @@ func (virtualbassBuilder *implVirtualbassBuilder) Strength(strength float64) Vir
 
 func (virtualbassBuilder *implVirtualbassBuilder) StrengthExpr(strength expr.Expr) VirtualbassBuilder {
 	return virtualbassBuilder.withOption("strength", strength)
+}
+
+func (virtualbassBuilder *implVirtualbassBuilder) Enable(enable expr.Expr) VirtualbassBuilder {
+	return virtualbassBuilder.withOption("enable", enable)
 }

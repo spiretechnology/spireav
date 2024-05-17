@@ -19,6 +19,8 @@ type CrystalizerBuilder interface {
 	C(c bool) CrystalizerBuilder
 	// CExpr enable clipping (default true).
 	CExpr(c expr.Expr) CrystalizerBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CrystalizerBuilder
 }
 
 // Crystalizer creates a new CrystalizerBuilder to configure the "crystalizer" filter.
@@ -64,4 +66,8 @@ func (crystalizerBuilder *implCrystalizerBuilder) C(c bool) CrystalizerBuilder {
 
 func (crystalizerBuilder *implCrystalizerBuilder) CExpr(c expr.Expr) CrystalizerBuilder {
 	return crystalizerBuilder.withOption("c", c)
+}
+
+func (crystalizerBuilder *implCrystalizerBuilder) Enable(enable expr.Expr) CrystalizerBuilder {
+	return crystalizerBuilder.withOption("enable", enable)
 }

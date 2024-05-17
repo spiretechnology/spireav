@@ -19,6 +19,8 @@ type ShuffleplanesBuilder interface {
 	Map2(map2 int) ShuffleplanesBuilder
 	// Map3 Index of the input plane to be used as the fourth output plane  (from 0 to 3) (default 3).
 	Map3(map3 int) ShuffleplanesBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ShuffleplanesBuilder
 }
 
 // Shuffleplanes creates a new ShuffleplanesBuilder to configure the "shuffleplanes" filter.
@@ -64,4 +66,8 @@ func (shuffleplanesBuilder *implShuffleplanesBuilder) Map2(map2 int) Shuffleplan
 
 func (shuffleplanesBuilder *implShuffleplanesBuilder) Map3(map3 int) ShuffleplanesBuilder {
 	return shuffleplanesBuilder.withOption("map3", expr.Int(map3))
+}
+
+func (shuffleplanesBuilder *implShuffleplanesBuilder) Enable(enable expr.Expr) ShuffleplanesBuilder {
+	return shuffleplanesBuilder.withOption("enable", enable)
 }

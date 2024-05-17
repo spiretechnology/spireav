@@ -79,6 +79,8 @@ type ColorlevelsBuilder interface {
 	Preserve(preserve int) ColorlevelsBuilder
 	// PreserveExpr set preserve color mode (from 0 to 6) (default none).
 	PreserveExpr(preserve expr.Expr) ColorlevelsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorlevelsBuilder
 }
 
 // Colorlevels creates a new ColorlevelsBuilder to configure the "colorlevels" filter.
@@ -244,4 +246,8 @@ func (colorlevelsBuilder *implColorlevelsBuilder) Preserve(preserve int) Colorle
 
 func (colorlevelsBuilder *implColorlevelsBuilder) PreserveExpr(preserve expr.Expr) ColorlevelsBuilder {
 	return colorlevelsBuilder.withOption("preserve", preserve)
+}
+
+func (colorlevelsBuilder *implColorlevelsBuilder) Enable(enable expr.Expr) ColorlevelsBuilder {
+	return colorlevelsBuilder.withOption("enable", enable)
 }

@@ -23,6 +23,8 @@ type SsimBuilder interface {
 	Repeatlast(repeatlast bool) SsimBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) SsimBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SsimBuilder
 }
 
 // Ssim creates a new SsimBuilder to configure the "ssim" filter.
@@ -76,4 +78,8 @@ func (ssimBuilder *implSsimBuilder) Repeatlast(repeatlast bool) SsimBuilder {
 
 func (ssimBuilder *implSsimBuilder) TsSyncMode(tsSyncMode int) SsimBuilder {
 	return ssimBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (ssimBuilder *implSsimBuilder) Enable(enable expr.Expr) SsimBuilder {
+	return ssimBuilder.withOption("enable", enable)
 }

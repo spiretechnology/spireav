@@ -60,11 +60,11 @@ type WaveformBuilder interface {
 	// OExpr set graticule opacity (from 0 to 1) (default 0.75).
 	OExpr(o expr.Expr) WaveformBuilder
 	// Flags set graticule flags (default numbers).
-	Flags(flags string) WaveformBuilder
+	Flags(flags ...string) WaveformBuilder
 	// FlagsExpr set graticule flags (default numbers).
 	FlagsExpr(flags expr.Expr) WaveformBuilder
 	// Fl set graticule flags (default numbers).
-	Fl(fl string) WaveformBuilder
+	Fl(fl ...string) WaveformBuilder
 	// FlExpr set graticule flags (default numbers).
 	FlExpr(fl expr.Expr) WaveformBuilder
 	// Scale set scale (from 0 to 2) (default digital).
@@ -228,16 +228,16 @@ func (waveformBuilder *implWaveformBuilder) OExpr(o expr.Expr) WaveformBuilder {
 	return waveformBuilder.withOption("o", o)
 }
 
-func (waveformBuilder *implWaveformBuilder) Flags(flags string) WaveformBuilder {
-	return waveformBuilder.withOption("flags", expr.String(flags))
+func (waveformBuilder *implWaveformBuilder) Flags(flags ...string) WaveformBuilder {
+	return waveformBuilder.withOption("flags", expr.Flags(flags))
 }
 
 func (waveformBuilder *implWaveformBuilder) FlagsExpr(flags expr.Expr) WaveformBuilder {
 	return waveformBuilder.withOption("flags", flags)
 }
 
-func (waveformBuilder *implWaveformBuilder) Fl(fl string) WaveformBuilder {
-	return waveformBuilder.withOption("fl", expr.String(fl))
+func (waveformBuilder *implWaveformBuilder) Fl(fl ...string) WaveformBuilder {
+	return waveformBuilder.withOption("fl", expr.Flags(fl))
 }
 
 func (waveformBuilder *implWaveformBuilder) FlExpr(fl expr.Expr) WaveformBuilder {

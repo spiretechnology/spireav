@@ -12,7 +12,7 @@ import (
 type VolumeBuilder interface {
 	filter.Filter
 	// Volume set volume adjustment expression (default "1.0").
-	Volume(volume string) VolumeBuilder
+	Volume(volume float32) VolumeBuilder
 	// VolumeExpr set volume adjustment expression (default "1.0").
 	VolumeExpr(volume expr.Expr) VolumeBuilder
 	// Precision select mathematical precision (from 0 to 2) (default float).
@@ -25,6 +25,8 @@ type VolumeBuilder interface {
 	ReplaygainPreamp(replaygainPreamp float64) VolumeBuilder
 	// ReplaygainNoclip Apply replaygain clipping prevention (default true).
 	ReplaygainNoclip(replaygainNoclip bool) VolumeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VolumeBuilder
 }
 
 // Volume creates a new VolumeBuilder to configure the "volume" filter.
@@ -56,8 +58,8 @@ func (volumeBuilder *implVolumeBuilder) withOption(key string, value expr.Expr) 
 	return &bCopy
 }
 
-func (volumeBuilder *implVolumeBuilder) Volume(volume string) VolumeBuilder {
-	return volumeBuilder.withOption("volume", expr.String(volume))
+func (volumeBuilder *implVolumeBuilder) Volume(volume float32) VolumeBuilder {
+	return volumeBuilder.withOption("volume", expr.Float(volume))
 }
 
 func (volumeBuilder *implVolumeBuilder) VolumeExpr(volume expr.Expr) VolumeBuilder {
@@ -82,4 +84,8 @@ func (volumeBuilder *implVolumeBuilder) ReplaygainPreamp(replaygainPreamp float6
 
 func (volumeBuilder *implVolumeBuilder) ReplaygainNoclip(replaygainNoclip bool) VolumeBuilder {
 	return volumeBuilder.withOption("replaygain_noclip", expr.Bool(replaygainNoclip))
+}
+
+func (volumeBuilder *implVolumeBuilder) Enable(enable expr.Expr) VolumeBuilder {
+	return volumeBuilder.withOption("enable", enable)
 }

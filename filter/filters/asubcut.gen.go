@@ -23,6 +23,8 @@ type AsubcutBuilder interface {
 	Level(level float64) AsubcutBuilder
 	// LevelExpr set input level (from 0 to 1) (default 1).
 	LevelExpr(level expr.Expr) AsubcutBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AsubcutBuilder
 }
 
 // Asubcut creates a new AsubcutBuilder to configure the "asubcut" filter.
@@ -76,4 +78,8 @@ func (asubcutBuilder *implAsubcutBuilder) Level(level float64) AsubcutBuilder {
 
 func (asubcutBuilder *implAsubcutBuilder) LevelExpr(level expr.Expr) AsubcutBuilder {
 	return asubcutBuilder.withOption("level", level)
+}
+
+func (asubcutBuilder *implAsubcutBuilder) Enable(enable expr.Expr) AsubcutBuilder {
+	return asubcutBuilder.withOption("enable", enable)
 }

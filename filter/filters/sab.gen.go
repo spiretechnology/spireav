@@ -35,6 +35,8 @@ type SabBuilder interface {
 	ChromaStrength(chromaStrength float32) SabBuilder
 	// Cs set chroma strength (from -0.9 to 100) (default -0.9).
 	Cs(cs float32) SabBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SabBuilder
 }
 
 // Sab creates a new SabBuilder to configure the "sab" filter.
@@ -112,4 +114,8 @@ func (sabBuilder *implSabBuilder) ChromaStrength(chromaStrength float32) SabBuil
 
 func (sabBuilder *implSabBuilder) Cs(cs float32) SabBuilder {
 	return sabBuilder.withOption("cs", expr.Float(cs))
+}
+
+func (sabBuilder *implSabBuilder) Enable(enable expr.Expr) SabBuilder {
+	return sabBuilder.withOption("enable", enable)
 }

@@ -63,6 +63,8 @@ type OscilloscopeBuilder interface {
 	Sc(sc bool) OscilloscopeBuilder
 	// ScExpr draw scope (default true).
 	ScExpr(sc expr.Expr) OscilloscopeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) OscilloscopeBuilder
 }
 
 // Oscilloscope creates a new OscilloscopeBuilder to configure the "oscilloscope" filter.
@@ -196,4 +198,8 @@ func (oscilloscopeBuilder *implOscilloscopeBuilder) Sc(sc bool) OscilloscopeBuil
 
 func (oscilloscopeBuilder *implOscilloscopeBuilder) ScExpr(sc expr.Expr) OscilloscopeBuilder {
 	return oscilloscopeBuilder.withOption("sc", sc)
+}
+
+func (oscilloscopeBuilder *implOscilloscopeBuilder) Enable(enable expr.Expr) OscilloscopeBuilder {
+	return oscilloscopeBuilder.withOption("enable", enable)
 }

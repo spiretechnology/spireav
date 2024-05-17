@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#hflip
 type HflipBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HflipBuilder
 }
 
 // Hflip creates a new HflipBuilder to configure the "hflip" filter.
@@ -40,4 +42,8 @@ func (hflipBuilder *implHflipBuilder) withOption(key string, value expr.Expr) Hf
 	bCopy := *hflipBuilder
 	bCopy.f = hflipBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (hflipBuilder *implHflipBuilder) Enable(enable expr.Expr) HflipBuilder {
+	return hflipBuilder.withOption("enable", enable)
 }

@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#aderivative
 type AderivativeBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AderivativeBuilder
 }
 
 // Aderivative creates a new AderivativeBuilder to configure the "aderivative" filter.
@@ -40,4 +42,8 @@ func (aderivativeBuilder *implAderivativeBuilder) withOption(key string, value e
 	bCopy := *aderivativeBuilder
 	bCopy.f = aderivativeBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (aderivativeBuilder *implAderivativeBuilder) Enable(enable expr.Expr) AderivativeBuilder {
+	return aderivativeBuilder.withOption("enable", enable)
 }

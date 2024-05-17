@@ -33,6 +33,8 @@ type GuidedBuilder interface {
 	Planes(planes int) GuidedBuilder
 	// PlanesExpr set planes to filter (from 0 to 15) (default 1).
 	PlanesExpr(planes expr.Expr) GuidedBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) GuidedBuilder
 }
 
 // Guided creates a new GuidedBuilder to configure the "guided" filter.
@@ -106,4 +108,8 @@ func (guidedBuilder *implGuidedBuilder) Planes(planes int) GuidedBuilder {
 
 func (guidedBuilder *implGuidedBuilder) PlanesExpr(planes expr.Expr) GuidedBuilder {
 	return guidedBuilder.withOption("planes", planes)
+}
+
+func (guidedBuilder *implGuidedBuilder) Enable(enable expr.Expr) GuidedBuilder {
+	return guidedBuilder.withOption("enable", enable)
 }

@@ -35,6 +35,8 @@ type ColorcorrectBuilder interface {
 	Analyze(analyze int) ColorcorrectBuilder
 	// AnalyzeExpr set the analyze mode (from 0 to 3) (default manual).
 	AnalyzeExpr(analyze expr.Expr) ColorcorrectBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorcorrectBuilder
 }
 
 // Colorcorrect creates a new ColorcorrectBuilder to configure the "colorcorrect" filter.
@@ -112,4 +114,8 @@ func (colorcorrectBuilder *implColorcorrectBuilder) Analyze(analyze int) Colorco
 
 func (colorcorrectBuilder *implColorcorrectBuilder) AnalyzeExpr(analyze expr.Expr) ColorcorrectBuilder {
 	return colorcorrectBuilder.withOption("analyze", analyze)
+}
+
+func (colorcorrectBuilder *implColorcorrectBuilder) Enable(enable expr.Expr) ColorcorrectBuilder {
+	return colorcorrectBuilder.withOption("enable", enable)
 }

@@ -33,6 +33,8 @@ type SelectivecolorBuilder interface {
 	Blacks(blacks string) SelectivecolorBuilder
 	// Psfile set Photoshop selectivecolor file name.
 	Psfile(psfile string) SelectivecolorBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SelectivecolorBuilder
 }
 
 // Selectivecolor creates a new SelectivecolorBuilder to configure the "selectivecolor" filter.
@@ -106,4 +108,8 @@ func (selectivecolorBuilder *implSelectivecolorBuilder) Blacks(blacks string) Se
 
 func (selectivecolorBuilder *implSelectivecolorBuilder) Psfile(psfile string) SelectivecolorBuilder {
 	return selectivecolorBuilder.withOption("psfile", expr.String(psfile))
+}
+
+func (selectivecolorBuilder *implSelectivecolorBuilder) Enable(enable expr.Expr) SelectivecolorBuilder {
+	return selectivecolorBuilder.withOption("enable", enable)
 }

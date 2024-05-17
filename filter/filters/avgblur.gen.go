@@ -23,6 +23,8 @@ type AvgblurBuilder interface {
 	SizeY(sizeY int) AvgblurBuilder
 	// SizeYExpr set vertical size (from 0 to 1024) (default 0).
 	SizeYExpr(sizeY expr.Expr) AvgblurBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AvgblurBuilder
 }
 
 // Avgblur creates a new AvgblurBuilder to configure the "avgblur" filter.
@@ -76,4 +78,8 @@ func (avgblurBuilder *implAvgblurBuilder) SizeY(sizeY int) AvgblurBuilder {
 
 func (avgblurBuilder *implAvgblurBuilder) SizeYExpr(sizeY expr.Expr) AvgblurBuilder {
 	return avgblurBuilder.withOption("sizeY", sizeY)
+}
+
+func (avgblurBuilder *implAvgblurBuilder) Enable(enable expr.Expr) AvgblurBuilder {
+	return avgblurBuilder.withOption("enable", enable)
 }

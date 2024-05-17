@@ -43,6 +43,8 @@ type VibranceBuilder interface {
 	Alternate(alternate bool) VibranceBuilder
 	// AlternateExpr use alternate colors (default false).
 	AlternateExpr(alternate expr.Expr) VibranceBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VibranceBuilder
 }
 
 // Vibrance creates a new VibranceBuilder to configure the "vibrance" filter.
@@ -136,4 +138,8 @@ func (vibranceBuilder *implVibranceBuilder) Alternate(alternate bool) VibranceBu
 
 func (vibranceBuilder *implVibranceBuilder) AlternateExpr(alternate expr.Expr) VibranceBuilder {
 	return vibranceBuilder.withOption("alternate", alternate)
+}
+
+func (vibranceBuilder *implVibranceBuilder) Enable(enable expr.Expr) VibranceBuilder {
+	return vibranceBuilder.withOption("enable", enable)
 }

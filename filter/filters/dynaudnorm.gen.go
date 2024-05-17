@@ -115,6 +115,8 @@ type DynaudnormBuilder interface {
 	V(v string) DynaudnormBuilder
 	// VExpr set the custom peak mapping curve.
 	VExpr(v expr.Expr) DynaudnormBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DynaudnormBuilder
 }
 
 // Dynaudnorm creates a new DynaudnormBuilder to configure the "dynaudnorm" filter.
@@ -352,4 +354,8 @@ func (dynaudnormBuilder *implDynaudnormBuilder) V(v string) DynaudnormBuilder {
 
 func (dynaudnormBuilder *implDynaudnormBuilder) VExpr(v expr.Expr) DynaudnormBuilder {
 	return dynaudnormBuilder.withOption("v", v)
+}
+
+func (dynaudnormBuilder *implDynaudnormBuilder) Enable(enable expr.Expr) DynaudnormBuilder {
+	return dynaudnormBuilder.withOption("enable", enable)
 }

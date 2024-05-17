@@ -12,37 +12,39 @@ import (
 type GeqBuilder interface {
 	filter.Filter
 	// LumExpr set luminance expression.
-	LumExpr(lumExpr string) GeqBuilder
+	LumExpr(lumExpr expr.Expr) GeqBuilder
 	// Lum set luminance expression.
-	Lum(lum string) GeqBuilder
+	Lum(lum expr.Expr) GeqBuilder
 	// CbExpr set chroma blue expression.
-	CbExpr(cbExpr string) GeqBuilder
+	CbExpr(cbExpr expr.Expr) GeqBuilder
 	// Cb set chroma blue expression.
-	Cb(cb string) GeqBuilder
+	Cb(cb expr.Expr) GeqBuilder
 	// CrExpr set chroma red expression.
-	CrExpr(crExpr string) GeqBuilder
+	CrExpr(crExpr expr.Expr) GeqBuilder
 	// Cr set chroma red expression.
-	Cr(cr string) GeqBuilder
+	Cr(cr expr.Expr) GeqBuilder
 	// AlphaExpr set alpha expression.
-	AlphaExpr(alphaExpr string) GeqBuilder
+	AlphaExpr(alphaExpr expr.Expr) GeqBuilder
 	// A set alpha expression.
-	A(a string) GeqBuilder
+	A(a expr.Expr) GeqBuilder
 	// RedExpr set red expression.
-	RedExpr(redExpr string) GeqBuilder
+	RedExpr(redExpr expr.Expr) GeqBuilder
 	// R set red expression.
-	R(r string) GeqBuilder
+	R(r expr.Expr) GeqBuilder
 	// GreenExpr set green expression.
-	GreenExpr(greenExpr string) GeqBuilder
+	GreenExpr(greenExpr expr.Expr) GeqBuilder
 	// G set green expression.
-	G(g string) GeqBuilder
+	G(g expr.Expr) GeqBuilder
 	// BlueExpr set blue expression.
-	BlueExpr(blueExpr string) GeqBuilder
+	BlueExpr(blueExpr expr.Expr) GeqBuilder
 	// B set blue expression.
-	B(b string) GeqBuilder
+	B(b expr.Expr) GeqBuilder
 	// Interpolation set interpolation method (from 0 to 1) (default bilinear).
 	Interpolation(interpolation int) GeqBuilder
 	// I set interpolation method (from 0 to 1) (default bilinear).
 	I(i int) GeqBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) GeqBuilder
 }
 
 // Geq creates a new GeqBuilder to configure the "geq" filter.
@@ -74,60 +76,60 @@ func (geqBuilder *implGeqBuilder) withOption(key string, value expr.Expr) GeqBui
 	return &bCopy
 }
 
-func (geqBuilder *implGeqBuilder) LumExpr(lumExpr string) GeqBuilder {
-	return geqBuilder.withOption("lum_expr", expr.String(lumExpr))
+func (geqBuilder *implGeqBuilder) LumExpr(lumExpr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("lum_expr", lumExpr)
 }
 
-func (geqBuilder *implGeqBuilder) Lum(lum string) GeqBuilder {
-	return geqBuilder.withOption("lum", expr.String(lum))
+func (geqBuilder *implGeqBuilder) Lum(lum expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("lum", lum)
 }
 
-func (geqBuilder *implGeqBuilder) CbExpr(cbExpr string) GeqBuilder {
-	return geqBuilder.withOption("cb_expr", expr.String(cbExpr))
+func (geqBuilder *implGeqBuilder) CbExpr(cbExpr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("cb_expr", cbExpr)
 }
 
-func (geqBuilder *implGeqBuilder) Cb(cb string) GeqBuilder {
-	return geqBuilder.withOption("cb", expr.String(cb))
+func (geqBuilder *implGeqBuilder) Cb(cb expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("cb", cb)
 }
 
-func (geqBuilder *implGeqBuilder) CrExpr(crExpr string) GeqBuilder {
-	return geqBuilder.withOption("cr_expr", expr.String(crExpr))
+func (geqBuilder *implGeqBuilder) CrExpr(crExpr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("cr_expr", crExpr)
 }
 
-func (geqBuilder *implGeqBuilder) Cr(cr string) GeqBuilder {
-	return geqBuilder.withOption("cr", expr.String(cr))
+func (geqBuilder *implGeqBuilder) Cr(cr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("cr", cr)
 }
 
-func (geqBuilder *implGeqBuilder) AlphaExpr(alphaExpr string) GeqBuilder {
-	return geqBuilder.withOption("alpha_expr", expr.String(alphaExpr))
+func (geqBuilder *implGeqBuilder) AlphaExpr(alphaExpr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("alpha_expr", alphaExpr)
 }
 
-func (geqBuilder *implGeqBuilder) A(a string) GeqBuilder {
-	return geqBuilder.withOption("a", expr.String(a))
+func (geqBuilder *implGeqBuilder) A(a expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("a", a)
 }
 
-func (geqBuilder *implGeqBuilder) RedExpr(redExpr string) GeqBuilder {
-	return geqBuilder.withOption("red_expr", expr.String(redExpr))
+func (geqBuilder *implGeqBuilder) RedExpr(redExpr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("red_expr", redExpr)
 }
 
-func (geqBuilder *implGeqBuilder) R(r string) GeqBuilder {
-	return geqBuilder.withOption("r", expr.String(r))
+func (geqBuilder *implGeqBuilder) R(r expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("r", r)
 }
 
-func (geqBuilder *implGeqBuilder) GreenExpr(greenExpr string) GeqBuilder {
-	return geqBuilder.withOption("green_expr", expr.String(greenExpr))
+func (geqBuilder *implGeqBuilder) GreenExpr(greenExpr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("green_expr", greenExpr)
 }
 
-func (geqBuilder *implGeqBuilder) G(g string) GeqBuilder {
-	return geqBuilder.withOption("g", expr.String(g))
+func (geqBuilder *implGeqBuilder) G(g expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("g", g)
 }
 
-func (geqBuilder *implGeqBuilder) BlueExpr(blueExpr string) GeqBuilder {
-	return geqBuilder.withOption("blue_expr", expr.String(blueExpr))
+func (geqBuilder *implGeqBuilder) BlueExpr(blueExpr expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("blue_expr", blueExpr)
 }
 
-func (geqBuilder *implGeqBuilder) B(b string) GeqBuilder {
-	return geqBuilder.withOption("b", expr.String(b))
+func (geqBuilder *implGeqBuilder) B(b expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("b", b)
 }
 
 func (geqBuilder *implGeqBuilder) Interpolation(interpolation int) GeqBuilder {
@@ -136,4 +138,8 @@ func (geqBuilder *implGeqBuilder) Interpolation(interpolation int) GeqBuilder {
 
 func (geqBuilder *implGeqBuilder) I(i int) GeqBuilder {
 	return geqBuilder.withOption("i", expr.Int(i))
+}
+
+func (geqBuilder *implGeqBuilder) Enable(enable expr.Expr) GeqBuilder {
+	return geqBuilder.withOption("enable", enable)
 }

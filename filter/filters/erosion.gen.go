@@ -31,6 +31,8 @@ type ErosionBuilder interface {
 	Threshold3(threshold3 int) ErosionBuilder
 	// Threshold3Expr set threshold for 4th plane (from 0 to 65535) (default 65535).
 	Threshold3Expr(threshold3 expr.Expr) ErosionBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ErosionBuilder
 }
 
 // Erosion creates a new ErosionBuilder to configure the "erosion" filter.
@@ -100,4 +102,8 @@ func (erosionBuilder *implErosionBuilder) Threshold3(threshold3 int) ErosionBuil
 
 func (erosionBuilder *implErosionBuilder) Threshold3Expr(threshold3 expr.Expr) ErosionBuilder {
 	return erosionBuilder.withOption("threshold3", threshold3)
+}
+
+func (erosionBuilder *implErosionBuilder) Enable(enable expr.Expr) ErosionBuilder {
+	return erosionBuilder.withOption("enable", enable)
 }

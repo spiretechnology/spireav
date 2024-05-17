@@ -15,6 +15,8 @@ type Pp7Builder interface {
 	Qp(qp int) Pp7Builder
 	// Mode set thresholding mode (from 0 to 2) (default medium).
 	Mode(mode int) Pp7Builder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Pp7Builder
 }
 
 // Pp7 creates a new Pp7Builder to configure the "pp7" filter.
@@ -52,4 +54,8 @@ func (pp7Builder *implPp7Builder) Qp(qp int) Pp7Builder {
 
 func (pp7Builder *implPp7Builder) Mode(mode int) Pp7Builder {
 	return pp7Builder.withOption("mode", expr.Int(mode))
+}
+
+func (pp7Builder *implPp7Builder) Enable(enable expr.Expr) Pp7Builder {
+	return pp7Builder.withOption("enable", enable)
 }

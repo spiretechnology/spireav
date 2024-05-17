@@ -47,6 +47,8 @@ type EstdifBuilder interface {
 	Interp(interp int) EstdifBuilder
 	// InterpExpr specify the type of interpolation (from 0 to 2) (default 4p).
 	InterpExpr(interp expr.Expr) EstdifBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) EstdifBuilder
 }
 
 // Estdif creates a new EstdifBuilder to configure the "estdif" filter.
@@ -148,4 +150,8 @@ func (estdifBuilder *implEstdifBuilder) Interp(interp int) EstdifBuilder {
 
 func (estdifBuilder *implEstdifBuilder) InterpExpr(interp expr.Expr) EstdifBuilder {
 	return estdifBuilder.withOption("interp", interp)
+}
+
+func (estdifBuilder *implEstdifBuilder) Enable(enable expr.Expr) EstdifBuilder {
+	return estdifBuilder.withOption("enable", enable)
 }

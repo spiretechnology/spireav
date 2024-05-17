@@ -33,6 +33,8 @@ type PerspectiveBuilder interface {
 	Sense(sense int) PerspectiveBuilder
 	// Eval specify when to evaluate expressions (from 0 to 1) (default init).
 	Eval(eval int) PerspectiveBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PerspectiveBuilder
 }
 
 // Perspective creates a new PerspectiveBuilder to configure the "perspective" filter.
@@ -106,4 +108,8 @@ func (perspectiveBuilder *implPerspectiveBuilder) Sense(sense int) PerspectiveBu
 
 func (perspectiveBuilder *implPerspectiveBuilder) Eval(eval int) PerspectiveBuilder {
 	return perspectiveBuilder.withOption("eval", expr.Int(eval))
+}
+
+func (perspectiveBuilder *implPerspectiveBuilder) Enable(enable expr.Expr) PerspectiveBuilder {
+	return perspectiveBuilder.withOption("enable", enable)
 }

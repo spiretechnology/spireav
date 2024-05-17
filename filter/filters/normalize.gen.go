@@ -29,6 +29,8 @@ type NormalizeBuilder interface {
 	Strength(strength float32) NormalizeBuilder
 	// StrengthExpr strength of filter, from no effect to full normalization (from 0 to 1) (default 1).
 	StrengthExpr(strength expr.Expr) NormalizeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) NormalizeBuilder
 }
 
 // Normalize creates a new NormalizeBuilder to configure the "normalize" filter.
@@ -94,4 +96,8 @@ func (normalizeBuilder *implNormalizeBuilder) Strength(strength float32) Normali
 
 func (normalizeBuilder *implNormalizeBuilder) StrengthExpr(strength expr.Expr) NormalizeBuilder {
 	return normalizeBuilder.withOption("strength", strength)
+}
+
+func (normalizeBuilder *implNormalizeBuilder) Enable(enable expr.Expr) NormalizeBuilder {
+	return normalizeBuilder.withOption("enable", enable)
 }

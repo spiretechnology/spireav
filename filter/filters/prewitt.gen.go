@@ -23,6 +23,8 @@ type PrewittBuilder interface {
 	Delta(delta float32) PrewittBuilder
 	// DeltaExpr set delta (from -65535 to 65535) (default 0).
 	DeltaExpr(delta expr.Expr) PrewittBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PrewittBuilder
 }
 
 // Prewitt creates a new PrewittBuilder to configure the "prewitt" filter.
@@ -76,4 +78,8 @@ func (prewittBuilder *implPrewittBuilder) Delta(delta float32) PrewittBuilder {
 
 func (prewittBuilder *implPrewittBuilder) DeltaExpr(delta expr.Expr) PrewittBuilder {
 	return prewittBuilder.withOption("delta", delta)
+}
+
+func (prewittBuilder *implPrewittBuilder) Enable(enable expr.Expr) PrewittBuilder {
+	return prewittBuilder.withOption("enable", enable)
 }

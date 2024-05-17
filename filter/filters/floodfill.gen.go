@@ -31,6 +31,8 @@ type FloodfillBuilder interface {
 	D2(d2 int) FloodfillBuilder
 	// D3 set destination #3 component value (from 0 to 65535) (default 0).
 	D3(d3 int) FloodfillBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FloodfillBuilder
 }
 
 // Floodfill creates a new FloodfillBuilder to configure the "floodfill" filter.
@@ -100,4 +102,8 @@ func (floodfillBuilder *implFloodfillBuilder) D2(d2 int) FloodfillBuilder {
 
 func (floodfillBuilder *implFloodfillBuilder) D3(d3 int) FloodfillBuilder {
 	return floodfillBuilder.withOption("d3", expr.Int(d3))
+}
+
+func (floodfillBuilder *implFloodfillBuilder) Enable(enable expr.Expr) FloodfillBuilder {
+	return floodfillBuilder.withOption("enable", enable)
 }

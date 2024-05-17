@@ -12,9 +12,13 @@ import (
 type AselectBuilder interface {
 	filter.Filter
 	// Expr set an expression to use for selecting frames (default "1").
-	Expr(expression string) AselectBuilder
+	Expr(expression int) AselectBuilder
+	// ExprExpr set an expression to use for selecting frames (default "1").
+	ExprExpr(expression expr.Expr) AselectBuilder
 	// E set an expression to use for selecting frames (default "1").
-	E(e string) AselectBuilder
+	E(e int) AselectBuilder
+	// EExpr set an expression to use for selecting frames (default "1").
+	EExpr(e expr.Expr) AselectBuilder
 	// N set the number of outputs (from 1 to INT_MAX) (default 1).
 	N(n int) AselectBuilder
 }
@@ -48,12 +52,20 @@ func (aselectBuilder *implAselectBuilder) withOption(key string, value expr.Expr
 	return &bCopy
 }
 
-func (aselectBuilder *implAselectBuilder) Expr(expression string) AselectBuilder {
-	return aselectBuilder.withOption("expr", expr.String(expression))
+func (aselectBuilder *implAselectBuilder) Expr(expression int) AselectBuilder {
+	return aselectBuilder.withOption("expr", expr.Int(expression))
 }
 
-func (aselectBuilder *implAselectBuilder) E(e string) AselectBuilder {
-	return aselectBuilder.withOption("e", expr.String(e))
+func (aselectBuilder *implAselectBuilder) ExprExpr(expression expr.Expr) AselectBuilder {
+	return aselectBuilder.withOption("expr", expression)
+}
+
+func (aselectBuilder *implAselectBuilder) E(e int) AselectBuilder {
+	return aselectBuilder.withOption("e", expr.Int(e))
+}
+
+func (aselectBuilder *implAselectBuilder) EExpr(e expr.Expr) AselectBuilder {
+	return aselectBuilder.withOption("e", e)
 }
 
 func (aselectBuilder *implAselectBuilder) N(n int) AselectBuilder {

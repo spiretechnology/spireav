@@ -25,6 +25,8 @@ type DeconvolveBuilder interface {
 	Repeatlast(repeatlast bool) DeconvolveBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) DeconvolveBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DeconvolveBuilder
 }
 
 // Deconvolve creates a new DeconvolveBuilder to configure the "deconvolve" filter.
@@ -82,4 +84,8 @@ func (deconvolveBuilder *implDeconvolveBuilder) Repeatlast(repeatlast bool) Deco
 
 func (deconvolveBuilder *implDeconvolveBuilder) TsSyncMode(tsSyncMode int) DeconvolveBuilder {
 	return deconvolveBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (deconvolveBuilder *implDeconvolveBuilder) Enable(enable expr.Expr) DeconvolveBuilder {
+	return deconvolveBuilder.withOption("enable", enable)
 }

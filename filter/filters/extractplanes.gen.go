@@ -12,7 +12,7 @@ import (
 type ExtractplanesBuilder interface {
 	filter.Filter
 	// Planes set planes (default r).
-	Planes(planes string) ExtractplanesBuilder
+	Planes(planes ...string) ExtractplanesBuilder
 }
 
 // Extractplanes creates a new ExtractplanesBuilder to configure the "extractplanes" filter.
@@ -44,6 +44,6 @@ func (extractplanesBuilder *implExtractplanesBuilder) withOption(key string, val
 	return &bCopy
 }
 
-func (extractplanesBuilder *implExtractplanesBuilder) Planes(planes string) ExtractplanesBuilder {
-	return extractplanesBuilder.withOption("planes", expr.String(planes))
+func (extractplanesBuilder *implExtractplanesBuilder) Planes(planes ...string) ExtractplanesBuilder {
+	return extractplanesBuilder.withOption("planes", expr.Flags(planes))
 }

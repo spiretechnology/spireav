@@ -15,6 +15,8 @@ type RemovelogoBuilder interface {
 	Filename(filename string) RemovelogoBuilder
 	// F set bitmap filename.
 	F(f string) RemovelogoBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) RemovelogoBuilder
 }
 
 // Removelogo creates a new RemovelogoBuilder to configure the "removelogo" filter.
@@ -52,4 +54,8 @@ func (removelogoBuilder *implRemovelogoBuilder) Filename(filename string) Remove
 
 func (removelogoBuilder *implRemovelogoBuilder) F(f string) RemovelogoBuilder {
 	return removelogoBuilder.withOption("f", expr.String(f))
+}
+
+func (removelogoBuilder *implRemovelogoBuilder) Enable(enable expr.Expr) RemovelogoBuilder {
+	return removelogoBuilder.withOption("enable", enable)
 }

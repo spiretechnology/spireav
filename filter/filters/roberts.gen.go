@@ -23,6 +23,8 @@ type RobertsBuilder interface {
 	Delta(delta float32) RobertsBuilder
 	// DeltaExpr set delta (from -65535 to 65535) (default 0).
 	DeltaExpr(delta expr.Expr) RobertsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) RobertsBuilder
 }
 
 // Roberts creates a new RobertsBuilder to configure the "roberts" filter.
@@ -76,4 +78,8 @@ func (robertsBuilder *implRobertsBuilder) Delta(delta float32) RobertsBuilder {
 
 func (robertsBuilder *implRobertsBuilder) DeltaExpr(delta expr.Expr) RobertsBuilder {
 	return robertsBuilder.withOption("delta", delta)
+}
+
+func (robertsBuilder *implRobertsBuilder) Enable(enable expr.Expr) RobertsBuilder {
+	return robertsBuilder.withOption("enable", enable)
 }

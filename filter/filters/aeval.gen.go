@@ -12,11 +12,13 @@ import (
 type AevalBuilder interface {
 	filter.Filter
 	// Exprs set the '|'-separated list of channels expressions.
-	Exprs(exprs string) AevalBuilder
+	Exprs(exprs expr.Expr) AevalBuilder
 	// ChannelLayout set channel layout.
 	ChannelLayout(channelLayout string) AevalBuilder
 	// C set channel layout.
 	C(c string) AevalBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AevalBuilder
 }
 
 // Aeval creates a new AevalBuilder to configure the "aeval" filter.
@@ -48,8 +50,8 @@ func (aevalBuilder *implAevalBuilder) withOption(key string, value expr.Expr) Ae
 	return &bCopy
 }
 
-func (aevalBuilder *implAevalBuilder) Exprs(exprs string) AevalBuilder {
-	return aevalBuilder.withOption("exprs", expr.String(exprs))
+func (aevalBuilder *implAevalBuilder) Exprs(exprs expr.Expr) AevalBuilder {
+	return aevalBuilder.withOption("exprs", exprs)
 }
 
 func (aevalBuilder *implAevalBuilder) ChannelLayout(channelLayout string) AevalBuilder {
@@ -58,4 +60,8 @@ func (aevalBuilder *implAevalBuilder) ChannelLayout(channelLayout string) AevalB
 
 func (aevalBuilder *implAevalBuilder) C(c string) AevalBuilder {
 	return aevalBuilder.withOption("c", expr.String(c))
+}
+
+func (aevalBuilder *implAevalBuilder) Enable(enable expr.Expr) AevalBuilder {
+	return aevalBuilder.withOption("enable", enable)
 }

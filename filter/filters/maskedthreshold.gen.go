@@ -21,6 +21,8 @@ type MaskedthresholdBuilder interface {
 	PlanesExpr(planes expr.Expr) MaskedthresholdBuilder
 	// Mode set mode (from 0 to 1) (default abs).
 	Mode(mode int) MaskedthresholdBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MaskedthresholdBuilder
 }
 
 // Maskedthreshold creates a new MaskedthresholdBuilder to configure the "maskedthreshold" filter.
@@ -70,4 +72,8 @@ func (maskedthresholdBuilder *implMaskedthresholdBuilder) PlanesExpr(planes expr
 
 func (maskedthresholdBuilder *implMaskedthresholdBuilder) Mode(mode int) MaskedthresholdBuilder {
 	return maskedthresholdBuilder.withOption("mode", expr.Int(mode))
+}
+
+func (maskedthresholdBuilder *implMaskedthresholdBuilder) Enable(enable expr.Expr) MaskedthresholdBuilder {
+	return maskedthresholdBuilder.withOption("enable", enable)
 }

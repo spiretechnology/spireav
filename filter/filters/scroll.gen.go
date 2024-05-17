@@ -31,6 +31,8 @@ type ScrollBuilder interface {
 	Hpos(hpos float32) ScrollBuilder
 	// Vpos set initial vertical position (from 0 to 1) (default 0).
 	Vpos(vpos float32) ScrollBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ScrollBuilder
 }
 
 // Scroll creates a new ScrollBuilder to configure the "scroll" filter.
@@ -100,4 +102,8 @@ func (scrollBuilder *implScrollBuilder) Hpos(hpos float32) ScrollBuilder {
 
 func (scrollBuilder *implScrollBuilder) Vpos(vpos float32) ScrollBuilder {
 	return scrollBuilder.withOption("vpos", expr.Float(vpos))
+}
+
+func (scrollBuilder *implScrollBuilder) Enable(enable expr.Expr) ScrollBuilder {
+	return scrollBuilder.withOption("enable", enable)
 }

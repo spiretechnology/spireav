@@ -12,27 +12,27 @@ import (
 type CropBuilder interface {
 	filter.Filter
 	// OutW set the width crop area expression (default "iw").
-	OutW(outW string) CropBuilder
+	OutW(outW int) CropBuilder
 	// OutWExpr set the width crop area expression (default "iw").
 	OutWExpr(outW expr.Expr) CropBuilder
 	// W set the width crop area expression (default "iw").
-	W(w string) CropBuilder
+	W(w int) CropBuilder
 	// WExpr set the width crop area expression (default "iw").
 	WExpr(w expr.Expr) CropBuilder
 	// OutH set the height crop area expression (default "ih").
-	OutH(outH string) CropBuilder
+	OutH(outH int) CropBuilder
 	// OutHExpr set the height crop area expression (default "ih").
 	OutHExpr(outH expr.Expr) CropBuilder
 	// H set the height crop area expression (default "ih").
-	H(h string) CropBuilder
+	H(h int) CropBuilder
 	// HExpr set the height crop area expression (default "ih").
 	HExpr(h expr.Expr) CropBuilder
 	// X set the x crop area expression (default "(in_w-out_w)/2").
-	X(x string) CropBuilder
+	X(x int) CropBuilder
 	// XExpr set the x crop area expression (default "(in_w-out_w)/2").
 	XExpr(x expr.Expr) CropBuilder
 	// Y set the y crop area expression (default "(in_h-out_h)/2").
-	Y(y string) CropBuilder
+	Y(y int) CropBuilder
 	// YExpr set the y crop area expression (default "(in_h-out_h)/2").
 	YExpr(y expr.Expr) CropBuilder
 	// KeepAspect keep aspect ratio (default false).
@@ -70,48 +70,48 @@ func (cropBuilder *implCropBuilder) withOption(key string, value expr.Expr) Crop
 	return &bCopy
 }
 
-func (cropBuilder *implCropBuilder) OutW(outW string) CropBuilder {
-	return cropBuilder.withOption("out_w", expr.String(outW))
+func (cropBuilder *implCropBuilder) OutW(outW int) CropBuilder {
+	return cropBuilder.withOption("out_w", expr.Int(outW))
 }
 
 func (cropBuilder *implCropBuilder) OutWExpr(outW expr.Expr) CropBuilder {
 	return cropBuilder.withOption("out_w", outW)
 }
 
-func (cropBuilder *implCropBuilder) W(w string) CropBuilder {
-	return cropBuilder.withOption("w", expr.String(w))
+func (cropBuilder *implCropBuilder) W(w int) CropBuilder {
+	return cropBuilder.withOption("w", expr.Int(w))
 }
 
 func (cropBuilder *implCropBuilder) WExpr(w expr.Expr) CropBuilder {
 	return cropBuilder.withOption("w", w)
 }
 
-func (cropBuilder *implCropBuilder) OutH(outH string) CropBuilder {
-	return cropBuilder.withOption("out_h", expr.String(outH))
+func (cropBuilder *implCropBuilder) OutH(outH int) CropBuilder {
+	return cropBuilder.withOption("out_h", expr.Int(outH))
 }
 
 func (cropBuilder *implCropBuilder) OutHExpr(outH expr.Expr) CropBuilder {
 	return cropBuilder.withOption("out_h", outH)
 }
 
-func (cropBuilder *implCropBuilder) H(h string) CropBuilder {
-	return cropBuilder.withOption("h", expr.String(h))
+func (cropBuilder *implCropBuilder) H(h int) CropBuilder {
+	return cropBuilder.withOption("h", expr.Int(h))
 }
 
 func (cropBuilder *implCropBuilder) HExpr(h expr.Expr) CropBuilder {
 	return cropBuilder.withOption("h", h)
 }
 
-func (cropBuilder *implCropBuilder) X(x string) CropBuilder {
-	return cropBuilder.withOption("x", expr.String(x))
+func (cropBuilder *implCropBuilder) X(x int) CropBuilder {
+	return cropBuilder.withOption("x", expr.Int(x))
 }
 
 func (cropBuilder *implCropBuilder) XExpr(x expr.Expr) CropBuilder {
 	return cropBuilder.withOption("x", x)
 }
 
-func (cropBuilder *implCropBuilder) Y(y string) CropBuilder {
-	return cropBuilder.withOption("y", expr.String(y))
+func (cropBuilder *implCropBuilder) Y(y int) CropBuilder {
+	return cropBuilder.withOption("y", expr.Int(y))
 }
 
 func (cropBuilder *implCropBuilder) YExpr(y expr.Expr) CropBuilder {

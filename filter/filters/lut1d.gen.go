@@ -19,6 +19,8 @@ type Lut1dBuilder interface {
 	Interp(interp int) Lut1dBuilder
 	// InterpExpr select interpolation mode (from 0 to 4) (default linear).
 	InterpExpr(interp expr.Expr) Lut1dBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Lut1dBuilder
 }
 
 // Lut1d creates a new Lut1dBuilder to configure the "lut1d" filter.
@@ -64,4 +66,8 @@ func (lut1dBuilder *implLut1dBuilder) Interp(interp int) Lut1dBuilder {
 
 func (lut1dBuilder *implLut1dBuilder) InterpExpr(interp expr.Expr) Lut1dBuilder {
 	return lut1dBuilder.withOption("interp", interp)
+}
+
+func (lut1dBuilder *implLut1dBuilder) Enable(enable expr.Expr) Lut1dBuilder {
+	return lut1dBuilder.withOption("enable", enable)
 }

@@ -31,6 +31,8 @@ type AsoftclipBuilder interface {
 	Oversample(oversample int) AsoftclipBuilder
 	// OversampleExpr set oversample factor (from 1 to 64) (default 1).
 	OversampleExpr(oversample expr.Expr) AsoftclipBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AsoftclipBuilder
 }
 
 // Asoftclip creates a new AsoftclipBuilder to configure the "asoftclip" filter.
@@ -100,4 +102,8 @@ func (asoftclipBuilder *implAsoftclipBuilder) Oversample(oversample int) Asoftcl
 
 func (asoftclipBuilder *implAsoftclipBuilder) OversampleExpr(oversample expr.Expr) AsoftclipBuilder {
 	return asoftclipBuilder.withOption("oversample", oversample)
+}
+
+func (asoftclipBuilder *implAsoftclipBuilder) Enable(enable expr.Expr) AsoftclipBuilder {
+	return asoftclipBuilder.withOption("enable", enable)
 }

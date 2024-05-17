@@ -24,7 +24,7 @@ type ShowvolumeBuilder interface {
 	// F set fade (from 0 to 1) (default 0.95).
 	F(f float64) ShowvolumeBuilder
 	// C set volume color expression (default "PEAK*255+floor((1-PEAK)*255)*256+0xff000000").
-	C(c string) ShowvolumeBuilder
+	C(c expr.Expr) ShowvolumeBuilder
 	// T display channel names (default true).
 	T(t bool) ShowvolumeBuilder
 	// V display volume value (default true).
@@ -98,8 +98,8 @@ func (showvolumeBuilder *implShowvolumeBuilder) F(f float64) ShowvolumeBuilder {
 	return showvolumeBuilder.withOption("f", expr.Double(f))
 }
 
-func (showvolumeBuilder *implShowvolumeBuilder) C(c string) ShowvolumeBuilder {
-	return showvolumeBuilder.withOption("c", expr.String(c))
+func (showvolumeBuilder *implShowvolumeBuilder) C(c expr.Expr) ShowvolumeBuilder {
+	return showvolumeBuilder.withOption("c", c)
 }
 
 func (showvolumeBuilder *implShowvolumeBuilder) T(t bool) ShowvolumeBuilder {

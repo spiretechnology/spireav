@@ -19,6 +19,8 @@ type MsadBuilder interface {
 	Repeatlast(repeatlast bool) MsadBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) MsadBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MsadBuilder
 }
 
 // Msad creates a new MsadBuilder to configure the "msad" filter.
@@ -64,4 +66,8 @@ func (msadBuilder *implMsadBuilder) Repeatlast(repeatlast bool) MsadBuilder {
 
 func (msadBuilder *implMsadBuilder) TsSyncMode(tsSyncMode int) MsadBuilder {
 	return msadBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (msadBuilder *implMsadBuilder) Enable(enable expr.Expr) MsadBuilder {
+	return msadBuilder.withOption("enable", enable)
 }

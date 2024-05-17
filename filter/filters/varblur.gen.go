@@ -31,6 +31,8 @@ type VarblurBuilder interface {
 	Repeatlast(repeatlast bool) VarblurBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) VarblurBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VarblurBuilder
 }
 
 // Varblur creates a new VarblurBuilder to configure the "varblur" filter.
@@ -100,4 +102,8 @@ func (varblurBuilder *implVarblurBuilder) Repeatlast(repeatlast bool) VarblurBui
 
 func (varblurBuilder *implVarblurBuilder) TsSyncMode(tsSyncMode int) VarblurBuilder {
 	return varblurBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (varblurBuilder *implVarblurBuilder) Enable(enable expr.Expr) VarblurBuilder {
+	return varblurBuilder.withOption("enable", enable)
 }

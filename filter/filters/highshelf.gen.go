@@ -83,6 +83,8 @@ type HighshelfBuilder interface {
 	Blocksize(blocksize int) HighshelfBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) HighshelfBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HighshelfBuilder
 }
 
 // Highshelf creates a new HighshelfBuilder to configure the "highshelf" filter.
@@ -256,4 +258,8 @@ func (highshelfBuilder *implHighshelfBuilder) Blocksize(blocksize int) Highshelf
 
 func (highshelfBuilder *implHighshelfBuilder) B(b int) HighshelfBuilder {
 	return highshelfBuilder.withOption("b", expr.Int(b))
+}
+
+func (highshelfBuilder *implHighshelfBuilder) Enable(enable expr.Expr) HighshelfBuilder {
+	return highshelfBuilder.withOption("enable", enable)
 }

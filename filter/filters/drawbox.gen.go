@@ -59,6 +59,8 @@ type DrawboxBuilder interface {
 	BoxSource(boxSource string) DrawboxBuilder
 	// BoxSourceExpr use datas from bounding box in side data.
 	BoxSourceExpr(boxSource expr.Expr) DrawboxBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DrawboxBuilder
 }
 
 // Drawbox creates a new DrawboxBuilder to configure the "drawbox" filter.
@@ -184,4 +186,8 @@ func (drawboxBuilder *implDrawboxBuilder) BoxSource(boxSource string) DrawboxBui
 
 func (drawboxBuilder *implDrawboxBuilder) BoxSourceExpr(boxSource expr.Expr) DrawboxBuilder {
 	return drawboxBuilder.withOption("box_source", boxSource)
+}
+
+func (drawboxBuilder *implDrawboxBuilder) Enable(enable expr.Expr) DrawboxBuilder {
+	return drawboxBuilder.withOption("enable", enable)
 }

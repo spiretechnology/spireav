@@ -12,49 +12,29 @@ import (
 type LutrgbBuilder interface {
 	filter.Filter
 	// C0 set component #0 expression (default "clipval").
-	C0(c0 string) LutrgbBuilder
-	// C0Expr set component #0 expression (default "clipval").
-	C0Expr(c0 expr.Expr) LutrgbBuilder
+	C0(c0 expr.Expr) LutrgbBuilder
 	// C1 set component #1 expression (default "clipval").
-	C1(c1 string) LutrgbBuilder
-	// C1Expr set component #1 expression (default "clipval").
-	C1Expr(c1 expr.Expr) LutrgbBuilder
+	C1(c1 expr.Expr) LutrgbBuilder
 	// C2 set component #2 expression (default "clipval").
-	C2(c2 string) LutrgbBuilder
-	// C2Expr set component #2 expression (default "clipval").
-	C2Expr(c2 expr.Expr) LutrgbBuilder
+	C2(c2 expr.Expr) LutrgbBuilder
 	// C3 set component #3 expression (default "clipval").
-	C3(c3 string) LutrgbBuilder
-	// C3Expr set component #3 expression (default "clipval").
-	C3Expr(c3 expr.Expr) LutrgbBuilder
+	C3(c3 expr.Expr) LutrgbBuilder
 	// Y set Y expression (default "clipval").
-	Y(y string) LutrgbBuilder
-	// YExpr set Y expression (default "clipval").
-	YExpr(y expr.Expr) LutrgbBuilder
+	Y(y expr.Expr) LutrgbBuilder
 	// U set U expression (default "clipval").
-	U(u string) LutrgbBuilder
-	// UExpr set U expression (default "clipval").
-	UExpr(u expr.Expr) LutrgbBuilder
+	U(u expr.Expr) LutrgbBuilder
 	// V set V expression (default "clipval").
-	V(v string) LutrgbBuilder
-	// VExpr set V expression (default "clipval").
-	VExpr(v expr.Expr) LutrgbBuilder
+	V(v expr.Expr) LutrgbBuilder
 	// R set R expression (default "clipval").
-	R(r string) LutrgbBuilder
-	// RExpr set R expression (default "clipval").
-	RExpr(r expr.Expr) LutrgbBuilder
+	R(r expr.Expr) LutrgbBuilder
 	// G set G expression (default "clipval").
-	G(g string) LutrgbBuilder
-	// GExpr set G expression (default "clipval").
-	GExpr(g expr.Expr) LutrgbBuilder
+	G(g expr.Expr) LutrgbBuilder
 	// B set B expression (default "clipval").
-	B(b string) LutrgbBuilder
-	// BExpr set B expression (default "clipval").
-	BExpr(b expr.Expr) LutrgbBuilder
+	B(b expr.Expr) LutrgbBuilder
 	// A set A expression (default "clipval").
-	A(a string) LutrgbBuilder
-	// AExpr set A expression (default "clipval").
-	AExpr(a expr.Expr) LutrgbBuilder
+	A(a expr.Expr) LutrgbBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LutrgbBuilder
 }
 
 // Lutrgb creates a new LutrgbBuilder to configure the "lutrgb" filter.
@@ -86,90 +66,50 @@ func (lutrgbBuilder *implLutrgbBuilder) withOption(key string, value expr.Expr) 
 	return &bCopy
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) C0(c0 string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("c0", expr.String(c0))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) C0Expr(c0 expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) C0(c0 expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("c0", c0)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) C1(c1 string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("c1", expr.String(c1))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) C1Expr(c1 expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) C1(c1 expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("c1", c1)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) C2(c2 string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("c2", expr.String(c2))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) C2Expr(c2 expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) C2(c2 expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("c2", c2)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) C3(c3 string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("c3", expr.String(c3))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) C3Expr(c3 expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) C3(c3 expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("c3", c3)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) Y(y string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("y", expr.String(y))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) YExpr(y expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) Y(y expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("y", y)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) U(u string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("u", expr.String(u))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) UExpr(u expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) U(u expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("u", u)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) V(v string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("v", expr.String(v))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) VExpr(v expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) V(v expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("v", v)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) R(r string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("r", expr.String(r))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) RExpr(r expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) R(r expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("r", r)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) G(g string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("g", expr.String(g))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) GExpr(g expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) G(g expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("g", g)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) B(b string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("b", expr.String(b))
-}
-
-func (lutrgbBuilder *implLutrgbBuilder) BExpr(b expr.Expr) LutrgbBuilder {
+func (lutrgbBuilder *implLutrgbBuilder) B(b expr.Expr) LutrgbBuilder {
 	return lutrgbBuilder.withOption("b", b)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) A(a string) LutrgbBuilder {
-	return lutrgbBuilder.withOption("a", expr.String(a))
+func (lutrgbBuilder *implLutrgbBuilder) A(a expr.Expr) LutrgbBuilder {
+	return lutrgbBuilder.withOption("a", a)
 }
 
-func (lutrgbBuilder *implLutrgbBuilder) AExpr(a expr.Expr) LutrgbBuilder {
-	return lutrgbBuilder.withOption("a", a)
+func (lutrgbBuilder *implLutrgbBuilder) Enable(enable expr.Expr) LutrgbBuilder {
+	return lutrgbBuilder.withOption("enable", enable)
 }

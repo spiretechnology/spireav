@@ -12,19 +12,21 @@ import (
 type CodecviewBuilder interface {
 	filter.Filter
 	// Mv set motion vectors to visualize (default 0).
-	Mv(mv string) CodecviewBuilder
+	Mv(mv ...string) CodecviewBuilder
 	// Qp (default false).
 	Qp(qp bool) CodecviewBuilder
 	// MvType set motion vectors type (default 0).
-	MvType(mvType string) CodecviewBuilder
+	MvType(mvType ...string) CodecviewBuilder
 	// Mvt set motion vectors type (default 0).
-	Mvt(mvt string) CodecviewBuilder
+	Mvt(mvt ...string) CodecviewBuilder
 	// FrameType set frame types to visualize motion vectors of (default 0).
-	FrameType(frameType string) CodecviewBuilder
+	FrameType(frameType ...string) CodecviewBuilder
 	// Ft set frame types to visualize motion vectors of (default 0).
-	Ft(ft string) CodecviewBuilder
+	Ft(ft ...string) CodecviewBuilder
 	// Block set block partitioning structure to visualize (default false).
 	Block(block bool) CodecviewBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CodecviewBuilder
 }
 
 // Codecview creates a new CodecviewBuilder to configure the "codecview" filter.
@@ -56,30 +58,34 @@ func (codecviewBuilder *implCodecviewBuilder) withOption(key string, value expr.
 	return &bCopy
 }
 
-func (codecviewBuilder *implCodecviewBuilder) Mv(mv string) CodecviewBuilder {
-	return codecviewBuilder.withOption("mv", expr.String(mv))
+func (codecviewBuilder *implCodecviewBuilder) Mv(mv ...string) CodecviewBuilder {
+	return codecviewBuilder.withOption("mv", expr.Flags(mv))
 }
 
 func (codecviewBuilder *implCodecviewBuilder) Qp(qp bool) CodecviewBuilder {
 	return codecviewBuilder.withOption("qp", expr.Bool(qp))
 }
 
-func (codecviewBuilder *implCodecviewBuilder) MvType(mvType string) CodecviewBuilder {
-	return codecviewBuilder.withOption("mv_type", expr.String(mvType))
+func (codecviewBuilder *implCodecviewBuilder) MvType(mvType ...string) CodecviewBuilder {
+	return codecviewBuilder.withOption("mv_type", expr.Flags(mvType))
 }
 
-func (codecviewBuilder *implCodecviewBuilder) Mvt(mvt string) CodecviewBuilder {
-	return codecviewBuilder.withOption("mvt", expr.String(mvt))
+func (codecviewBuilder *implCodecviewBuilder) Mvt(mvt ...string) CodecviewBuilder {
+	return codecviewBuilder.withOption("mvt", expr.Flags(mvt))
 }
 
-func (codecviewBuilder *implCodecviewBuilder) FrameType(frameType string) CodecviewBuilder {
-	return codecviewBuilder.withOption("frame_type", expr.String(frameType))
+func (codecviewBuilder *implCodecviewBuilder) FrameType(frameType ...string) CodecviewBuilder {
+	return codecviewBuilder.withOption("frame_type", expr.Flags(frameType))
 }
 
-func (codecviewBuilder *implCodecviewBuilder) Ft(ft string) CodecviewBuilder {
-	return codecviewBuilder.withOption("ft", expr.String(ft))
+func (codecviewBuilder *implCodecviewBuilder) Ft(ft ...string) CodecviewBuilder {
+	return codecviewBuilder.withOption("ft", expr.Flags(ft))
 }
 
 func (codecviewBuilder *implCodecviewBuilder) Block(block bool) CodecviewBuilder {
 	return codecviewBuilder.withOption("block", expr.Bool(block))
+}
+
+func (codecviewBuilder *implCodecviewBuilder) Enable(enable expr.Expr) CodecviewBuilder {
+	return codecviewBuilder.withOption("enable", enable)
 }

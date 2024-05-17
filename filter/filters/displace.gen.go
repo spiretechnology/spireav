@@ -15,6 +15,8 @@ type DisplaceBuilder interface {
 	Edge(edge int) DisplaceBuilder
 	// EdgeExpr set edge mode (from 0 to 3) (default smear).
 	EdgeExpr(edge expr.Expr) DisplaceBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DisplaceBuilder
 }
 
 // Displace creates a new DisplaceBuilder to configure the "displace" filter.
@@ -52,4 +54,8 @@ func (displaceBuilder *implDisplaceBuilder) Edge(edge int) DisplaceBuilder {
 
 func (displaceBuilder *implDisplaceBuilder) EdgeExpr(edge expr.Expr) DisplaceBuilder {
 	return displaceBuilder.withOption("edge", edge)
+}
+
+func (displaceBuilder *implDisplaceBuilder) Enable(enable expr.Expr) DisplaceBuilder {
+	return displaceBuilder.withOption("enable", enable)
 }

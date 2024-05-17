@@ -23,6 +23,8 @@ type ColortemperatureBuilder interface {
 	Pl(pl float32) ColortemperatureBuilder
 	// PlExpr set the amount of preserving lightness (from 0 to 1) (default 0).
 	PlExpr(pl expr.Expr) ColortemperatureBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColortemperatureBuilder
 }
 
 // Colortemperature creates a new ColortemperatureBuilder to configure the "colortemperature" filter.
@@ -76,4 +78,8 @@ func (colortemperatureBuilder *implColortemperatureBuilder) Pl(pl float32) Color
 
 func (colortemperatureBuilder *implColortemperatureBuilder) PlExpr(pl expr.Expr) ColortemperatureBuilder {
 	return colortemperatureBuilder.withOption("pl", pl)
+}
+
+func (colortemperatureBuilder *implColortemperatureBuilder) Enable(enable expr.Expr) ColortemperatureBuilder {
+	return colortemperatureBuilder.withOption("enable", enable)
 }

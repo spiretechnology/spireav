@@ -35,6 +35,8 @@ type LenscorrectionBuilder interface {
 	Fc(fc expr.Color) LenscorrectionBuilder
 	// FcExpr set the color of the unmapped pixels (default "black@0").
 	FcExpr(fc expr.Expr) LenscorrectionBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LenscorrectionBuilder
 }
 
 // Lenscorrection creates a new LenscorrectionBuilder to configure the "lenscorrection" filter.
@@ -112,4 +114,8 @@ func (lenscorrectionBuilder *implLenscorrectionBuilder) Fc(fc expr.Color) Lensco
 
 func (lenscorrectionBuilder *implLenscorrectionBuilder) FcExpr(fc expr.Expr) LenscorrectionBuilder {
 	return lenscorrectionBuilder.withOption("fc", fc)
+}
+
+func (lenscorrectionBuilder *implLenscorrectionBuilder) Enable(enable expr.Expr) LenscorrectionBuilder {
+	return lenscorrectionBuilder.withOption("enable", enable)
 }

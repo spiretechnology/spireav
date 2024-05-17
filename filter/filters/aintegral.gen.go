@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#aintegral
 type AintegralBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AintegralBuilder
 }
 
 // Aintegral creates a new AintegralBuilder to configure the "aintegral" filter.
@@ -40,4 +42,8 @@ func (aintegralBuilder *implAintegralBuilder) withOption(key string, value expr.
 	bCopy := *aintegralBuilder
 	bCopy.f = aintegralBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (aintegralBuilder *implAintegralBuilder) Enable(enable expr.Expr) AintegralBuilder {
+	return aintegralBuilder.withOption("enable", enable)
 }

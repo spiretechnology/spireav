@@ -24,19 +24,19 @@ type AgraphmonitorBuilder interface {
 	// OExpr set video opacity (from 0 to 1) (default 0.9).
 	OExpr(o expr.Expr) AgraphmonitorBuilder
 	// Mode set mode (default 0).
-	Mode(mode string) AgraphmonitorBuilder
+	Mode(mode ...string) AgraphmonitorBuilder
 	// ModeExpr set mode (default 0).
 	ModeExpr(mode expr.Expr) AgraphmonitorBuilder
 	// M set mode (default 0).
-	M(m string) AgraphmonitorBuilder
+	M(m ...string) AgraphmonitorBuilder
 	// MExpr set mode (default 0).
 	MExpr(m expr.Expr) AgraphmonitorBuilder
 	// Flags set flags (default all+queue).
-	Flags(flags string) AgraphmonitorBuilder
+	Flags(flags ...string) AgraphmonitorBuilder
 	// FlagsExpr set flags (default all+queue).
 	FlagsExpr(flags expr.Expr) AgraphmonitorBuilder
 	// F set flags (default all+queue).
-	F(f string) AgraphmonitorBuilder
+	F(f ...string) AgraphmonitorBuilder
 	// FExpr set flags (default all+queue).
 	FExpr(f expr.Expr) AgraphmonitorBuilder
 	// Rate set video rate (default "25").
@@ -98,32 +98,32 @@ func (agraphmonitorBuilder *implAgraphmonitorBuilder) OExpr(o expr.Expr) Agraphm
 	return agraphmonitorBuilder.withOption("o", o)
 }
 
-func (agraphmonitorBuilder *implAgraphmonitorBuilder) Mode(mode string) AgraphmonitorBuilder {
-	return agraphmonitorBuilder.withOption("mode", expr.String(mode))
+func (agraphmonitorBuilder *implAgraphmonitorBuilder) Mode(mode ...string) AgraphmonitorBuilder {
+	return agraphmonitorBuilder.withOption("mode", expr.Flags(mode))
 }
 
 func (agraphmonitorBuilder *implAgraphmonitorBuilder) ModeExpr(mode expr.Expr) AgraphmonitorBuilder {
 	return agraphmonitorBuilder.withOption("mode", mode)
 }
 
-func (agraphmonitorBuilder *implAgraphmonitorBuilder) M(m string) AgraphmonitorBuilder {
-	return agraphmonitorBuilder.withOption("m", expr.String(m))
+func (agraphmonitorBuilder *implAgraphmonitorBuilder) M(m ...string) AgraphmonitorBuilder {
+	return agraphmonitorBuilder.withOption("m", expr.Flags(m))
 }
 
 func (agraphmonitorBuilder *implAgraphmonitorBuilder) MExpr(m expr.Expr) AgraphmonitorBuilder {
 	return agraphmonitorBuilder.withOption("m", m)
 }
 
-func (agraphmonitorBuilder *implAgraphmonitorBuilder) Flags(flags string) AgraphmonitorBuilder {
-	return agraphmonitorBuilder.withOption("flags", expr.String(flags))
+func (agraphmonitorBuilder *implAgraphmonitorBuilder) Flags(flags ...string) AgraphmonitorBuilder {
+	return agraphmonitorBuilder.withOption("flags", expr.Flags(flags))
 }
 
 func (agraphmonitorBuilder *implAgraphmonitorBuilder) FlagsExpr(flags expr.Expr) AgraphmonitorBuilder {
 	return agraphmonitorBuilder.withOption("flags", flags)
 }
 
-func (agraphmonitorBuilder *implAgraphmonitorBuilder) F(f string) AgraphmonitorBuilder {
-	return agraphmonitorBuilder.withOption("f", expr.String(f))
+func (agraphmonitorBuilder *implAgraphmonitorBuilder) F(f ...string) AgraphmonitorBuilder {
+	return agraphmonitorBuilder.withOption("f", expr.Flags(f))
 }
 
 func (agraphmonitorBuilder *implAgraphmonitorBuilder) FExpr(f expr.Expr) AgraphmonitorBuilder {

@@ -13,6 +13,8 @@ type MidequalizerBuilder interface {
 	filter.Filter
 	// Planes set planes (from 0 to 15) (default 15).
 	Planes(planes int) MidequalizerBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MidequalizerBuilder
 }
 
 // Midequalizer creates a new MidequalizerBuilder to configure the "midequalizer" filter.
@@ -46,4 +48,8 @@ func (midequalizerBuilder *implMidequalizerBuilder) withOption(key string, value
 
 func (midequalizerBuilder *implMidequalizerBuilder) Planes(planes int) MidequalizerBuilder {
 	return midequalizerBuilder.withOption("planes", expr.Int(planes))
+}
+
+func (midequalizerBuilder *implMidequalizerBuilder) Enable(enable expr.Expr) MidequalizerBuilder {
+	return midequalizerBuilder.withOption("enable", enable)
 }

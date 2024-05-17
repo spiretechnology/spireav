@@ -51,6 +51,8 @@ type ColorbalanceBuilder interface {
 	Pl(pl bool) ColorbalanceBuilder
 	// PlExpr preserve lightness (default false).
 	PlExpr(pl expr.Expr) ColorbalanceBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorbalanceBuilder
 }
 
 // Colorbalance creates a new ColorbalanceBuilder to configure the "colorbalance" filter.
@@ -160,4 +162,8 @@ func (colorbalanceBuilder *implColorbalanceBuilder) Pl(pl bool) ColorbalanceBuil
 
 func (colorbalanceBuilder *implColorbalanceBuilder) PlExpr(pl expr.Expr) ColorbalanceBuilder {
 	return colorbalanceBuilder.withOption("pl", pl)
+}
+
+func (colorbalanceBuilder *implColorbalanceBuilder) Enable(enable expr.Expr) ColorbalanceBuilder {
+	return colorbalanceBuilder.withOption("enable", enable)
 }

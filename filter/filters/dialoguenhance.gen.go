@@ -23,6 +23,8 @@ type DialoguenhanceBuilder interface {
 	Voice(voice float64) DialoguenhanceBuilder
 	// VoiceExpr set voice detection factor (from 2 to 32) (default 2).
 	VoiceExpr(voice expr.Expr) DialoguenhanceBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DialoguenhanceBuilder
 }
 
 // Dialoguenhance creates a new DialoguenhanceBuilder to configure the "dialoguenhance" filter.
@@ -76,4 +78,8 @@ func (dialoguenhanceBuilder *implDialoguenhanceBuilder) Voice(voice float64) Dia
 
 func (dialoguenhanceBuilder *implDialoguenhanceBuilder) VoiceExpr(voice expr.Expr) DialoguenhanceBuilder {
 	return dialoguenhanceBuilder.withOption("voice", voice)
+}
+
+func (dialoguenhanceBuilder *implDialoguenhanceBuilder) Enable(enable expr.Expr) DialoguenhanceBuilder {
+	return dialoguenhanceBuilder.withOption("enable", enable)
 }

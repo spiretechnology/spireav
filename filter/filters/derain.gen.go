@@ -21,6 +21,8 @@ type DerainBuilder interface {
 	Input(input string) DerainBuilder
 	// Output output name of the model (default "y").
 	Output(output string) DerainBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DerainBuilder
 }
 
 // Derain creates a new DerainBuilder to configure the "derain" filter.
@@ -70,4 +72,8 @@ func (derainBuilder *implDerainBuilder) Input(input string) DerainBuilder {
 
 func (derainBuilder *implDerainBuilder) Output(output string) DerainBuilder {
 	return derainBuilder.withOption("output", expr.String(output))
+}
+
+func (derainBuilder *implDerainBuilder) Enable(enable expr.Expr) DerainBuilder {
+	return derainBuilder.withOption("enable", enable)
 }

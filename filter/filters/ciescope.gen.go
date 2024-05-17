@@ -16,7 +16,7 @@ type CiescopeBuilder interface {
 	// Cie set cie system (from 0 to 2) (default xyy).
 	Cie(cie int) CiescopeBuilder
 	// Gamuts set what gamuts to draw (default 0).
-	Gamuts(gamuts string) CiescopeBuilder
+	Gamuts(gamuts ...string) CiescopeBuilder
 	// Size set ciescope size (from 256 to 8192) (default 512).
 	Size(size int) CiescopeBuilder
 	// S set ciescope size (from 256 to 8192) (default 512).
@@ -74,8 +74,8 @@ func (ciescopeBuilder *implCiescopeBuilder) Cie(cie int) CiescopeBuilder {
 	return ciescopeBuilder.withOption("cie", expr.Int(cie))
 }
 
-func (ciescopeBuilder *implCiescopeBuilder) Gamuts(gamuts string) CiescopeBuilder {
-	return ciescopeBuilder.withOption("gamuts", expr.String(gamuts))
+func (ciescopeBuilder *implCiescopeBuilder) Gamuts(gamuts ...string) CiescopeBuilder {
+	return ciescopeBuilder.withOption("gamuts", expr.Flags(gamuts))
 }
 
 func (ciescopeBuilder *implCiescopeBuilder) Size(size int) CiescopeBuilder {

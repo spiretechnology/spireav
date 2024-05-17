@@ -24,19 +24,19 @@ type GraphmonitorBuilder interface {
 	// OExpr set video opacity (from 0 to 1) (default 0.9).
 	OExpr(o expr.Expr) GraphmonitorBuilder
 	// Mode set mode (default 0).
-	Mode(mode string) GraphmonitorBuilder
+	Mode(mode ...string) GraphmonitorBuilder
 	// ModeExpr set mode (default 0).
 	ModeExpr(mode expr.Expr) GraphmonitorBuilder
 	// M set mode (default 0).
-	M(m string) GraphmonitorBuilder
+	M(m ...string) GraphmonitorBuilder
 	// MExpr set mode (default 0).
 	MExpr(m expr.Expr) GraphmonitorBuilder
 	// Flags set flags (default all+queue).
-	Flags(flags string) GraphmonitorBuilder
+	Flags(flags ...string) GraphmonitorBuilder
 	// FlagsExpr set flags (default all+queue).
 	FlagsExpr(flags expr.Expr) GraphmonitorBuilder
 	// F set flags (default all+queue).
-	F(f string) GraphmonitorBuilder
+	F(f ...string) GraphmonitorBuilder
 	// FExpr set flags (default all+queue).
 	FExpr(f expr.Expr) GraphmonitorBuilder
 	// Rate set video rate (default "25").
@@ -98,32 +98,32 @@ func (graphmonitorBuilder *implGraphmonitorBuilder) OExpr(o expr.Expr) Graphmoni
 	return graphmonitorBuilder.withOption("o", o)
 }
 
-func (graphmonitorBuilder *implGraphmonitorBuilder) Mode(mode string) GraphmonitorBuilder {
-	return graphmonitorBuilder.withOption("mode", expr.String(mode))
+func (graphmonitorBuilder *implGraphmonitorBuilder) Mode(mode ...string) GraphmonitorBuilder {
+	return graphmonitorBuilder.withOption("mode", expr.Flags(mode))
 }
 
 func (graphmonitorBuilder *implGraphmonitorBuilder) ModeExpr(mode expr.Expr) GraphmonitorBuilder {
 	return graphmonitorBuilder.withOption("mode", mode)
 }
 
-func (graphmonitorBuilder *implGraphmonitorBuilder) M(m string) GraphmonitorBuilder {
-	return graphmonitorBuilder.withOption("m", expr.String(m))
+func (graphmonitorBuilder *implGraphmonitorBuilder) M(m ...string) GraphmonitorBuilder {
+	return graphmonitorBuilder.withOption("m", expr.Flags(m))
 }
 
 func (graphmonitorBuilder *implGraphmonitorBuilder) MExpr(m expr.Expr) GraphmonitorBuilder {
 	return graphmonitorBuilder.withOption("m", m)
 }
 
-func (graphmonitorBuilder *implGraphmonitorBuilder) Flags(flags string) GraphmonitorBuilder {
-	return graphmonitorBuilder.withOption("flags", expr.String(flags))
+func (graphmonitorBuilder *implGraphmonitorBuilder) Flags(flags ...string) GraphmonitorBuilder {
+	return graphmonitorBuilder.withOption("flags", expr.Flags(flags))
 }
 
 func (graphmonitorBuilder *implGraphmonitorBuilder) FlagsExpr(flags expr.Expr) GraphmonitorBuilder {
 	return graphmonitorBuilder.withOption("flags", flags)
 }
 
-func (graphmonitorBuilder *implGraphmonitorBuilder) F(f string) GraphmonitorBuilder {
-	return graphmonitorBuilder.withOption("f", expr.String(f))
+func (graphmonitorBuilder *implGraphmonitorBuilder) F(f ...string) GraphmonitorBuilder {
+	return graphmonitorBuilder.withOption("f", expr.Flags(f))
 }
 
 func (graphmonitorBuilder *implGraphmonitorBuilder) FExpr(f expr.Expr) GraphmonitorBuilder {

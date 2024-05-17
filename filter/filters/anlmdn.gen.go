@@ -53,6 +53,8 @@ type AnlmdnBuilder interface {
 	M(m float32) AnlmdnBuilder
 	// MExpr set smooth factor (from 1 to 1000) (default 11).
 	MExpr(m expr.Expr) AnlmdnBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AnlmdnBuilder
 }
 
 // Anlmdn creates a new AnlmdnBuilder to configure the "anlmdn" filter.
@@ -162,4 +164,8 @@ func (anlmdnBuilder *implAnlmdnBuilder) M(m float32) AnlmdnBuilder {
 
 func (anlmdnBuilder *implAnlmdnBuilder) MExpr(m expr.Expr) AnlmdnBuilder {
 	return anlmdnBuilder.withOption("m", m)
+}
+
+func (anlmdnBuilder *implAnlmdnBuilder) Enable(enable expr.Expr) AnlmdnBuilder {
+	return anlmdnBuilder.withOption("enable", enable)
 }

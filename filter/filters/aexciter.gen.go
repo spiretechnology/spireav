@@ -43,6 +43,8 @@ type AexciterBuilder interface {
 	Listen(listen bool) AexciterBuilder
 	// ListenExpr enable listen mode (default false).
 	ListenExpr(listen expr.Expr) AexciterBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AexciterBuilder
 }
 
 // Aexciter creates a new AexciterBuilder to configure the "aexciter" filter.
@@ -136,4 +138,8 @@ func (aexciterBuilder *implAexciterBuilder) Listen(listen bool) AexciterBuilder 
 
 func (aexciterBuilder *implAexciterBuilder) ListenExpr(listen expr.Expr) AexciterBuilder {
 	return aexciterBuilder.withOption("listen", listen)
+}
+
+func (aexciterBuilder *implAexciterBuilder) Enable(enable expr.Expr) AexciterBuilder {
+	return aexciterBuilder.withOption("enable", enable)
 }

@@ -39,6 +39,8 @@ type FadeBuilder interface {
 	Color(color expr.Color) FadeBuilder
 	// C set color (default "black").
 	C(c expr.Color) FadeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FadeBuilder
 }
 
 // Fade creates a new FadeBuilder to configure the "fade" filter.
@@ -120,4 +122,8 @@ func (fadeBuilder *implFadeBuilder) Color(color expr.Color) FadeBuilder {
 
 func (fadeBuilder *implFadeBuilder) C(c expr.Color) FadeBuilder {
 	return fadeBuilder.withOption("c", c)
+}
+
+func (fadeBuilder *implFadeBuilder) Enable(enable expr.Expr) FadeBuilder {
+	return fadeBuilder.withOption("enable", enable)
 }

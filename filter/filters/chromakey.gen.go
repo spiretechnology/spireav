@@ -27,6 +27,8 @@ type ChromakeyBuilder interface {
 	Yuv(yuv bool) ChromakeyBuilder
 	// YuvExpr color parameter is in yuv instead of rgb (default false).
 	YuvExpr(yuv expr.Expr) ChromakeyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ChromakeyBuilder
 }
 
 // Chromakey creates a new ChromakeyBuilder to configure the "chromakey" filter.
@@ -88,4 +90,8 @@ func (chromakeyBuilder *implChromakeyBuilder) Yuv(yuv bool) ChromakeyBuilder {
 
 func (chromakeyBuilder *implChromakeyBuilder) YuvExpr(yuv expr.Expr) ChromakeyBuilder {
 	return chromakeyBuilder.withOption("yuv", yuv)
+}
+
+func (chromakeyBuilder *implChromakeyBuilder) Enable(enable expr.Expr) ChromakeyBuilder {
+	return chromakeyBuilder.withOption("enable", enable)
 }

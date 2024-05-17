@@ -19,6 +19,8 @@ type RemovegrainBuilder interface {
 	M2(m2 int) RemovegrainBuilder
 	// M3 set mode for 4th plane (from 0 to 24) (default 0).
 	M3(m3 int) RemovegrainBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) RemovegrainBuilder
 }
 
 // Removegrain creates a new RemovegrainBuilder to configure the "removegrain" filter.
@@ -64,4 +66,8 @@ func (removegrainBuilder *implRemovegrainBuilder) M2(m2 int) RemovegrainBuilder 
 
 func (removegrainBuilder *implRemovegrainBuilder) M3(m3 int) RemovegrainBuilder {
 	return removegrainBuilder.withOption("m3", expr.Int(m3))
+}
+
+func (removegrainBuilder *implRemovegrainBuilder) Enable(enable expr.Expr) RemovegrainBuilder {
+	return removegrainBuilder.withOption("enable", enable)
 }

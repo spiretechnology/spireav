@@ -13,6 +13,8 @@ type FieldorderBuilder interface {
 	filter.Filter
 	// Order output field order (from 0 to 1) (default tff).
 	Order(order int) FieldorderBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FieldorderBuilder
 }
 
 // Fieldorder creates a new FieldorderBuilder to configure the "fieldorder" filter.
@@ -46,4 +48,8 @@ func (fieldorderBuilder *implFieldorderBuilder) withOption(key string, value exp
 
 func (fieldorderBuilder *implFieldorderBuilder) Order(order int) FieldorderBuilder {
 	return fieldorderBuilder.withOption("order", expr.Int(order))
+}
+
+func (fieldorderBuilder *implFieldorderBuilder) Enable(enable expr.Expr) FieldorderBuilder {
+	return fieldorderBuilder.withOption("enable", enable)
 }

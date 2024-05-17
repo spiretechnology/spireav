@@ -15,6 +15,8 @@ type PhaseBuilder interface {
 	Mode(mode int) PhaseBuilder
 	// ModeExpr set phase mode (from 0 to 8) (default A).
 	ModeExpr(mode expr.Expr) PhaseBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PhaseBuilder
 }
 
 // Phase creates a new PhaseBuilder to configure the "phase" filter.
@@ -52,4 +54,8 @@ func (phaseBuilder *implPhaseBuilder) Mode(mode int) PhaseBuilder {
 
 func (phaseBuilder *implPhaseBuilder) ModeExpr(mode expr.Expr) PhaseBuilder {
 	return phaseBuilder.withOption("mode", mode)
+}
+
+func (phaseBuilder *implPhaseBuilder) Enable(enable expr.Expr) PhaseBuilder {
+	return phaseBuilder.withOption("enable", enable)
 }

@@ -36,13 +36,15 @@ type PixelizeBuilder interface {
 	// MExpr set the pixelize mode (from 0 to 2) (default avg).
 	MExpr(m expr.Expr) PixelizeBuilder
 	// Planes set what planes to filter (default F).
-	Planes(planes string) PixelizeBuilder
+	Planes(planes ...string) PixelizeBuilder
 	// PlanesExpr set what planes to filter (default F).
 	PlanesExpr(planes expr.Expr) PixelizeBuilder
 	// P set what planes to filter (default F).
-	P(p string) PixelizeBuilder
+	P(p ...string) PixelizeBuilder
 	// PExpr set what planes to filter (default F).
 	PExpr(p expr.Expr) PixelizeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PixelizeBuilder
 }
 
 // Pixelize creates a new PixelizeBuilder to configure the "pixelize" filter.
@@ -122,18 +124,22 @@ func (pixelizeBuilder *implPixelizeBuilder) MExpr(m expr.Expr) PixelizeBuilder {
 	return pixelizeBuilder.withOption("m", m)
 }
 
-func (pixelizeBuilder *implPixelizeBuilder) Planes(planes string) PixelizeBuilder {
-	return pixelizeBuilder.withOption("planes", expr.String(planes))
+func (pixelizeBuilder *implPixelizeBuilder) Planes(planes ...string) PixelizeBuilder {
+	return pixelizeBuilder.withOption("planes", expr.Flags(planes))
 }
 
 func (pixelizeBuilder *implPixelizeBuilder) PlanesExpr(planes expr.Expr) PixelizeBuilder {
 	return pixelizeBuilder.withOption("planes", planes)
 }
 
-func (pixelizeBuilder *implPixelizeBuilder) P(p string) PixelizeBuilder {
-	return pixelizeBuilder.withOption("p", expr.String(p))
+func (pixelizeBuilder *implPixelizeBuilder) P(p ...string) PixelizeBuilder {
+	return pixelizeBuilder.withOption("p", expr.Flags(p))
 }
 
 func (pixelizeBuilder *implPixelizeBuilder) PExpr(p expr.Expr) PixelizeBuilder {
 	return pixelizeBuilder.withOption("p", p)
+}
+
+func (pixelizeBuilder *implPixelizeBuilder) Enable(enable expr.Expr) PixelizeBuilder {
+	return pixelizeBuilder.withOption("enable", enable)
 }

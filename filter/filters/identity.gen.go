@@ -19,6 +19,8 @@ type IdentityBuilder interface {
 	Repeatlast(repeatlast bool) IdentityBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) IdentityBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) IdentityBuilder
 }
 
 // Identity creates a new IdentityBuilder to configure the "identity" filter.
@@ -64,4 +66,8 @@ func (identityBuilder *implIdentityBuilder) Repeatlast(repeatlast bool) Identity
 
 func (identityBuilder *implIdentityBuilder) TsSyncMode(tsSyncMode int) IdentityBuilder {
 	return identityBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (identityBuilder *implIdentityBuilder) Enable(enable expr.Expr) IdentityBuilder {
+	return identityBuilder.withOption("enable", enable)
 }

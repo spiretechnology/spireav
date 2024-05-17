@@ -33,6 +33,8 @@ type CrossfeedBuilder interface {
 	LevelOutExpr(levelOut expr.Expr) CrossfeedBuilder
 	// BlockSize set the block size (from 0 to 32768) (default 0).
 	BlockSize(blockSize int) CrossfeedBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CrossfeedBuilder
 }
 
 // Crossfeed creates a new CrossfeedBuilder to configure the "crossfeed" filter.
@@ -106,4 +108,8 @@ func (crossfeedBuilder *implCrossfeedBuilder) LevelOutExpr(levelOut expr.Expr) C
 
 func (crossfeedBuilder *implCrossfeedBuilder) BlockSize(blockSize int) CrossfeedBuilder {
 	return crossfeedBuilder.withOption("block_size", expr.Int(blockSize))
+}
+
+func (crossfeedBuilder *implCrossfeedBuilder) Enable(enable expr.Expr) CrossfeedBuilder {
+	return crossfeedBuilder.withOption("enable", enable)
 }

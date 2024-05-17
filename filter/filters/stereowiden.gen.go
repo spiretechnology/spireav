@@ -25,6 +25,8 @@ type StereowidenBuilder interface {
 	Drymix(drymix float32) StereowidenBuilder
 	// DrymixExpr set dry-mix (from 0 to 1) (default 0.8).
 	DrymixExpr(drymix expr.Expr) StereowidenBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) StereowidenBuilder
 }
 
 // Stereowiden creates a new StereowidenBuilder to configure the "stereowiden" filter.
@@ -82,4 +84,8 @@ func (stereowidenBuilder *implStereowidenBuilder) Drymix(drymix float32) Stereow
 
 func (stereowidenBuilder *implStereowidenBuilder) DrymixExpr(drymix expr.Expr) StereowidenBuilder {
 	return stereowidenBuilder.withOption("drymix", drymix)
+}
+
+func (stereowidenBuilder *implStereowidenBuilder) Enable(enable expr.Expr) StereowidenBuilder {
+	return stereowidenBuilder.withOption("enable", enable)
 }

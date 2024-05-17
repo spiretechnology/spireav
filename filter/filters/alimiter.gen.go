@@ -47,6 +47,8 @@ type AlimiterBuilder interface {
 	Latency(latency bool) AlimiterBuilder
 	// LatencyExpr compensate delay (default false).
 	LatencyExpr(latency expr.Expr) AlimiterBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AlimiterBuilder
 }
 
 // Alimiter creates a new AlimiterBuilder to configure the "alimiter" filter.
@@ -148,4 +150,8 @@ func (alimiterBuilder *implAlimiterBuilder) Latency(latency bool) AlimiterBuilde
 
 func (alimiterBuilder *implAlimiterBuilder) LatencyExpr(latency expr.Expr) AlimiterBuilder {
 	return alimiterBuilder.withOption("latency", latency)
+}
+
+func (alimiterBuilder *implAlimiterBuilder) Enable(enable expr.Expr) AlimiterBuilder {
+	return alimiterBuilder.withOption("enable", enable)
 }

@@ -23,6 +23,8 @@ type MaskedclampBuilder interface {
 	Planes(planes int) MaskedclampBuilder
 	// PlanesExpr set planes (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) MaskedclampBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MaskedclampBuilder
 }
 
 // Maskedclamp creates a new MaskedclampBuilder to configure the "maskedclamp" filter.
@@ -76,4 +78,8 @@ func (maskedclampBuilder *implMaskedclampBuilder) Planes(planes int) Maskedclamp
 
 func (maskedclampBuilder *implMaskedclampBuilder) PlanesExpr(planes expr.Expr) MaskedclampBuilder {
 	return maskedclampBuilder.withOption("planes", planes)
+}
+
+func (maskedclampBuilder *implMaskedclampBuilder) Enable(enable expr.Expr) MaskedclampBuilder {
+	return maskedclampBuilder.withOption("enable", enable)
 }

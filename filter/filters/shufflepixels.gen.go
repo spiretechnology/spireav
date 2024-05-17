@@ -31,6 +31,8 @@ type ShufflepixelsBuilder interface {
 	Seed(seed int64) ShufflepixelsBuilder
 	// S set random seed (from -1 to UINT32_MAX) (default -1).
 	S(s int64) ShufflepixelsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ShufflepixelsBuilder
 }
 
 // Shufflepixels creates a new ShufflepixelsBuilder to configure the "shufflepixels" filter.
@@ -100,4 +102,8 @@ func (shufflepixelsBuilder *implShufflepixelsBuilder) Seed(seed int64) Shufflepi
 
 func (shufflepixelsBuilder *implShufflepixelsBuilder) S(s int64) ShufflepixelsBuilder {
 	return shufflepixelsBuilder.withOption("s", expr.Int64(s))
+}
+
+func (shufflepixelsBuilder *implShufflepixelsBuilder) Enable(enable expr.Expr) ShufflepixelsBuilder {
+	return shufflepixelsBuilder.withOption("enable", enable)
 }

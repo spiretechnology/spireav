@@ -35,6 +35,8 @@ type CompensationdelayBuilder interface {
 	Temp(temp int) CompensationdelayBuilder
 	// TempExpr set temperature °C (from -50 to 50) (default 20).
 	TempExpr(temp expr.Expr) CompensationdelayBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CompensationdelayBuilder
 }
 
 // Compensationdelay creates a new CompensationdelayBuilder to configure the "compensationdelay" filter.
@@ -112,4 +114,8 @@ func (compensationdelayBuilder *implCompensationdelayBuilder) Temp(temp int) Com
 
 func (compensationdelayBuilder *implCompensationdelayBuilder) TempExpr(temp expr.Expr) CompensationdelayBuilder {
 	return compensationdelayBuilder.withOption("temp", temp)
+}
+
+func (compensationdelayBuilder *implCompensationdelayBuilder) Enable(enable expr.Expr) CompensationdelayBuilder {
+	return compensationdelayBuilder.withOption("enable", enable)
 }

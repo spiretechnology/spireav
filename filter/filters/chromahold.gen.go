@@ -27,6 +27,8 @@ type ChromaholdBuilder interface {
 	Yuv(yuv bool) ChromaholdBuilder
 	// YuvExpr color parameter is in yuv instead of rgb (default false).
 	YuvExpr(yuv expr.Expr) ChromaholdBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ChromaholdBuilder
 }
 
 // Chromahold creates a new ChromaholdBuilder to configure the "chromahold" filter.
@@ -88,4 +90,8 @@ func (chromaholdBuilder *implChromaholdBuilder) Yuv(yuv bool) ChromaholdBuilder 
 
 func (chromaholdBuilder *implChromaholdBuilder) YuvExpr(yuv expr.Expr) ChromaholdBuilder {
 	return chromaholdBuilder.withOption("yuv", yuv)
+}
+
+func (chromaholdBuilder *implChromaholdBuilder) Enable(enable expr.Expr) ChromaholdBuilder {
+	return chromaholdBuilder.withOption("enable", enable)
 }

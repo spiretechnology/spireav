@@ -14,19 +14,27 @@ type DrawgraphBuilder interface {
 	// M1 set 1st metadata key (default "").
 	M1(m1 string) DrawgraphBuilder
 	// Fg1 set 1st foreground color expression (default "0xffff0000").
-	Fg1(fg1 string) DrawgraphBuilder
+	Fg1(fg1 expr.Color) DrawgraphBuilder
+	// Fg1Expr set 1st foreground color expression (default "0xffff0000").
+	Fg1Expr(fg1 expr.Expr) DrawgraphBuilder
 	// M2 set 2nd metadata key (default "").
 	M2(m2 string) DrawgraphBuilder
 	// Fg2 set 2nd foreground color expression (default "0xff00ff00").
-	Fg2(fg2 string) DrawgraphBuilder
+	Fg2(fg2 expr.Color) DrawgraphBuilder
+	// Fg2Expr set 2nd foreground color expression (default "0xff00ff00").
+	Fg2Expr(fg2 expr.Expr) DrawgraphBuilder
 	// M3 set 3rd metadata key (default "").
 	M3(m3 string) DrawgraphBuilder
 	// Fg3 set 3rd foreground color expression (default "0xffff00ff").
-	Fg3(fg3 string) DrawgraphBuilder
+	Fg3(fg3 expr.Color) DrawgraphBuilder
+	// Fg3Expr set 3rd foreground color expression (default "0xffff00ff").
+	Fg3Expr(fg3 expr.Expr) DrawgraphBuilder
 	// M4 set 4th metadata key (default "").
 	M4(m4 string) DrawgraphBuilder
 	// Fg4 set 4th foreground color expression (default "0xffffff00").
-	Fg4(fg4 string) DrawgraphBuilder
+	Fg4(fg4 expr.Color) DrawgraphBuilder
+	// Fg4Expr set 4th foreground color expression (default "0xffffff00").
+	Fg4Expr(fg4 expr.Expr) DrawgraphBuilder
 	// Bg set background color (default "white").
 	Bg(bg expr.Color) DrawgraphBuilder
 	// Min set minimal value (from INT_MIN to INT_MAX) (default -1).
@@ -80,32 +88,48 @@ func (drawgraphBuilder *implDrawgraphBuilder) M1(m1 string) DrawgraphBuilder {
 	return drawgraphBuilder.withOption("m1", expr.String(m1))
 }
 
-func (drawgraphBuilder *implDrawgraphBuilder) Fg1(fg1 string) DrawgraphBuilder {
-	return drawgraphBuilder.withOption("fg1", expr.String(fg1))
+func (drawgraphBuilder *implDrawgraphBuilder) Fg1(fg1 expr.Color) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg1", fg1)
+}
+
+func (drawgraphBuilder *implDrawgraphBuilder) Fg1Expr(fg1 expr.Expr) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg1", fg1)
 }
 
 func (drawgraphBuilder *implDrawgraphBuilder) M2(m2 string) DrawgraphBuilder {
 	return drawgraphBuilder.withOption("m2", expr.String(m2))
 }
 
-func (drawgraphBuilder *implDrawgraphBuilder) Fg2(fg2 string) DrawgraphBuilder {
-	return drawgraphBuilder.withOption("fg2", expr.String(fg2))
+func (drawgraphBuilder *implDrawgraphBuilder) Fg2(fg2 expr.Color) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg2", fg2)
+}
+
+func (drawgraphBuilder *implDrawgraphBuilder) Fg2Expr(fg2 expr.Expr) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg2", fg2)
 }
 
 func (drawgraphBuilder *implDrawgraphBuilder) M3(m3 string) DrawgraphBuilder {
 	return drawgraphBuilder.withOption("m3", expr.String(m3))
 }
 
-func (drawgraphBuilder *implDrawgraphBuilder) Fg3(fg3 string) DrawgraphBuilder {
-	return drawgraphBuilder.withOption("fg3", expr.String(fg3))
+func (drawgraphBuilder *implDrawgraphBuilder) Fg3(fg3 expr.Color) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg3", fg3)
+}
+
+func (drawgraphBuilder *implDrawgraphBuilder) Fg3Expr(fg3 expr.Expr) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg3", fg3)
 }
 
 func (drawgraphBuilder *implDrawgraphBuilder) M4(m4 string) DrawgraphBuilder {
 	return drawgraphBuilder.withOption("m4", expr.String(m4))
 }
 
-func (drawgraphBuilder *implDrawgraphBuilder) Fg4(fg4 string) DrawgraphBuilder {
-	return drawgraphBuilder.withOption("fg4", expr.String(fg4))
+func (drawgraphBuilder *implDrawgraphBuilder) Fg4(fg4 expr.Color) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg4", fg4)
+}
+
+func (drawgraphBuilder *implDrawgraphBuilder) Fg4Expr(fg4 expr.Expr) DrawgraphBuilder {
+	return drawgraphBuilder.withOption("fg4", fg4)
 }
 
 func (drawgraphBuilder *implDrawgraphBuilder) Bg(bg expr.Color) DrawgraphBuilder {

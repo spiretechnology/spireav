@@ -17,6 +17,8 @@ type BwdifBuilder interface {
 	Parity(parity int) BwdifBuilder
 	// Deint specify which frames to deinterlace (from 0 to 1) (default all).
 	Deint(deint int) BwdifBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BwdifBuilder
 }
 
 // Bwdif creates a new BwdifBuilder to configure the "bwdif" filter.
@@ -58,4 +60,8 @@ func (bwdifBuilder *implBwdifBuilder) Parity(parity int) BwdifBuilder {
 
 func (bwdifBuilder *implBwdifBuilder) Deint(deint int) BwdifBuilder {
 	return bwdifBuilder.withOption("deint", expr.Int(deint))
+}
+
+func (bwdifBuilder *implBwdifBuilder) Enable(enable expr.Expr) BwdifBuilder {
+	return bwdifBuilder.withOption("enable", enable)
 }

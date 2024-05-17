@@ -25,6 +25,8 @@ type ArlsBuilder interface {
 	OutModeExpr(outMode expr.Expr) ArlsBuilder
 	// Precision set processing precision (from 0 to 2) (default auto).
 	Precision(precision int) ArlsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ArlsBuilder
 }
 
 // Arls creates a new ArlsBuilder to configure the "arls" filter.
@@ -82,4 +84,8 @@ func (arlsBuilder *implArlsBuilder) OutModeExpr(outMode expr.Expr) ArlsBuilder {
 
 func (arlsBuilder *implArlsBuilder) Precision(precision int) ArlsBuilder {
 	return arlsBuilder.withOption("precision", expr.Int(precision))
+}
+
+func (arlsBuilder *implArlsBuilder) Enable(enable expr.Expr) ArlsBuilder {
+	return arlsBuilder.withOption("enable", enable)
 }

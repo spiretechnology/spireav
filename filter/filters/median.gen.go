@@ -27,6 +27,8 @@ type MedianBuilder interface {
 	Percentile(percentile float32) MedianBuilder
 	// PercentileExpr set median percentile (from 0 to 1) (default 0.5).
 	PercentileExpr(percentile expr.Expr) MedianBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MedianBuilder
 }
 
 // Median creates a new MedianBuilder to configure the "median" filter.
@@ -88,4 +90,8 @@ func (medianBuilder *implMedianBuilder) Percentile(percentile float32) MedianBui
 
 func (medianBuilder *implMedianBuilder) PercentileExpr(percentile expr.Expr) MedianBuilder {
 	return medianBuilder.withOption("percentile", percentile)
+}
+
+func (medianBuilder *implMedianBuilder) Enable(enable expr.Expr) MedianBuilder {
+	return medianBuilder.withOption("enable", enable)
 }

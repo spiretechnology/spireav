@@ -19,6 +19,8 @@ type CorrBuilder interface {
 	Repeatlast(repeatlast bool) CorrBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) CorrBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CorrBuilder
 }
 
 // Corr creates a new CorrBuilder to configure the "corr" filter.
@@ -64,4 +66,8 @@ func (corrBuilder *implCorrBuilder) Repeatlast(repeatlast bool) CorrBuilder {
 
 func (corrBuilder *implCorrBuilder) TsSyncMode(tsSyncMode int) CorrBuilder {
 	return corrBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (corrBuilder *implCorrBuilder) Enable(enable expr.Expr) CorrBuilder {
+	return corrBuilder.withOption("enable", enable)
 }

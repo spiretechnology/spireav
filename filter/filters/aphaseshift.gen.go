@@ -23,6 +23,8 @@ type AphaseshiftBuilder interface {
 	Order(order int) AphaseshiftBuilder
 	// OrderExpr set filter order (from 1 to 16) (default 8).
 	OrderExpr(order expr.Expr) AphaseshiftBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AphaseshiftBuilder
 }
 
 // Aphaseshift creates a new AphaseshiftBuilder to configure the "aphaseshift" filter.
@@ -76,4 +78,8 @@ func (aphaseshiftBuilder *implAphaseshiftBuilder) Order(order int) AphaseshiftBu
 
 func (aphaseshiftBuilder *implAphaseshiftBuilder) OrderExpr(order expr.Expr) AphaseshiftBuilder {
 	return aphaseshiftBuilder.withOption("order", order)
+}
+
+func (aphaseshiftBuilder *implAphaseshiftBuilder) Enable(enable expr.Expr) AphaseshiftBuilder {
+	return aphaseshiftBuilder.withOption("enable", enable)
 }

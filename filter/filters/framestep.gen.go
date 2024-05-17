@@ -13,6 +13,8 @@ type FramestepBuilder interface {
 	filter.Filter
 	// Step set frame step (from 1 to INT_MAX) (default 1).
 	Step(step int) FramestepBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FramestepBuilder
 }
 
 // Framestep creates a new FramestepBuilder to configure the "framestep" filter.
@@ -46,4 +48,8 @@ func (framestepBuilder *implFramestepBuilder) withOption(key string, value expr.
 
 func (framestepBuilder *implFramestepBuilder) Step(step int) FramestepBuilder {
 	return framestepBuilder.withOption("step", expr.Int(step))
+}
+
+func (framestepBuilder *implFramestepBuilder) Enable(enable expr.Expr) FramestepBuilder {
+	return framestepBuilder.withOption("enable", enable)
 }

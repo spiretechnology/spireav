@@ -31,6 +31,8 @@ type DilationBuilder interface {
 	Threshold3(threshold3 int) DilationBuilder
 	// Threshold3Expr set threshold for 4th plane (from 0 to 65535) (default 65535).
 	Threshold3Expr(threshold3 expr.Expr) DilationBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DilationBuilder
 }
 
 // Dilation creates a new DilationBuilder to configure the "dilation" filter.
@@ -100,4 +102,8 @@ func (dilationBuilder *implDilationBuilder) Threshold3(threshold3 int) DilationB
 
 func (dilationBuilder *implDilationBuilder) Threshold3Expr(threshold3 expr.Expr) DilationBuilder {
 	return dilationBuilder.withOption("threshold3", threshold3)
+}
+
+func (dilationBuilder *implDilationBuilder) Enable(enable expr.Expr) DilationBuilder {
+	return dilationBuilder.withOption("enable", enable)
 }

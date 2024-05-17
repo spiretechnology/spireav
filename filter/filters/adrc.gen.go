@@ -12,9 +12,7 @@ import (
 type AdrcBuilder interface {
 	filter.Filter
 	// Transfer set the transfer expression (default "p").
-	Transfer(transfer string) AdrcBuilder
-	// TransferExpr set the transfer expression (default "p").
-	TransferExpr(transfer expr.Expr) AdrcBuilder
+	Transfer(transfer expr.Expr) AdrcBuilder
 	// Attack set the attack (from 1 to 1000) (default 50).
 	Attack(attack float64) AdrcBuilder
 	// AttackExpr set the attack (from 1 to 1000) (default 50).
@@ -27,6 +25,8 @@ type AdrcBuilder interface {
 	Channels(channels string) AdrcBuilder
 	// ChannelsExpr set channels to filter (default "all").
 	ChannelsExpr(channels expr.Expr) AdrcBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdrcBuilder
 }
 
 // Adrc creates a new AdrcBuilder to configure the "adrc" filter.
@@ -58,11 +58,7 @@ func (adrcBuilder *implAdrcBuilder) withOption(key string, value expr.Expr) Adrc
 	return &bCopy
 }
 
-func (adrcBuilder *implAdrcBuilder) Transfer(transfer string) AdrcBuilder {
-	return adrcBuilder.withOption("transfer", expr.String(transfer))
-}
-
-func (adrcBuilder *implAdrcBuilder) TransferExpr(transfer expr.Expr) AdrcBuilder {
+func (adrcBuilder *implAdrcBuilder) Transfer(transfer expr.Expr) AdrcBuilder {
 	return adrcBuilder.withOption("transfer", transfer)
 }
 
@@ -88,4 +84,8 @@ func (adrcBuilder *implAdrcBuilder) Channels(channels string) AdrcBuilder {
 
 func (adrcBuilder *implAdrcBuilder) ChannelsExpr(channels expr.Expr) AdrcBuilder {
 	return adrcBuilder.withOption("channels", channels)
+}
+
+func (adrcBuilder *implAdrcBuilder) Enable(enable expr.Expr) AdrcBuilder {
+	return adrcBuilder.withOption("enable", enable)
 }

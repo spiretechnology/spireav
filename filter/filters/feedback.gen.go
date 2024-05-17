@@ -23,6 +23,8 @@ type FeedbackBuilder interface {
 	W(w int) FeedbackBuilder
 	// H set crop size (from 0 to INT_MAX) (default 0).
 	H(h int) FeedbackBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FeedbackBuilder
 }
 
 // Feedback creates a new FeedbackBuilder to configure the "feedback" filter.
@@ -76,4 +78,8 @@ func (feedbackBuilder *implFeedbackBuilder) W(w int) FeedbackBuilder {
 
 func (feedbackBuilder *implFeedbackBuilder) H(h int) FeedbackBuilder {
 	return feedbackBuilder.withOption("h", expr.Int(h))
+}
+
+func (feedbackBuilder *implFeedbackBuilder) Enable(enable expr.Expr) FeedbackBuilder {
+	return feedbackBuilder.withOption("enable", enable)
 }

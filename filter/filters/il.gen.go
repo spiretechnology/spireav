@@ -59,6 +59,8 @@ type IlBuilder interface {
 	As(as bool) IlBuilder
 	// AsExpr swap alpha fields (default false).
 	AsExpr(as expr.Expr) IlBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) IlBuilder
 }
 
 // Il creates a new IlBuilder to configure the "il" filter.
@@ -184,4 +186,8 @@ func (ilBuilder *implIlBuilder) As(as bool) IlBuilder {
 
 func (ilBuilder *implIlBuilder) AsExpr(as expr.Expr) IlBuilder {
 	return ilBuilder.withOption("as", as)
+}
+
+func (ilBuilder *implIlBuilder) Enable(enable expr.Expr) IlBuilder {
+	return ilBuilder.withOption("enable", enable)
 }

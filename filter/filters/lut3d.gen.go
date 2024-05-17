@@ -21,6 +21,8 @@ type Lut3dBuilder interface {
 	Interp(interp int) Lut3dBuilder
 	// InterpExpr select interpolation mode (from 0 to 4) (default tetrahedral).
 	InterpExpr(interp expr.Expr) Lut3dBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Lut3dBuilder
 }
 
 // Lut3d creates a new Lut3dBuilder to configure the "lut3d" filter.
@@ -70,4 +72,8 @@ func (lut3dBuilder *implLut3dBuilder) Interp(interp int) Lut3dBuilder {
 
 func (lut3dBuilder *implLut3dBuilder) InterpExpr(interp expr.Expr) Lut3dBuilder {
 	return lut3dBuilder.withOption("interp", interp)
+}
+
+func (lut3dBuilder *implLut3dBuilder) Enable(enable expr.Expr) Lut3dBuilder {
+	return lut3dBuilder.withOption("enable", enable)
 }

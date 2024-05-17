@@ -15,6 +15,8 @@ type MaskedmergeBuilder interface {
 	Planes(planes int) MaskedmergeBuilder
 	// PlanesExpr set planes (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) MaskedmergeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MaskedmergeBuilder
 }
 
 // Maskedmerge creates a new MaskedmergeBuilder to configure the "maskedmerge" filter.
@@ -52,4 +54,8 @@ func (maskedmergeBuilder *implMaskedmergeBuilder) Planes(planes int) Maskedmerge
 
 func (maskedmergeBuilder *implMaskedmergeBuilder) PlanesExpr(planes expr.Expr) MaskedmergeBuilder {
 	return maskedmergeBuilder.withOption("planes", planes)
+}
+
+func (maskedmergeBuilder *implMaskedmergeBuilder) Enable(enable expr.Expr) MaskedmergeBuilder {
+	return maskedmergeBuilder.withOption("enable", enable)
 }

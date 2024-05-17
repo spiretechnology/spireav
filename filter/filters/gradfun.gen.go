@@ -15,6 +15,8 @@ type GradfunBuilder interface {
 	Strength(strength float32) GradfunBuilder
 	// Radius The neighborhood to fit the gradient to. (from 4 to 32) (default 16).
 	Radius(radius int) GradfunBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) GradfunBuilder
 }
 
 // Gradfun creates a new GradfunBuilder to configure the "gradfun" filter.
@@ -52,4 +54,8 @@ func (gradfunBuilder *implGradfunBuilder) Strength(strength float32) GradfunBuil
 
 func (gradfunBuilder *implGradfunBuilder) Radius(radius int) GradfunBuilder {
 	return gradfunBuilder.withOption("radius", expr.Int(radius))
+}
+
+func (gradfunBuilder *implGradfunBuilder) Enable(enable expr.Expr) GradfunBuilder {
+	return gradfunBuilder.withOption("enable", enable)
 }

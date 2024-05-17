@@ -27,6 +27,8 @@ type AemphasisBuilder interface {
 	Type(typ int) AemphasisBuilder
 	// TypeExpr set filter type (from 0 to 8) (default cd).
 	TypeExpr(typ expr.Expr) AemphasisBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AemphasisBuilder
 }
 
 // Aemphasis creates a new AemphasisBuilder to configure the "aemphasis" filter.
@@ -88,4 +90,8 @@ func (aemphasisBuilder *implAemphasisBuilder) Type(typ int) AemphasisBuilder {
 
 func (aemphasisBuilder *implAemphasisBuilder) TypeExpr(typ expr.Expr) AemphasisBuilder {
 	return aemphasisBuilder.withOption("type", typ)
+}
+
+func (aemphasisBuilder *implAemphasisBuilder) Enable(enable expr.Expr) AemphasisBuilder {
+	return aemphasisBuilder.withOption("enable", enable)
 }

@@ -21,6 +21,8 @@ type NlmeansBuilder interface {
 	R(r int) NlmeansBuilder
 	// Rc research window for chroma planes (from 0 to 99) (default 0).
 	Rc(rc int) NlmeansBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) NlmeansBuilder
 }
 
 // Nlmeans creates a new NlmeansBuilder to configure the "nlmeans" filter.
@@ -70,4 +72,8 @@ func (nlmeansBuilder *implNlmeansBuilder) R(r int) NlmeansBuilder {
 
 func (nlmeansBuilder *implNlmeansBuilder) Rc(rc int) NlmeansBuilder {
 	return nlmeansBuilder.withOption("rc", expr.Int(rc))
+}
+
+func (nlmeansBuilder *implNlmeansBuilder) Enable(enable expr.Expr) NlmeansBuilder {
+	return nlmeansBuilder.withOption("enable", enable)
 }

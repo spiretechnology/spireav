@@ -15,6 +15,8 @@ type ColormatrixBuilder interface {
 	Src(src int) ColormatrixBuilder
 	// Dst set destination color matrix (from -1 to 4) (default -1).
 	Dst(dst int) ColormatrixBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColormatrixBuilder
 }
 
 // Colormatrix creates a new ColormatrixBuilder to configure the "colormatrix" filter.
@@ -52,4 +54,8 @@ func (colormatrixBuilder *implColormatrixBuilder) Src(src int) ColormatrixBuilde
 
 func (colormatrixBuilder *implColormatrixBuilder) Dst(dst int) ColormatrixBuilder {
 	return colormatrixBuilder.withOption("dst", expr.Int(dst))
+}
+
+func (colormatrixBuilder *implColormatrixBuilder) Enable(enable expr.Expr) ColormatrixBuilder {
+	return colormatrixBuilder.withOption("enable", enable)
 }

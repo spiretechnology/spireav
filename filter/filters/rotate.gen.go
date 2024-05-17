@@ -20,19 +20,29 @@ type RotateBuilder interface {
 	// AExpr set angle (in radians) (default "0").
 	AExpr(a expr.Expr) RotateBuilder
 	// OutW set output width expression (default "iw").
-	OutW(outW string) RotateBuilder
+	OutW(outW int) RotateBuilder
+	// OutWExpr set output width expression (default "iw").
+	OutWExpr(outW expr.Expr) RotateBuilder
 	// Ow set output width expression (default "iw").
-	Ow(ow string) RotateBuilder
+	Ow(ow int) RotateBuilder
+	// OwExpr set output width expression (default "iw").
+	OwExpr(ow expr.Expr) RotateBuilder
 	// OutH set output height expression (default "ih").
-	OutH(outH string) RotateBuilder
+	OutH(outH int) RotateBuilder
+	// OutHExpr set output height expression (default "ih").
+	OutHExpr(outH expr.Expr) RotateBuilder
 	// Oh set output height expression (default "ih").
-	Oh(oh string) RotateBuilder
+	Oh(oh int) RotateBuilder
+	// OhExpr set output height expression (default "ih").
+	OhExpr(oh expr.Expr) RotateBuilder
 	// Fillcolor set background fill color (default "black").
 	Fillcolor(fillcolor string) RotateBuilder
 	// C set background fill color (default "black").
 	C(c string) RotateBuilder
 	// Bilinear use bilinear interpolation (default true).
 	Bilinear(bilinear bool) RotateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) RotateBuilder
 }
 
 // Rotate creates a new RotateBuilder to configure the "rotate" filter.
@@ -80,20 +90,36 @@ func (rotateBuilder *implRotateBuilder) AExpr(a expr.Expr) RotateBuilder {
 	return rotateBuilder.withOption("a", a)
 }
 
-func (rotateBuilder *implRotateBuilder) OutW(outW string) RotateBuilder {
-	return rotateBuilder.withOption("out_w", expr.String(outW))
+func (rotateBuilder *implRotateBuilder) OutW(outW int) RotateBuilder {
+	return rotateBuilder.withOption("out_w", expr.Int(outW))
 }
 
-func (rotateBuilder *implRotateBuilder) Ow(ow string) RotateBuilder {
-	return rotateBuilder.withOption("ow", expr.String(ow))
+func (rotateBuilder *implRotateBuilder) OutWExpr(outW expr.Expr) RotateBuilder {
+	return rotateBuilder.withOption("out_w", outW)
 }
 
-func (rotateBuilder *implRotateBuilder) OutH(outH string) RotateBuilder {
-	return rotateBuilder.withOption("out_h", expr.String(outH))
+func (rotateBuilder *implRotateBuilder) Ow(ow int) RotateBuilder {
+	return rotateBuilder.withOption("ow", expr.Int(ow))
 }
 
-func (rotateBuilder *implRotateBuilder) Oh(oh string) RotateBuilder {
-	return rotateBuilder.withOption("oh", expr.String(oh))
+func (rotateBuilder *implRotateBuilder) OwExpr(ow expr.Expr) RotateBuilder {
+	return rotateBuilder.withOption("ow", ow)
+}
+
+func (rotateBuilder *implRotateBuilder) OutH(outH int) RotateBuilder {
+	return rotateBuilder.withOption("out_h", expr.Int(outH))
+}
+
+func (rotateBuilder *implRotateBuilder) OutHExpr(outH expr.Expr) RotateBuilder {
+	return rotateBuilder.withOption("out_h", outH)
+}
+
+func (rotateBuilder *implRotateBuilder) Oh(oh int) RotateBuilder {
+	return rotateBuilder.withOption("oh", expr.Int(oh))
+}
+
+func (rotateBuilder *implRotateBuilder) OhExpr(oh expr.Expr) RotateBuilder {
+	return rotateBuilder.withOption("oh", oh)
 }
 
 func (rotateBuilder *implRotateBuilder) Fillcolor(fillcolor string) RotateBuilder {
@@ -106,4 +132,8 @@ func (rotateBuilder *implRotateBuilder) C(c string) RotateBuilder {
 
 func (rotateBuilder *implRotateBuilder) Bilinear(bilinear bool) RotateBuilder {
 	return rotateBuilder.withOption("bilinear", expr.Bool(bilinear))
+}
+
+func (rotateBuilder *implRotateBuilder) Enable(enable expr.Expr) RotateBuilder {
+	return rotateBuilder.withOption("enable", enable)
 }

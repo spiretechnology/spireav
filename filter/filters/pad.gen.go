@@ -12,17 +12,29 @@ import (
 type PadBuilder interface {
 	filter.Filter
 	// Width set the pad area width expression (default "iw").
-	Width(width string) PadBuilder
+	Width(width int) PadBuilder
+	// WidthExpr set the pad area width expression (default "iw").
+	WidthExpr(width expr.Expr) PadBuilder
 	// W set the pad area width expression (default "iw").
-	W(w string) PadBuilder
+	W(w int) PadBuilder
+	// WExpr set the pad area width expression (default "iw").
+	WExpr(w expr.Expr) PadBuilder
 	// Height set the pad area height expression (default "ih").
-	Height(height string) PadBuilder
+	Height(height int) PadBuilder
+	// HeightExpr set the pad area height expression (default "ih").
+	HeightExpr(height expr.Expr) PadBuilder
 	// H set the pad area height expression (default "ih").
-	H(h string) PadBuilder
+	H(h int) PadBuilder
+	// HExpr set the pad area height expression (default "ih").
+	HExpr(h expr.Expr) PadBuilder
 	// X set the x offset expression for the input image position (default "0").
-	X(x string) PadBuilder
+	X(x int) PadBuilder
+	// XExpr set the x offset expression for the input image position (default "0").
+	XExpr(x expr.Expr) PadBuilder
 	// Y set the y offset expression for the input image position (default "0").
-	Y(y string) PadBuilder
+	Y(y int) PadBuilder
+	// YExpr set the y offset expression for the input image position (default "0").
+	YExpr(y expr.Expr) PadBuilder
 	// Color set the color of the padded area border (default "black").
 	Color(color expr.Color) PadBuilder
 	// Eval specify when to evaluate expressions (from 0 to 1) (default init).
@@ -60,28 +72,52 @@ func (padBuilder *implPadBuilder) withOption(key string, value expr.Expr) PadBui
 	return &bCopy
 }
 
-func (padBuilder *implPadBuilder) Width(width string) PadBuilder {
-	return padBuilder.withOption("width", expr.String(width))
+func (padBuilder *implPadBuilder) Width(width int) PadBuilder {
+	return padBuilder.withOption("width", expr.Int(width))
 }
 
-func (padBuilder *implPadBuilder) W(w string) PadBuilder {
-	return padBuilder.withOption("w", expr.String(w))
+func (padBuilder *implPadBuilder) WidthExpr(width expr.Expr) PadBuilder {
+	return padBuilder.withOption("width", width)
 }
 
-func (padBuilder *implPadBuilder) Height(height string) PadBuilder {
-	return padBuilder.withOption("height", expr.String(height))
+func (padBuilder *implPadBuilder) W(w int) PadBuilder {
+	return padBuilder.withOption("w", expr.Int(w))
 }
 
-func (padBuilder *implPadBuilder) H(h string) PadBuilder {
-	return padBuilder.withOption("h", expr.String(h))
+func (padBuilder *implPadBuilder) WExpr(w expr.Expr) PadBuilder {
+	return padBuilder.withOption("w", w)
 }
 
-func (padBuilder *implPadBuilder) X(x string) PadBuilder {
-	return padBuilder.withOption("x", expr.String(x))
+func (padBuilder *implPadBuilder) Height(height int) PadBuilder {
+	return padBuilder.withOption("height", expr.Int(height))
 }
 
-func (padBuilder *implPadBuilder) Y(y string) PadBuilder {
-	return padBuilder.withOption("y", expr.String(y))
+func (padBuilder *implPadBuilder) HeightExpr(height expr.Expr) PadBuilder {
+	return padBuilder.withOption("height", height)
+}
+
+func (padBuilder *implPadBuilder) H(h int) PadBuilder {
+	return padBuilder.withOption("h", expr.Int(h))
+}
+
+func (padBuilder *implPadBuilder) HExpr(h expr.Expr) PadBuilder {
+	return padBuilder.withOption("h", h)
+}
+
+func (padBuilder *implPadBuilder) X(x int) PadBuilder {
+	return padBuilder.withOption("x", expr.Int(x))
+}
+
+func (padBuilder *implPadBuilder) XExpr(x expr.Expr) PadBuilder {
+	return padBuilder.withOption("x", x)
+}
+
+func (padBuilder *implPadBuilder) Y(y int) PadBuilder {
+	return padBuilder.withOption("y", expr.Int(y))
+}
+
+func (padBuilder *implPadBuilder) YExpr(y expr.Expr) PadBuilder {
+	return padBuilder.withOption("y", y)
 }
 
 func (padBuilder *implPadBuilder) Color(color expr.Color) PadBuilder {

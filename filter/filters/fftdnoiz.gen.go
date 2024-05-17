@@ -37,6 +37,8 @@ type FftdnoizBuilder interface {
 	PlanesExpr(planes expr.Expr) FftdnoizBuilder
 	// Window set window function (from 0 to 20) (default hann).
 	Window(window int) FftdnoizBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FftdnoizBuilder
 }
 
 // Fftdnoiz creates a new FftdnoizBuilder to configure the "fftdnoiz" filter.
@@ -118,4 +120,8 @@ func (fftdnoizBuilder *implFftdnoizBuilder) PlanesExpr(planes expr.Expr) Fftdnoi
 
 func (fftdnoizBuilder *implFftdnoizBuilder) Window(window int) FftdnoizBuilder {
 	return fftdnoizBuilder.withOption("window", expr.Int(window))
+}
+
+func (fftdnoizBuilder *implFftdnoizBuilder) Enable(enable expr.Expr) FftdnoizBuilder {
+	return fftdnoizBuilder.withOption("enable", enable)
 }

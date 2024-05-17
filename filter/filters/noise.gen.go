@@ -18,9 +18,9 @@ type NoiseBuilder interface {
 	// Alls set component #0 strength (from 0 to 100) (default 0).
 	Alls(alls int) NoiseBuilder
 	// AllFlags set component #0 flags (default 0).
-	AllFlags(allFlags string) NoiseBuilder
+	AllFlags(allFlags ...string) NoiseBuilder
 	// Allf set component #0 flags (default 0).
-	Allf(allf string) NoiseBuilder
+	Allf(allf ...string) NoiseBuilder
 	// C0Seed set component #0 noise seed (from -1 to INT_MAX) (default -1).
 	C0Seed(c0Seed int) NoiseBuilder
 	// C0Strength set component #0 strength (from 0 to 100) (default 0).
@@ -28,9 +28,9 @@ type NoiseBuilder interface {
 	// C0s set component #0 strength (from 0 to 100) (default 0).
 	C0s(c0s int) NoiseBuilder
 	// C0Flags set component #0 flags (default 0).
-	C0Flags(c0Flags string) NoiseBuilder
+	C0Flags(c0Flags ...string) NoiseBuilder
 	// C0f set component #0 flags (default 0).
-	C0f(c0f string) NoiseBuilder
+	C0f(c0f ...string) NoiseBuilder
 	// C1Seed set component #1 noise seed (from -1 to INT_MAX) (default -1).
 	C1Seed(c1Seed int) NoiseBuilder
 	// C1Strength set component #1 strength (from 0 to 100) (default 0).
@@ -38,9 +38,9 @@ type NoiseBuilder interface {
 	// C1s set component #1 strength (from 0 to 100) (default 0).
 	C1s(c1s int) NoiseBuilder
 	// C1Flags set component #1 flags (default 0).
-	C1Flags(c1Flags string) NoiseBuilder
+	C1Flags(c1Flags ...string) NoiseBuilder
 	// C1f set component #1 flags (default 0).
-	C1f(c1f string) NoiseBuilder
+	C1f(c1f ...string) NoiseBuilder
 	// C2Seed set component #2 noise seed (from -1 to INT_MAX) (default -1).
 	C2Seed(c2Seed int) NoiseBuilder
 	// C2Strength set component #2 strength (from 0 to 100) (default 0).
@@ -48,9 +48,9 @@ type NoiseBuilder interface {
 	// C2s set component #2 strength (from 0 to 100) (default 0).
 	C2s(c2s int) NoiseBuilder
 	// C2Flags set component #2 flags (default 0).
-	C2Flags(c2Flags string) NoiseBuilder
+	C2Flags(c2Flags ...string) NoiseBuilder
 	// C2f set component #2 flags (default 0).
-	C2f(c2f string) NoiseBuilder
+	C2f(c2f ...string) NoiseBuilder
 	// C3Seed set component #3 noise seed (from -1 to INT_MAX) (default -1).
 	C3Seed(c3Seed int) NoiseBuilder
 	// C3Strength set component #3 strength (from 0 to 100) (default 0).
@@ -58,9 +58,11 @@ type NoiseBuilder interface {
 	// C3s set component #3 strength (from 0 to 100) (default 0).
 	C3s(c3s int) NoiseBuilder
 	// C3Flags set component #3 flags (default 0).
-	C3Flags(c3Flags string) NoiseBuilder
+	C3Flags(c3Flags ...string) NoiseBuilder
 	// C3f set component #3 flags (default 0).
-	C3f(c3f string) NoiseBuilder
+	C3f(c3f ...string) NoiseBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) NoiseBuilder
 }
 
 // Noise creates a new NoiseBuilder to configure the "noise" filter.
@@ -104,12 +106,12 @@ func (noiseBuilder *implNoiseBuilder) Alls(alls int) NoiseBuilder {
 	return noiseBuilder.withOption("alls", expr.Int(alls))
 }
 
-func (noiseBuilder *implNoiseBuilder) AllFlags(allFlags string) NoiseBuilder {
-	return noiseBuilder.withOption("all_flags", expr.String(allFlags))
+func (noiseBuilder *implNoiseBuilder) AllFlags(allFlags ...string) NoiseBuilder {
+	return noiseBuilder.withOption("all_flags", expr.Flags(allFlags))
 }
 
-func (noiseBuilder *implNoiseBuilder) Allf(allf string) NoiseBuilder {
-	return noiseBuilder.withOption("allf", expr.String(allf))
+func (noiseBuilder *implNoiseBuilder) Allf(allf ...string) NoiseBuilder {
+	return noiseBuilder.withOption("allf", expr.Flags(allf))
 }
 
 func (noiseBuilder *implNoiseBuilder) C0Seed(c0Seed int) NoiseBuilder {
@@ -124,12 +126,12 @@ func (noiseBuilder *implNoiseBuilder) C0s(c0s int) NoiseBuilder {
 	return noiseBuilder.withOption("c0s", expr.Int(c0s))
 }
 
-func (noiseBuilder *implNoiseBuilder) C0Flags(c0Flags string) NoiseBuilder {
-	return noiseBuilder.withOption("c0_flags", expr.String(c0Flags))
+func (noiseBuilder *implNoiseBuilder) C0Flags(c0Flags ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c0_flags", expr.Flags(c0Flags))
 }
 
-func (noiseBuilder *implNoiseBuilder) C0f(c0f string) NoiseBuilder {
-	return noiseBuilder.withOption("c0f", expr.String(c0f))
+func (noiseBuilder *implNoiseBuilder) C0f(c0f ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c0f", expr.Flags(c0f))
 }
 
 func (noiseBuilder *implNoiseBuilder) C1Seed(c1Seed int) NoiseBuilder {
@@ -144,12 +146,12 @@ func (noiseBuilder *implNoiseBuilder) C1s(c1s int) NoiseBuilder {
 	return noiseBuilder.withOption("c1s", expr.Int(c1s))
 }
 
-func (noiseBuilder *implNoiseBuilder) C1Flags(c1Flags string) NoiseBuilder {
-	return noiseBuilder.withOption("c1_flags", expr.String(c1Flags))
+func (noiseBuilder *implNoiseBuilder) C1Flags(c1Flags ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c1_flags", expr.Flags(c1Flags))
 }
 
-func (noiseBuilder *implNoiseBuilder) C1f(c1f string) NoiseBuilder {
-	return noiseBuilder.withOption("c1f", expr.String(c1f))
+func (noiseBuilder *implNoiseBuilder) C1f(c1f ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c1f", expr.Flags(c1f))
 }
 
 func (noiseBuilder *implNoiseBuilder) C2Seed(c2Seed int) NoiseBuilder {
@@ -164,12 +166,12 @@ func (noiseBuilder *implNoiseBuilder) C2s(c2s int) NoiseBuilder {
 	return noiseBuilder.withOption("c2s", expr.Int(c2s))
 }
 
-func (noiseBuilder *implNoiseBuilder) C2Flags(c2Flags string) NoiseBuilder {
-	return noiseBuilder.withOption("c2_flags", expr.String(c2Flags))
+func (noiseBuilder *implNoiseBuilder) C2Flags(c2Flags ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c2_flags", expr.Flags(c2Flags))
 }
 
-func (noiseBuilder *implNoiseBuilder) C2f(c2f string) NoiseBuilder {
-	return noiseBuilder.withOption("c2f", expr.String(c2f))
+func (noiseBuilder *implNoiseBuilder) C2f(c2f ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c2f", expr.Flags(c2f))
 }
 
 func (noiseBuilder *implNoiseBuilder) C3Seed(c3Seed int) NoiseBuilder {
@@ -184,10 +186,14 @@ func (noiseBuilder *implNoiseBuilder) C3s(c3s int) NoiseBuilder {
 	return noiseBuilder.withOption("c3s", expr.Int(c3s))
 }
 
-func (noiseBuilder *implNoiseBuilder) C3Flags(c3Flags string) NoiseBuilder {
-	return noiseBuilder.withOption("c3_flags", expr.String(c3Flags))
+func (noiseBuilder *implNoiseBuilder) C3Flags(c3Flags ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c3_flags", expr.Flags(c3Flags))
 }
 
-func (noiseBuilder *implNoiseBuilder) C3f(c3f string) NoiseBuilder {
-	return noiseBuilder.withOption("c3f", expr.String(c3f))
+func (noiseBuilder *implNoiseBuilder) C3f(c3f ...string) NoiseBuilder {
+	return noiseBuilder.withOption("c3f", expr.Flags(c3f))
+}
+
+func (noiseBuilder *implNoiseBuilder) Enable(enable expr.Expr) NoiseBuilder {
+	return noiseBuilder.withOption("enable", enable)
 }

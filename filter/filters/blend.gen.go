@@ -32,25 +32,15 @@ type BlendBuilder interface {
 	// AllModeExpr set blend mode for all components (from -1 to 39) (default -1).
 	AllModeExpr(allMode expr.Expr) BlendBuilder
 	// C0Expr set color component #0 expression.
-	C0Expr(c0Expr string) BlendBuilder
-	// C0ExprExpr set color component #0 expression.
-	C0ExprExpr(c0Expr expr.Expr) BlendBuilder
+	C0Expr(c0Expr expr.Expr) BlendBuilder
 	// C1Expr set color component #1 expression.
-	C1Expr(c1Expr string) BlendBuilder
-	// C1ExprExpr set color component #1 expression.
-	C1ExprExpr(c1Expr expr.Expr) BlendBuilder
+	C1Expr(c1Expr expr.Expr) BlendBuilder
 	// C2Expr set color component #2 expression.
-	C2Expr(c2Expr string) BlendBuilder
-	// C2ExprExpr set color component #2 expression.
-	C2ExprExpr(c2Expr expr.Expr) BlendBuilder
+	C2Expr(c2Expr expr.Expr) BlendBuilder
 	// C3Expr set color component #3 expression.
-	C3Expr(c3Expr string) BlendBuilder
-	// C3ExprExpr set color component #3 expression.
-	C3ExprExpr(c3Expr expr.Expr) BlendBuilder
+	C3Expr(c3Expr expr.Expr) BlendBuilder
 	// AllExpr set expression for all color components.
-	AllExpr(allExpr string) BlendBuilder
-	// AllExprExpr set expression for all color components.
-	AllExprExpr(allExpr expr.Expr) BlendBuilder
+	AllExpr(allExpr expr.Expr) BlendBuilder
 	// C0Opacity set color component #0 opacity (from 0 to 1) (default 1).
 	C0Opacity(c0Opacity float64) BlendBuilder
 	// C0OpacityExpr set color component #0 opacity (from 0 to 1) (default 1).
@@ -79,6 +69,8 @@ type BlendBuilder interface {
 	Repeatlast(repeatlast bool) BlendBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) BlendBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BlendBuilder
 }
 
 // Blend creates a new BlendBuilder to configure the "blend" filter.
@@ -150,43 +142,23 @@ func (blendBuilder *implBlendBuilder) AllModeExpr(allMode expr.Expr) BlendBuilde
 	return blendBuilder.withOption("all_mode", allMode)
 }
 
-func (blendBuilder *implBlendBuilder) C0Expr(c0Expr string) BlendBuilder {
-	return blendBuilder.withOption("c0_expr", expr.String(c0Expr))
-}
-
-func (blendBuilder *implBlendBuilder) C0ExprExpr(c0Expr expr.Expr) BlendBuilder {
+func (blendBuilder *implBlendBuilder) C0Expr(c0Expr expr.Expr) BlendBuilder {
 	return blendBuilder.withOption("c0_expr", c0Expr)
 }
 
-func (blendBuilder *implBlendBuilder) C1Expr(c1Expr string) BlendBuilder {
-	return blendBuilder.withOption("c1_expr", expr.String(c1Expr))
-}
-
-func (blendBuilder *implBlendBuilder) C1ExprExpr(c1Expr expr.Expr) BlendBuilder {
+func (blendBuilder *implBlendBuilder) C1Expr(c1Expr expr.Expr) BlendBuilder {
 	return blendBuilder.withOption("c1_expr", c1Expr)
 }
 
-func (blendBuilder *implBlendBuilder) C2Expr(c2Expr string) BlendBuilder {
-	return blendBuilder.withOption("c2_expr", expr.String(c2Expr))
-}
-
-func (blendBuilder *implBlendBuilder) C2ExprExpr(c2Expr expr.Expr) BlendBuilder {
+func (blendBuilder *implBlendBuilder) C2Expr(c2Expr expr.Expr) BlendBuilder {
 	return blendBuilder.withOption("c2_expr", c2Expr)
 }
 
-func (blendBuilder *implBlendBuilder) C3Expr(c3Expr string) BlendBuilder {
-	return blendBuilder.withOption("c3_expr", expr.String(c3Expr))
-}
-
-func (blendBuilder *implBlendBuilder) C3ExprExpr(c3Expr expr.Expr) BlendBuilder {
+func (blendBuilder *implBlendBuilder) C3Expr(c3Expr expr.Expr) BlendBuilder {
 	return blendBuilder.withOption("c3_expr", c3Expr)
 }
 
-func (blendBuilder *implBlendBuilder) AllExpr(allExpr string) BlendBuilder {
-	return blendBuilder.withOption("all_expr", expr.String(allExpr))
-}
-
-func (blendBuilder *implBlendBuilder) AllExprExpr(allExpr expr.Expr) BlendBuilder {
+func (blendBuilder *implBlendBuilder) AllExpr(allExpr expr.Expr) BlendBuilder {
 	return blendBuilder.withOption("all_expr", allExpr)
 }
 
@@ -244,4 +216,8 @@ func (blendBuilder *implBlendBuilder) Repeatlast(repeatlast bool) BlendBuilder {
 
 func (blendBuilder *implBlendBuilder) TsSyncMode(tsSyncMode int) BlendBuilder {
 	return blendBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (blendBuilder *implBlendBuilder) Enable(enable expr.Expr) BlendBuilder {
+	return blendBuilder.withOption("enable", enable)
 }

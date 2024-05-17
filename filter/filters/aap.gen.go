@@ -29,6 +29,8 @@ type AapBuilder interface {
 	OutModeExpr(outMode expr.Expr) AapBuilder
 	// Precision set processing precision (from 0 to 2) (default auto).
 	Precision(precision int) AapBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AapBuilder
 }
 
 // Aap creates a new AapBuilder to configure the "aap" filter.
@@ -94,4 +96,8 @@ func (aapBuilder *implAapBuilder) OutModeExpr(outMode expr.Expr) AapBuilder {
 
 func (aapBuilder *implAapBuilder) Precision(precision int) AapBuilder {
 	return aapBuilder.withOption("precision", expr.Int(precision))
+}
+
+func (aapBuilder *implAapBuilder) Enable(enable expr.Expr) AapBuilder {
+	return aapBuilder.withOption("enable", enable)
 }

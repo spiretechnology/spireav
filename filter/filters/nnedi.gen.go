@@ -45,6 +45,8 @@ type NnediBuilder interface {
 	Pscrn(pscrn int) NnediBuilder
 	// PscrnExpr set prescreening (from 0 to 4) (default new).
 	PscrnExpr(pscrn expr.Expr) NnediBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) NnediBuilder
 }
 
 // Nnedi creates a new NnediBuilder to configure the "nnedi" filter.
@@ -142,4 +144,8 @@ func (nnediBuilder *implNnediBuilder) Pscrn(pscrn int) NnediBuilder {
 
 func (nnediBuilder *implNnediBuilder) PscrnExpr(pscrn expr.Expr) NnediBuilder {
 	return nnediBuilder.withOption("pscrn", pscrn)
+}
+
+func (nnediBuilder *implNnediBuilder) Enable(enable expr.Expr) NnediBuilder {
+	return nnediBuilder.withOption("enable", enable)
 }

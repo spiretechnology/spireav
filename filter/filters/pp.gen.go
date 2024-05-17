@@ -13,6 +13,8 @@ type PpBuilder interface {
 	filter.Filter
 	// Subfilters set postprocess subfilters (default "de").
 	Subfilters(subfilters string) PpBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PpBuilder
 }
 
 // Pp creates a new PpBuilder to configure the "pp" filter.
@@ -46,4 +48,8 @@ func (ppBuilder *implPpBuilder) withOption(key string, value expr.Expr) PpBuilde
 
 func (ppBuilder *implPpBuilder) Subfilters(subfilters string) PpBuilder {
 	return ppBuilder.withOption("subfilters", expr.String(subfilters))
+}
+
+func (ppBuilder *implPpBuilder) Enable(enable expr.Expr) PpBuilder {
+	return ppBuilder.withOption("enable", enable)
 }

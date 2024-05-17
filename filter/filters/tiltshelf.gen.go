@@ -83,6 +83,8 @@ type TiltshelfBuilder interface {
 	Blocksize(blocksize int) TiltshelfBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) TiltshelfBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) TiltshelfBuilder
 }
 
 // Tiltshelf creates a new TiltshelfBuilder to configure the "tiltshelf" filter.
@@ -256,4 +258,8 @@ func (tiltshelfBuilder *implTiltshelfBuilder) Blocksize(blocksize int) Tiltshelf
 
 func (tiltshelfBuilder *implTiltshelfBuilder) B(b int) TiltshelfBuilder {
 	return tiltshelfBuilder.withOption("b", expr.Int(b))
+}
+
+func (tiltshelfBuilder *implTiltshelfBuilder) Enable(enable expr.Expr) TiltshelfBuilder {
+	return tiltshelfBuilder.withOption("enable", enable)
 }

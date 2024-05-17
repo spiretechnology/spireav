@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#apsnr
 type ApsnrBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ApsnrBuilder
 }
 
 // Apsnr creates a new ApsnrBuilder to configure the "apsnr" filter.
@@ -40,4 +42,8 @@ func (apsnrBuilder *implApsnrBuilder) withOption(key string, value expr.Expr) Ap
 	bCopy := *apsnrBuilder
 	bCopy.f = apsnrBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (apsnrBuilder *implApsnrBuilder) Enable(enable expr.Expr) ApsnrBuilder {
+	return apsnrBuilder.withOption("enable", enable)
 }

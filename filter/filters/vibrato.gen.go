@@ -15,6 +15,8 @@ type VibratoBuilder interface {
 	F(f float64) VibratoBuilder
 	// D set depth as percentage (from 0 to 1) (default 0.5).
 	D(d float64) VibratoBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VibratoBuilder
 }
 
 // Vibrato creates a new VibratoBuilder to configure the "vibrato" filter.
@@ -52,4 +54,8 @@ func (vibratoBuilder *implVibratoBuilder) F(f float64) VibratoBuilder {
 
 func (vibratoBuilder *implVibratoBuilder) D(d float64) VibratoBuilder {
 	return vibratoBuilder.withOption("d", expr.Double(d))
+}
+
+func (vibratoBuilder *implVibratoBuilder) Enable(enable expr.Expr) VibratoBuilder {
+	return vibratoBuilder.withOption("enable", enable)
 }

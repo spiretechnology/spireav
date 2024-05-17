@@ -12,49 +12,29 @@ import (
 type LutBuilder interface {
 	filter.Filter
 	// C0 set component #0 expression (default "clipval").
-	C0(c0 string) LutBuilder
-	// C0Expr set component #0 expression (default "clipval").
-	C0Expr(c0 expr.Expr) LutBuilder
+	C0(c0 expr.Expr) LutBuilder
 	// C1 set component #1 expression (default "clipval").
-	C1(c1 string) LutBuilder
-	// C1Expr set component #1 expression (default "clipval").
-	C1Expr(c1 expr.Expr) LutBuilder
+	C1(c1 expr.Expr) LutBuilder
 	// C2 set component #2 expression (default "clipval").
-	C2(c2 string) LutBuilder
-	// C2Expr set component #2 expression (default "clipval").
-	C2Expr(c2 expr.Expr) LutBuilder
+	C2(c2 expr.Expr) LutBuilder
 	// C3 set component #3 expression (default "clipval").
-	C3(c3 string) LutBuilder
-	// C3Expr set component #3 expression (default "clipval").
-	C3Expr(c3 expr.Expr) LutBuilder
+	C3(c3 expr.Expr) LutBuilder
 	// Y set Y expression (default "clipval").
-	Y(y string) LutBuilder
-	// YExpr set Y expression (default "clipval").
-	YExpr(y expr.Expr) LutBuilder
+	Y(y expr.Expr) LutBuilder
 	// U set U expression (default "clipval").
-	U(u string) LutBuilder
-	// UExpr set U expression (default "clipval").
-	UExpr(u expr.Expr) LutBuilder
+	U(u expr.Expr) LutBuilder
 	// V set V expression (default "clipval").
-	V(v string) LutBuilder
-	// VExpr set V expression (default "clipval").
-	VExpr(v expr.Expr) LutBuilder
+	V(v expr.Expr) LutBuilder
 	// R set R expression (default "clipval").
-	R(r string) LutBuilder
-	// RExpr set R expression (default "clipval").
-	RExpr(r expr.Expr) LutBuilder
+	R(r expr.Expr) LutBuilder
 	// G set G expression (default "clipval").
-	G(g string) LutBuilder
-	// GExpr set G expression (default "clipval").
-	GExpr(g expr.Expr) LutBuilder
+	G(g expr.Expr) LutBuilder
 	// B set B expression (default "clipval").
-	B(b string) LutBuilder
-	// BExpr set B expression (default "clipval").
-	BExpr(b expr.Expr) LutBuilder
+	B(b expr.Expr) LutBuilder
 	// A set A expression (default "clipval").
-	A(a string) LutBuilder
-	// AExpr set A expression (default "clipval").
-	AExpr(a expr.Expr) LutBuilder
+	A(a expr.Expr) LutBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LutBuilder
 }
 
 // Lut creates a new LutBuilder to configure the "lut" filter.
@@ -86,90 +66,50 @@ func (lutBuilder *implLutBuilder) withOption(key string, value expr.Expr) LutBui
 	return &bCopy
 }
 
-func (lutBuilder *implLutBuilder) C0(c0 string) LutBuilder {
-	return lutBuilder.withOption("c0", expr.String(c0))
-}
-
-func (lutBuilder *implLutBuilder) C0Expr(c0 expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) C0(c0 expr.Expr) LutBuilder {
 	return lutBuilder.withOption("c0", c0)
 }
 
-func (lutBuilder *implLutBuilder) C1(c1 string) LutBuilder {
-	return lutBuilder.withOption("c1", expr.String(c1))
-}
-
-func (lutBuilder *implLutBuilder) C1Expr(c1 expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) C1(c1 expr.Expr) LutBuilder {
 	return lutBuilder.withOption("c1", c1)
 }
 
-func (lutBuilder *implLutBuilder) C2(c2 string) LutBuilder {
-	return lutBuilder.withOption("c2", expr.String(c2))
-}
-
-func (lutBuilder *implLutBuilder) C2Expr(c2 expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) C2(c2 expr.Expr) LutBuilder {
 	return lutBuilder.withOption("c2", c2)
 }
 
-func (lutBuilder *implLutBuilder) C3(c3 string) LutBuilder {
-	return lutBuilder.withOption("c3", expr.String(c3))
-}
-
-func (lutBuilder *implLutBuilder) C3Expr(c3 expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) C3(c3 expr.Expr) LutBuilder {
 	return lutBuilder.withOption("c3", c3)
 }
 
-func (lutBuilder *implLutBuilder) Y(y string) LutBuilder {
-	return lutBuilder.withOption("y", expr.String(y))
-}
-
-func (lutBuilder *implLutBuilder) YExpr(y expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) Y(y expr.Expr) LutBuilder {
 	return lutBuilder.withOption("y", y)
 }
 
-func (lutBuilder *implLutBuilder) U(u string) LutBuilder {
-	return lutBuilder.withOption("u", expr.String(u))
-}
-
-func (lutBuilder *implLutBuilder) UExpr(u expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) U(u expr.Expr) LutBuilder {
 	return lutBuilder.withOption("u", u)
 }
 
-func (lutBuilder *implLutBuilder) V(v string) LutBuilder {
-	return lutBuilder.withOption("v", expr.String(v))
-}
-
-func (lutBuilder *implLutBuilder) VExpr(v expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) V(v expr.Expr) LutBuilder {
 	return lutBuilder.withOption("v", v)
 }
 
-func (lutBuilder *implLutBuilder) R(r string) LutBuilder {
-	return lutBuilder.withOption("r", expr.String(r))
-}
-
-func (lutBuilder *implLutBuilder) RExpr(r expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) R(r expr.Expr) LutBuilder {
 	return lutBuilder.withOption("r", r)
 }
 
-func (lutBuilder *implLutBuilder) G(g string) LutBuilder {
-	return lutBuilder.withOption("g", expr.String(g))
-}
-
-func (lutBuilder *implLutBuilder) GExpr(g expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) G(g expr.Expr) LutBuilder {
 	return lutBuilder.withOption("g", g)
 }
 
-func (lutBuilder *implLutBuilder) B(b string) LutBuilder {
-	return lutBuilder.withOption("b", expr.String(b))
-}
-
-func (lutBuilder *implLutBuilder) BExpr(b expr.Expr) LutBuilder {
+func (lutBuilder *implLutBuilder) B(b expr.Expr) LutBuilder {
 	return lutBuilder.withOption("b", b)
 }
 
-func (lutBuilder *implLutBuilder) A(a string) LutBuilder {
-	return lutBuilder.withOption("a", expr.String(a))
+func (lutBuilder *implLutBuilder) A(a expr.Expr) LutBuilder {
+	return lutBuilder.withOption("a", a)
 }
 
-func (lutBuilder *implLutBuilder) AExpr(a expr.Expr) LutBuilder {
-	return lutBuilder.withOption("a", a)
+func (lutBuilder *implLutBuilder) Enable(enable expr.Expr) LutBuilder {
+	return lutBuilder.withOption("enable", enable)
 }

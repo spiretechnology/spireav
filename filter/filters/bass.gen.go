@@ -83,6 +83,8 @@ type BassBuilder interface {
 	Blocksize(blocksize int) BassBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) BassBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BassBuilder
 }
 
 // Bass creates a new BassBuilder to configure the "bass" filter.
@@ -256,4 +258,8 @@ func (bassBuilder *implBassBuilder) Blocksize(blocksize int) BassBuilder {
 
 func (bassBuilder *implBassBuilder) B(b int) BassBuilder {
 	return bassBuilder.withOption("b", expr.Int(b))
+}
+
+func (bassBuilder *implBassBuilder) Enable(enable expr.Expr) BassBuilder {
+	return bassBuilder.withOption("enable", enable)
 }

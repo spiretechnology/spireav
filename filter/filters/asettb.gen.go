@@ -12,9 +12,9 @@ import (
 type AsettbBuilder interface {
 	filter.Filter
 	// Expr set expression determining the output timebase (default "intb").
-	Expr(expression string) AsettbBuilder
+	Expr(expression expr.Expr) AsettbBuilder
 	// Tb set expression determining the output timebase (default "intb").
-	Tb(tb string) AsettbBuilder
+	Tb(tb expr.Expr) AsettbBuilder
 }
 
 // Asettb creates a new AsettbBuilder to configure the "asettb" filter.
@@ -46,10 +46,10 @@ func (asettbBuilder *implAsettbBuilder) withOption(key string, value expr.Expr) 
 	return &bCopy
 }
 
-func (asettbBuilder *implAsettbBuilder) Expr(expression string) AsettbBuilder {
-	return asettbBuilder.withOption("expr", expr.String(expression))
+func (asettbBuilder *implAsettbBuilder) Expr(expression expr.Expr) AsettbBuilder {
+	return asettbBuilder.withOption("expr", expression)
 }
 
-func (asettbBuilder *implAsettbBuilder) Tb(tb string) AsettbBuilder {
-	return asettbBuilder.withOption("tb", expr.String(tb))
+func (asettbBuilder *implAsettbBuilder) Tb(tb expr.Expr) AsettbBuilder {
+	return asettbBuilder.withOption("tb", tb)
 }

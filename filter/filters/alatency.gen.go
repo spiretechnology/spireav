@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#alatency
 type AlatencyBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AlatencyBuilder
 }
 
 // Alatency creates a new AlatencyBuilder to configure the "alatency" filter.
@@ -40,4 +42,8 @@ func (alatencyBuilder *implAlatencyBuilder) withOption(key string, value expr.Ex
 	bCopy := *alatencyBuilder
 	bCopy.f = alatencyBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (alatencyBuilder *implAlatencyBuilder) Enable(enable expr.Expr) AlatencyBuilder {
+	return alatencyBuilder.withOption("enable", enable)
 }

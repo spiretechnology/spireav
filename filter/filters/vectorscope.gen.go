@@ -48,11 +48,11 @@ type VectorscopeBuilder interface {
 	// OExpr set graticule opacity (from 0 to 1) (default 0.75).
 	OExpr(o expr.Expr) VectorscopeBuilder
 	// Flags set graticule flags (default name).
-	Flags(flags string) VectorscopeBuilder
+	Flags(flags ...string) VectorscopeBuilder
 	// FlagsExpr set graticule flags (default name).
 	FlagsExpr(flags expr.Expr) VectorscopeBuilder
 	// F set graticule flags (default name).
-	F(f string) VectorscopeBuilder
+	F(f ...string) VectorscopeBuilder
 	// FExpr set graticule flags (default name).
 	FExpr(f expr.Expr) VectorscopeBuilder
 	// Bgopacity set background opacity (from 0 to 1) (default 0.3).
@@ -194,16 +194,16 @@ func (vectorscopeBuilder *implVectorscopeBuilder) OExpr(o expr.Expr) Vectorscope
 	return vectorscopeBuilder.withOption("o", o)
 }
 
-func (vectorscopeBuilder *implVectorscopeBuilder) Flags(flags string) VectorscopeBuilder {
-	return vectorscopeBuilder.withOption("flags", expr.String(flags))
+func (vectorscopeBuilder *implVectorscopeBuilder) Flags(flags ...string) VectorscopeBuilder {
+	return vectorscopeBuilder.withOption("flags", expr.Flags(flags))
 }
 
 func (vectorscopeBuilder *implVectorscopeBuilder) FlagsExpr(flags expr.Expr) VectorscopeBuilder {
 	return vectorscopeBuilder.withOption("flags", flags)
 }
 
-func (vectorscopeBuilder *implVectorscopeBuilder) F(f string) VectorscopeBuilder {
-	return vectorscopeBuilder.withOption("f", expr.String(f))
+func (vectorscopeBuilder *implVectorscopeBuilder) F(f ...string) VectorscopeBuilder {
+	return vectorscopeBuilder.withOption("f", expr.Flags(f))
 }
 
 func (vectorscopeBuilder *implVectorscopeBuilder) FExpr(f expr.Expr) VectorscopeBuilder {

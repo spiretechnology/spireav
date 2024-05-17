@@ -19,6 +19,8 @@ type AlphamergeBuilder interface {
 	Repeatlast(repeatlast bool) AlphamergeBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) AlphamergeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AlphamergeBuilder
 }
 
 // Alphamerge creates a new AlphamergeBuilder to configure the "alphamerge" filter.
@@ -64,4 +66,8 @@ func (alphamergeBuilder *implAlphamergeBuilder) Repeatlast(repeatlast bool) Alph
 
 func (alphamergeBuilder *implAlphamergeBuilder) TsSyncMode(tsSyncMode int) AlphamergeBuilder {
 	return alphamergeBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (alphamergeBuilder *implAlphamergeBuilder) Enable(enable expr.Expr) AlphamergeBuilder {
+	return alphamergeBuilder.withOption("enable", enable)
 }

@@ -79,6 +79,8 @@ type EqualizerBuilder interface {
 	Blocksize(blocksize int) EqualizerBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) EqualizerBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) EqualizerBuilder
 }
 
 // Equalizer creates a new EqualizerBuilder to configure the "equalizer" filter.
@@ -244,4 +246,8 @@ func (equalizerBuilder *implEqualizerBuilder) Blocksize(blocksize int) Equalizer
 
 func (equalizerBuilder *implEqualizerBuilder) B(b int) EqualizerBuilder {
 	return equalizerBuilder.withOption("b", expr.Int(b))
+}
+
+func (equalizerBuilder *implEqualizerBuilder) Enable(enable expr.Expr) EqualizerBuilder {
+	return equalizerBuilder.withOption("enable", enable)
 }

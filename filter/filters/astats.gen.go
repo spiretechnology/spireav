@@ -18,9 +18,9 @@ type AstatsBuilder interface {
 	// Reset Set the number of frames over which cumulative stats are calculated before being reset (from 0 to INT_MAX) (default 0).
 	Reset(reset int) AstatsBuilder
 	// MeasurePerchannel Select the parameters which are measured per channel (default all+Bit_depth+Crest_factor+DC_offset+Dynamic_range+Entropy+Flat_factor+Max_difference+Max_level+Mean_difference+Min_difference+Min_level+Noise_floor+Noise_floor_count+Number_of_Infs+Number_of_NaNs+Number_of_denormals+Number_of_samples+Peak_count+Peak_level+RMS_difference+RMS_level+RMS_peak+RMS_trough+Zero_crossings+Zero_crossings_rate+Abs_Peak_count).
-	MeasurePerchannel(measurePerchannel string) AstatsBuilder
+	MeasurePerchannel(measurePerchannel ...string) AstatsBuilder
 	// MeasureOverall Select the parameters which are measured overall (default all+Bit_depth+Crest_factor+DC_offset+Dynamic_range+Entropy+Flat_factor+Max_difference+Max_level+Mean_difference+Min_difference+Min_level+Noise_floor+Noise_floor_count+Number_of_Infs+Number_of_NaNs+Number_of_denormals+Number_of_samples+Peak_count+Peak_level+RMS_difference+RMS_level+RMS_peak+RMS_trough+Zero_crossings+Zero_crossings_rate+Abs_Peak_count).
-	MeasureOverall(measureOverall string) AstatsBuilder
+	MeasureOverall(measureOverall ...string) AstatsBuilder
 }
 
 // Astats creates a new AstatsBuilder to configure the "astats" filter.
@@ -64,10 +64,10 @@ func (astatsBuilder *implAstatsBuilder) Reset(reset int) AstatsBuilder {
 	return astatsBuilder.withOption("reset", expr.Int(reset))
 }
 
-func (astatsBuilder *implAstatsBuilder) MeasurePerchannel(measurePerchannel string) AstatsBuilder {
-	return astatsBuilder.withOption("measure_perchannel", expr.String(measurePerchannel))
+func (astatsBuilder *implAstatsBuilder) MeasurePerchannel(measurePerchannel ...string) AstatsBuilder {
+	return astatsBuilder.withOption("measure_perchannel", expr.Flags(measurePerchannel))
 }
 
-func (astatsBuilder *implAstatsBuilder) MeasureOverall(measureOverall string) AstatsBuilder {
-	return astatsBuilder.withOption("measure_overall", expr.String(measureOverall))
+func (astatsBuilder *implAstatsBuilder) MeasureOverall(measureOverall ...string) AstatsBuilder {
+	return astatsBuilder.withOption("measure_overall", expr.Flags(measureOverall))
 }

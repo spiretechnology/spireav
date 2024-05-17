@@ -38,7 +38,7 @@ type AtadenoiseBuilder interface {
 	// S set how many frames to use (from 5 to 129) (default 9).
 	S(s int) AtadenoiseBuilder
 	// P set what planes to filter (default 7).
-	P(p string) AtadenoiseBuilder
+	P(p ...string) AtadenoiseBuilder
 	// PExpr set what planes to filter (default 7).
 	PExpr(p expr.Expr) AtadenoiseBuilder
 	// A set variant of algorithm (from 0 to 1) (default p).
@@ -57,6 +57,8 @@ type AtadenoiseBuilder interface {
 	With2s(val2s float32) AtadenoiseBuilder
 	// With2sExpr set sigma for 3rd plane (from 0 to 32767) (default 32767).
 	With2sExpr(val2s expr.Expr) AtadenoiseBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AtadenoiseBuilder
 }
 
 // Atadenoise creates a new AtadenoiseBuilder to configure the "atadenoise" filter.
@@ -140,8 +142,8 @@ func (atadenoiseBuilder *implAtadenoiseBuilder) S(s int) AtadenoiseBuilder {
 	return atadenoiseBuilder.withOption("s", expr.Int(s))
 }
 
-func (atadenoiseBuilder *implAtadenoiseBuilder) P(p string) AtadenoiseBuilder {
-	return atadenoiseBuilder.withOption("p", expr.String(p))
+func (atadenoiseBuilder *implAtadenoiseBuilder) P(p ...string) AtadenoiseBuilder {
+	return atadenoiseBuilder.withOption("p", expr.Flags(p))
 }
 
 func (atadenoiseBuilder *implAtadenoiseBuilder) PExpr(p expr.Expr) AtadenoiseBuilder {
@@ -178,4 +180,8 @@ func (atadenoiseBuilder *implAtadenoiseBuilder) With2s(val2s float32) Atadenoise
 
 func (atadenoiseBuilder *implAtadenoiseBuilder) With2sExpr(val2s expr.Expr) AtadenoiseBuilder {
 	return atadenoiseBuilder.withOption("2s", val2s)
+}
+
+func (atadenoiseBuilder *implAtadenoiseBuilder) Enable(enable expr.Expr) AtadenoiseBuilder {
+	return atadenoiseBuilder.withOption("enable", enable)
 }

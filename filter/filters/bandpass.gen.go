@@ -75,6 +75,8 @@ type BandpassBuilder interface {
 	Blocksize(blocksize int) BandpassBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) BandpassBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BandpassBuilder
 }
 
 // Bandpass creates a new BandpassBuilder to configure the "bandpass" filter.
@@ -232,4 +234,8 @@ func (bandpassBuilder *implBandpassBuilder) Blocksize(blocksize int) BandpassBui
 
 func (bandpassBuilder *implBandpassBuilder) B(b int) BandpassBuilder {
 	return bandpassBuilder.withOption("b", expr.Int(b))
+}
+
+func (bandpassBuilder *implBandpassBuilder) Enable(enable expr.Expr) BandpassBuilder {
+	return bandpassBuilder.withOption("enable", enable)
 }

@@ -12,9 +12,13 @@ import (
 type OverlayBuilder interface {
 	filter.Filter
 	// X set the x expression (default "0").
-	X(x string) OverlayBuilder
+	X(x int) OverlayBuilder
+	// XExpr set the x expression (default "0").
+	XExpr(x expr.Expr) OverlayBuilder
 	// Y set the y expression (default "0").
-	Y(y string) OverlayBuilder
+	Y(y int) OverlayBuilder
+	// YExpr set the y expression (default "0").
+	YExpr(y expr.Expr) OverlayBuilder
 	// EofAction Action to take when encountering EOF from secondary input  (from 0 to 2) (default repeat).
 	EofAction(eofAction int) OverlayBuilder
 	// Eval specify when to evaluate expressions (from 0 to 1) (default frame).
@@ -29,6 +33,8 @@ type OverlayBuilder interface {
 	Alpha(alpha int) OverlayBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) OverlayBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) OverlayBuilder
 }
 
 // Overlay creates a new OverlayBuilder to configure the "overlay" filter.
@@ -60,12 +66,20 @@ func (overlayBuilder *implOverlayBuilder) withOption(key string, value expr.Expr
 	return &bCopy
 }
 
-func (overlayBuilder *implOverlayBuilder) X(x string) OverlayBuilder {
-	return overlayBuilder.withOption("x", expr.String(x))
+func (overlayBuilder *implOverlayBuilder) X(x int) OverlayBuilder {
+	return overlayBuilder.withOption("x", expr.Int(x))
 }
 
-func (overlayBuilder *implOverlayBuilder) Y(y string) OverlayBuilder {
-	return overlayBuilder.withOption("y", expr.String(y))
+func (overlayBuilder *implOverlayBuilder) XExpr(x expr.Expr) OverlayBuilder {
+	return overlayBuilder.withOption("x", x)
+}
+
+func (overlayBuilder *implOverlayBuilder) Y(y int) OverlayBuilder {
+	return overlayBuilder.withOption("y", expr.Int(y))
+}
+
+func (overlayBuilder *implOverlayBuilder) YExpr(y expr.Expr) OverlayBuilder {
+	return overlayBuilder.withOption("y", y)
 }
 
 func (overlayBuilder *implOverlayBuilder) EofAction(eofAction int) OverlayBuilder {
@@ -94,4 +108,8 @@ func (overlayBuilder *implOverlayBuilder) Alpha(alpha int) OverlayBuilder {
 
 func (overlayBuilder *implOverlayBuilder) TsSyncMode(tsSyncMode int) OverlayBuilder {
 	return overlayBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (overlayBuilder *implOverlayBuilder) Enable(enable expr.Expr) OverlayBuilder {
+	return overlayBuilder.withOption("enable", enable)
 }

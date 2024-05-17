@@ -35,6 +35,8 @@ type BoxblurBuilder interface {
 	AlphaPower(alphaPower int) BoxblurBuilder
 	// Ap How many times should the boxblur be applied to alpha (from -1 to INT_MAX) (default -1).
 	Ap(ap int) BoxblurBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BoxblurBuilder
 }
 
 // Boxblur creates a new BoxblurBuilder to configure the "boxblur" filter.
@@ -112,4 +114,8 @@ func (boxblurBuilder *implBoxblurBuilder) AlphaPower(alphaPower int) BoxblurBuil
 
 func (boxblurBuilder *implBoxblurBuilder) Ap(ap int) BoxblurBuilder {
 	return boxblurBuilder.withOption("ap", expr.Int(ap))
+}
+
+func (boxblurBuilder *implBoxblurBuilder) Enable(enable expr.Expr) BoxblurBuilder {
+	return boxblurBuilder.withOption("enable", enable)
 }

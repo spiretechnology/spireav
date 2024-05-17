@@ -31,6 +31,8 @@ type HsvholdBuilder interface {
 	Blend(blend float32) HsvholdBuilder
 	// BlendExpr set the hsvhold blend value (from 0 to 1) (default 0).
 	BlendExpr(blend expr.Expr) HsvholdBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HsvholdBuilder
 }
 
 // Hsvhold creates a new HsvholdBuilder to configure the "hsvhold" filter.
@@ -100,4 +102,8 @@ func (hsvholdBuilder *implHsvholdBuilder) Blend(blend float32) HsvholdBuilder {
 
 func (hsvholdBuilder *implHsvholdBuilder) BlendExpr(blend expr.Expr) HsvholdBuilder {
 	return hsvholdBuilder.withOption("blend", blend)
+}
+
+func (hsvholdBuilder *implHsvholdBuilder) Enable(enable expr.Expr) HsvholdBuilder {
+	return hsvholdBuilder.withOption("enable", enable)
 }

@@ -35,6 +35,8 @@ type SmartblurBuilder interface {
 	ChromaThreshold(chromaThreshold int) SmartblurBuilder
 	// Ct set chroma threshold (from -31 to 30) (default -31).
 	Ct(ct int) SmartblurBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SmartblurBuilder
 }
 
 // Smartblur creates a new SmartblurBuilder to configure the "smartblur" filter.
@@ -112,4 +114,8 @@ func (smartblurBuilder *implSmartblurBuilder) ChromaThreshold(chromaThreshold in
 
 func (smartblurBuilder *implSmartblurBuilder) Ct(ct int) SmartblurBuilder {
 	return smartblurBuilder.withOption("ct", expr.Int(ct))
+}
+
+func (smartblurBuilder *implSmartblurBuilder) Enable(enable expr.Expr) SmartblurBuilder {
+	return smartblurBuilder.withOption("enable", enable)
 }

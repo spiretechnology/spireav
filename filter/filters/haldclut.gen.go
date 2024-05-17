@@ -27,6 +27,8 @@ type HaldclutBuilder interface {
 	Repeatlast(repeatlast bool) HaldclutBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) HaldclutBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HaldclutBuilder
 }
 
 // Haldclut creates a new HaldclutBuilder to configure the "haldclut" filter.
@@ -88,4 +90,8 @@ func (haldclutBuilder *implHaldclutBuilder) Repeatlast(repeatlast bool) Haldclut
 
 func (haldclutBuilder *implHaldclutBuilder) TsSyncMode(tsSyncMode int) HaldclutBuilder {
 	return haldclutBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (haldclutBuilder *implHaldclutBuilder) Enable(enable expr.Expr) HaldclutBuilder {
+	return haldclutBuilder.withOption("enable", enable)
 }

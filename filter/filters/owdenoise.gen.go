@@ -21,6 +21,8 @@ type OwdenoiseBuilder interface {
 	ChromaStrength(chromaStrength float64) OwdenoiseBuilder
 	// Cs set chroma strength (from 0 to 1000) (default 1).
 	Cs(cs float64) OwdenoiseBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) OwdenoiseBuilder
 }
 
 // Owdenoise creates a new OwdenoiseBuilder to configure the "owdenoise" filter.
@@ -70,4 +72,8 @@ func (owdenoiseBuilder *implOwdenoiseBuilder) ChromaStrength(chromaStrength floa
 
 func (owdenoiseBuilder *implOwdenoiseBuilder) Cs(cs float64) OwdenoiseBuilder {
 	return owdenoiseBuilder.withOption("cs", expr.Double(cs))
+}
+
+func (owdenoiseBuilder *implOwdenoiseBuilder) Enable(enable expr.Expr) OwdenoiseBuilder {
+	return owdenoiseBuilder.withOption("enable", enable)
 }

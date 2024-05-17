@@ -20,16 +20,16 @@ func main() {
 	// Scale and rotate the foreground video
 	scaleAndRotate := spireav.Pipeline(
 		g.Filter(filters.Scale().WidthExpr(expr.Int(200)).HeightExpr(expr.Int(200))),
+		g.Filter(filters.Pad().WExpr(expr.Raw("max(iw,ih)*sqrt(2)")).HExpr(expr.Raw("max(ih,iw)*sqrt(2)")).X(-1).Y(-1).Color(expr.ColorTransparent)),
 		g.Filter(
 			filters.Rotate().
-				// AngleExpr("t*PI/4").
 				AngleExpr(expr.Div(expr.Mul(expr.Var("t"), expr.PI), expr.Int(4))).
-				Fillcolor(expr.ColorBlack.WithOpacity(0.0).String())),
+				Fillcolor(expr.ColorTransparent.String())),
 	)
 	foreground.Video(0).Pipe(scaleAndRotate, 0)
 
 	// Overlay the scaled and rotated foreground video on top of a solid background
-	overlayFilter := g.Filter(filters.Overlay().X("0").Y("0"))
+	overlayFilter := g.Filter(filters.Overlay().X(0).Y(0))
 	background := g.Filter(filters.Color().Color(expr.ColorRed).Duration(10 * time.Second).Size(expr.Size{Width: 1280, Height: 720}))
 	background.Pipe(overlayFilter, 0)
 	scaleAndRotate.Pipe(overlayFilter, 1)

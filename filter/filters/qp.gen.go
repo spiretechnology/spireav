@@ -12,7 +12,9 @@ import (
 type QpBuilder interface {
 	filter.Filter
 	// Qp set qp expression.
-	Qp(qp string) QpBuilder
+	Qp(qp expr.Expr) QpBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) QpBuilder
 }
 
 // Qp creates a new QpBuilder to configure the "qp" filter.
@@ -44,6 +46,10 @@ func (qpBuilder *implQpBuilder) withOption(key string, value expr.Expr) QpBuilde
 	return &bCopy
 }
 
-func (qpBuilder *implQpBuilder) Qp(qp string) QpBuilder {
-	return qpBuilder.withOption("qp", expr.String(qp))
+func (qpBuilder *implQpBuilder) Qp(qp expr.Expr) QpBuilder {
+	return qpBuilder.withOption("qp", qp)
+}
+
+func (qpBuilder *implQpBuilder) Enable(enable expr.Expr) QpBuilder {
+	return qpBuilder.withOption("enable", enable)
 }

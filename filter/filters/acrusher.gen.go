@@ -55,6 +55,8 @@ type AcrusherBuilder interface {
 	Lforate(lforate float64) AcrusherBuilder
 	// LforateExpr set LFO rate (from 0.01 to 200) (default 0.3).
 	LforateExpr(lforate expr.Expr) AcrusherBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AcrusherBuilder
 }
 
 // Acrusher creates a new AcrusherBuilder to configure the "acrusher" filter.
@@ -172,4 +174,8 @@ func (acrusherBuilder *implAcrusherBuilder) Lforate(lforate float64) AcrusherBui
 
 func (acrusherBuilder *implAcrusherBuilder) LforateExpr(lforate expr.Expr) AcrusherBuilder {
 	return acrusherBuilder.withOption("lforate", lforate)
+}
+
+func (acrusherBuilder *implAcrusherBuilder) Enable(enable expr.Expr) AcrusherBuilder {
+	return acrusherBuilder.withOption("enable", enable)
 }

@@ -22,11 +22,13 @@ type MixBuilder interface {
 	// ScaleExpr set scale (from 0 to 32767) (default 0).
 	ScaleExpr(scale expr.Expr) MixBuilder
 	// Planes set what planes to filter (default F).
-	Planes(planes string) MixBuilder
+	Planes(planes ...string) MixBuilder
 	// PlanesExpr set what planes to filter (default F).
 	PlanesExpr(planes expr.Expr) MixBuilder
 	// Duration how to determine end of stream (from 0 to 2) (default longest).
 	Duration(duration int) MixBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MixBuilder
 }
 
 // Mix creates a new MixBuilder to configure the "mix" filter.
@@ -78,8 +80,8 @@ func (mixBuilder *implMixBuilder) ScaleExpr(scale expr.Expr) MixBuilder {
 	return mixBuilder.withOption("scale", scale)
 }
 
-func (mixBuilder *implMixBuilder) Planes(planes string) MixBuilder {
-	return mixBuilder.withOption("planes", expr.String(planes))
+func (mixBuilder *implMixBuilder) Planes(planes ...string) MixBuilder {
+	return mixBuilder.withOption("planes", expr.Flags(planes))
 }
 
 func (mixBuilder *implMixBuilder) PlanesExpr(planes expr.Expr) MixBuilder {
@@ -88,4 +90,8 @@ func (mixBuilder *implMixBuilder) PlanesExpr(planes expr.Expr) MixBuilder {
 
 func (mixBuilder *implMixBuilder) Duration(duration int) MixBuilder {
 	return mixBuilder.withOption("duration", expr.Int(duration))
+}
+
+func (mixBuilder *implMixBuilder) Enable(enable expr.Expr) MixBuilder {
+	return mixBuilder.withOption("enable", enable)
 }

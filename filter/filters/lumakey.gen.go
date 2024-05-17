@@ -23,6 +23,8 @@ type LumakeyBuilder interface {
 	Softness(softness float64) LumakeyBuilder
 	// SoftnessExpr set the softness value (from 0 to 1) (default 0).
 	SoftnessExpr(softness expr.Expr) LumakeyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LumakeyBuilder
 }
 
 // Lumakey creates a new LumakeyBuilder to configure the "lumakey" filter.
@@ -76,4 +78,8 @@ func (lumakeyBuilder *implLumakeyBuilder) Softness(softness float64) LumakeyBuil
 
 func (lumakeyBuilder *implLumakeyBuilder) SoftnessExpr(softness expr.Expr) LumakeyBuilder {
 	return lumakeyBuilder.withOption("softness", softness)
+}
+
+func (lumakeyBuilder *implLumakeyBuilder) Enable(enable expr.Expr) LumakeyBuilder {
+	return lumakeyBuilder.withOption("enable", enable)
 }

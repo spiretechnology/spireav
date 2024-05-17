@@ -35,6 +35,8 @@ type SwaprectBuilder interface {
 	Y2(y2 string) SwaprectBuilder
 	// Y2Expr set 2nd rect y top left coordinate (default "0").
 	Y2Expr(y2 expr.Expr) SwaprectBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SwaprectBuilder
 }
 
 // Swaprect creates a new SwaprectBuilder to configure the "swaprect" filter.
@@ -112,4 +114,8 @@ func (swaprectBuilder *implSwaprectBuilder) Y2(y2 string) SwaprectBuilder {
 
 func (swaprectBuilder *implSwaprectBuilder) Y2Expr(y2 expr.Expr) SwaprectBuilder {
 	return swaprectBuilder.withOption("y2", y2)
+}
+
+func (swaprectBuilder *implSwaprectBuilder) Enable(enable expr.Expr) SwaprectBuilder {
+	return swaprectBuilder.withOption("enable", enable)
 }

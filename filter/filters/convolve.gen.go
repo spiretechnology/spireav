@@ -25,6 +25,8 @@ type ConvolveBuilder interface {
 	Repeatlast(repeatlast bool) ConvolveBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) ConvolveBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ConvolveBuilder
 }
 
 // Convolve creates a new ConvolveBuilder to configure the "convolve" filter.
@@ -82,4 +84,8 @@ func (convolveBuilder *implConvolveBuilder) Repeatlast(repeatlast bool) Convolve
 
 func (convolveBuilder *implConvolveBuilder) TsSyncMode(tsSyncMode int) ConvolveBuilder {
 	return convolveBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (convolveBuilder *implConvolveBuilder) Enable(enable expr.Expr) ConvolveBuilder {
+	return convolveBuilder.withOption("enable", enable)
 }

@@ -12,7 +12,7 @@ import (
 type SignalstatsBuilder interface {
 	filter.Filter
 	// Stat set statistics filters (default 0).
-	Stat(stat string) SignalstatsBuilder
+	Stat(stat ...string) SignalstatsBuilder
 	// Out set video filter (from -1 to 2) (default -1).
 	Out(out int) SignalstatsBuilder
 	// C set highlight color (default "yellow").
@@ -50,8 +50,8 @@ func (signalstatsBuilder *implSignalstatsBuilder) withOption(key string, value e
 	return &bCopy
 }
 
-func (signalstatsBuilder *implSignalstatsBuilder) Stat(stat string) SignalstatsBuilder {
-	return signalstatsBuilder.withOption("stat", expr.String(stat))
+func (signalstatsBuilder *implSignalstatsBuilder) Stat(stat ...string) SignalstatsBuilder {
+	return signalstatsBuilder.withOption("stat", expr.Flags(stat))
 }
 
 func (signalstatsBuilder *implSignalstatsBuilder) Out(out int) SignalstatsBuilder {

@@ -75,6 +75,8 @@ type LowpassBuilder interface {
 	Blocksize(blocksize int) LowpassBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) LowpassBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LowpassBuilder
 }
 
 // Lowpass creates a new LowpassBuilder to configure the "lowpass" filter.
@@ -232,4 +234,8 @@ func (lowpassBuilder *implLowpassBuilder) Blocksize(blocksize int) LowpassBuilde
 
 func (lowpassBuilder *implLowpassBuilder) B(b int) LowpassBuilder {
 	return lowpassBuilder.withOption("b", expr.Int(b))
+}
+
+func (lowpassBuilder *implLowpassBuilder) Enable(enable expr.Expr) LowpassBuilder {
+	return lowpassBuilder.withOption("enable", enable)
 }

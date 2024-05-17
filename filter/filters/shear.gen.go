@@ -31,6 +31,8 @@ type ShearBuilder interface {
 	Interp(interp int) ShearBuilder
 	// InterpExpr set interpolation (from 0 to 1) (default bilinear).
 	InterpExpr(interp expr.Expr) ShearBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ShearBuilder
 }
 
 // Shear creates a new ShearBuilder to configure the "shear" filter.
@@ -100,4 +102,8 @@ func (shearBuilder *implShearBuilder) Interp(interp int) ShearBuilder {
 
 func (shearBuilder *implShearBuilder) InterpExpr(interp expr.Expr) ShearBuilder {
 	return shearBuilder.withOption("interp", interp)
+}
+
+func (shearBuilder *implShearBuilder) Enable(enable expr.Expr) ShearBuilder {
+	return shearBuilder.withOption("enable", enable)
 }

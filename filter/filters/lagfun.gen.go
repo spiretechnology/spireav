@@ -16,9 +16,11 @@ type LagfunBuilder interface {
 	// DecayExpr set decay (from 0 to 1) (default 0.95).
 	DecayExpr(decay expr.Expr) LagfunBuilder
 	// Planes set what planes to filter (default F).
-	Planes(planes string) LagfunBuilder
+	Planes(planes ...string) LagfunBuilder
 	// PlanesExpr set what planes to filter (default F).
 	PlanesExpr(planes expr.Expr) LagfunBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LagfunBuilder
 }
 
 // Lagfun creates a new LagfunBuilder to configure the "lagfun" filter.
@@ -58,10 +60,14 @@ func (lagfunBuilder *implLagfunBuilder) DecayExpr(decay expr.Expr) LagfunBuilder
 	return lagfunBuilder.withOption("decay", decay)
 }
 
-func (lagfunBuilder *implLagfunBuilder) Planes(planes string) LagfunBuilder {
-	return lagfunBuilder.withOption("planes", expr.String(planes))
+func (lagfunBuilder *implLagfunBuilder) Planes(planes ...string) LagfunBuilder {
+	return lagfunBuilder.withOption("planes", expr.Flags(planes))
 }
 
 func (lagfunBuilder *implLagfunBuilder) PlanesExpr(planes expr.Expr) LagfunBuilder {
 	return lagfunBuilder.withOption("planes", planes)
+}
+
+func (lagfunBuilder *implLagfunBuilder) Enable(enable expr.Expr) LagfunBuilder {
+	return lagfunBuilder.withOption("enable", enable)
 }

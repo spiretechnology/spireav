@@ -23,6 +23,8 @@ type SobelBuilder interface {
 	Delta(delta float32) SobelBuilder
 	// DeltaExpr set delta (from -65535 to 65535) (default 0).
 	DeltaExpr(delta expr.Expr) SobelBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SobelBuilder
 }
 
 // Sobel creates a new SobelBuilder to configure the "sobel" filter.
@@ -76,4 +78,8 @@ func (sobelBuilder *implSobelBuilder) Delta(delta float32) SobelBuilder {
 
 func (sobelBuilder *implSobelBuilder) DeltaExpr(delta expr.Expr) SobelBuilder {
 	return sobelBuilder.withOption("delta", delta)
+}
+
+func (sobelBuilder *implSobelBuilder) Enable(enable expr.Expr) SobelBuilder {
+	return sobelBuilder.withOption("enable", enable)
 }

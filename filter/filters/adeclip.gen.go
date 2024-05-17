@@ -35,6 +35,8 @@ type AdeclipBuilder interface {
 	Method(method int) AdeclipBuilder
 	// M set overlap method (from 0 to 1) (default add).
 	M(m int) AdeclipBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdeclipBuilder
 }
 
 // Adeclip creates a new AdeclipBuilder to configure the "adeclip" filter.
@@ -112,4 +114,8 @@ func (adeclipBuilder *implAdeclipBuilder) Method(method int) AdeclipBuilder {
 
 func (adeclipBuilder *implAdeclipBuilder) M(m int) AdeclipBuilder {
 	return adeclipBuilder.withOption("m", expr.Int(m))
+}
+
+func (adeclipBuilder *implAdeclipBuilder) Enable(enable expr.Expr) AdeclipBuilder {
+	return adeclipBuilder.withOption("enable", enable)
 }

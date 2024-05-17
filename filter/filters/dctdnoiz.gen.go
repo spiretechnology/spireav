@@ -18,11 +18,13 @@ type DctdnoizBuilder interface {
 	// Overlap set number of block overlapping pixels (from -1 to 15) (default -1).
 	Overlap(overlap int) DctdnoizBuilder
 	// Expr set coefficient factor expression.
-	Expr(expression string) DctdnoizBuilder
+	Expr(expression expr.Expr) DctdnoizBuilder
 	// E set coefficient factor expression.
-	E(e string) DctdnoizBuilder
+	E(e expr.Expr) DctdnoizBuilder
 	// N set the block size, expressed in bits (from 3 to 4) (default 3).
 	N(n int) DctdnoizBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DctdnoizBuilder
 }
 
 // Dctdnoiz creates a new DctdnoizBuilder to configure the "dctdnoiz" filter.
@@ -66,14 +68,18 @@ func (dctdnoizBuilder *implDctdnoizBuilder) Overlap(overlap int) DctdnoizBuilder
 	return dctdnoizBuilder.withOption("overlap", expr.Int(overlap))
 }
 
-func (dctdnoizBuilder *implDctdnoizBuilder) Expr(expression string) DctdnoizBuilder {
-	return dctdnoizBuilder.withOption("expr", expr.String(expression))
+func (dctdnoizBuilder *implDctdnoizBuilder) Expr(expression expr.Expr) DctdnoizBuilder {
+	return dctdnoizBuilder.withOption("expr", expression)
 }
 
-func (dctdnoizBuilder *implDctdnoizBuilder) E(e string) DctdnoizBuilder {
-	return dctdnoizBuilder.withOption("e", expr.String(e))
+func (dctdnoizBuilder *implDctdnoizBuilder) E(e expr.Expr) DctdnoizBuilder {
+	return dctdnoizBuilder.withOption("e", e)
 }
 
 func (dctdnoizBuilder *implDctdnoizBuilder) N(n int) DctdnoizBuilder {
 	return dctdnoizBuilder.withOption("n", expr.Int(n))
+}
+
+func (dctdnoizBuilder *implDctdnoizBuilder) Enable(enable expr.Expr) DctdnoizBuilder {
+	return dctdnoizBuilder.withOption("enable", enable)
 }

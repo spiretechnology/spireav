@@ -23,6 +23,8 @@ type ArnndnBuilder interface {
 	Mix(mix float32) ArnndnBuilder
 	// MixExpr set output vs input mix (from -1 to 1) (default 1).
 	MixExpr(mix expr.Expr) ArnndnBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ArnndnBuilder
 }
 
 // Arnndn creates a new ArnndnBuilder to configure the "arnndn" filter.
@@ -76,4 +78,8 @@ func (arnndnBuilder *implArnndnBuilder) Mix(mix float32) ArnndnBuilder {
 
 func (arnndnBuilder *implArnndnBuilder) MixExpr(mix expr.Expr) ArnndnBuilder {
 	return arnndnBuilder.withOption("mix", mix)
+}
+
+func (arnndnBuilder *implArnndnBuilder) Enable(enable expr.Expr) ArnndnBuilder {
+	return arnndnBuilder.withOption("enable", enable)
 }

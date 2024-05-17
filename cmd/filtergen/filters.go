@@ -25,6 +25,9 @@ type FilterOption struct {
 	Type        OptionType
 	Description string
 
+	Expression             bool
+	InferredExpressionType OptionType
+
 	FlagEncodingParam  bool
 	FlagDecodingParam  bool
 	FlagFilteringParam bool
@@ -114,6 +117,10 @@ func getFilterInfo(ctx context.Context, filter *Filter) error {
 		if strings.TrimSpace(line) == "dynamic (depending on the options)" {
 			filter.NumOutputs = nil
 			break
+		} else if strings.TrimSpace(line) == "none (sink filter)" {
+			filter.NumOutputs = new(int)
+			*filter.NumOutputs = 0
+			break
 		} else {
 			if filter.NumOutputs == nil {
 				filter.NumOutputs = new(int)
@@ -137,6 +144,14 @@ func getFilterInfo(ctx context.Context, filter *Filter) error {
 		option.Name = match[1]
 		option.Type = OptionType(match[2])
 		option.Description = match[4]
+
+		option.Expression = option.Type == "string" && strings.Contains(option.Description, "expression")
+		if option.Expression {
+			inferred := inferExpressionType(option)
+			if inferred != "" {
+				option.InferredExpressionType = OptionType(inferred)
+			}
+		}
 
 		flags := match[3]
 		option.FlagEncodingParam = flags[0] == 'E'
@@ -165,6 +180,46 @@ func getFilterInfo(ctx context.Context, filter *Filter) error {
 		}
 	}
 
+	if filter.FlagTimelineSupport {
+		filter.Options = append(filter.Options, FilterOption{
+			Name:        "enable",
+			Type:        "boolean",
+			Description: "expression to enable or disable the filter",
+			Expression:  true,
+		})
+	}
+
 	// Parse the inputs
 	return nil
+}
+
+var (
+	defaultValueRegex = regexp.MustCompile(`\s+\(default "(.+)"\)$`)
+	integerRegex      = regexp.MustCompile(`^\d+$`)
+	floatRegex        = regexp.MustCompile(`^\d+\.\d+$`)
+	colorRegex        = regexp.MustCompile(`^0x[0-9a-fA-F]{6,8}$`)
+)
+
+func inferExpressionType(option FilterOption) string {
+	defaultValueMatches := defaultValueRegex.FindStringSubmatch(option.Description)
+	if len(defaultValueMatches) == 0 {
+		return ""
+	}
+	defaultValue := defaultValueMatches[1]
+
+	if integerRegex.MatchString(defaultValue) {
+		return "int"
+	}
+	if floatRegex.MatchString(defaultValue) {
+		return "float"
+	}
+	if colorRegex.MatchString(defaultValue) {
+		return "color"
+	}
+
+	switch defaultValue {
+	case "iw", "ih", "(in_w-out_w)/2", "(in_h-out_h)/2":
+		return "int"
+	}
+	return ""
 }

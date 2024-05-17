@@ -71,6 +71,8 @@ type BiquadBuilder interface {
 	Blocksize(blocksize int) BiquadBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) BiquadBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BiquadBuilder
 }
 
 // Biquad creates a new BiquadBuilder to configure the "biquad" filter.
@@ -220,4 +222,8 @@ func (biquadBuilder *implBiquadBuilder) Blocksize(blocksize int) BiquadBuilder {
 
 func (biquadBuilder *implBiquadBuilder) B(b int) BiquadBuilder {
 	return biquadBuilder.withOption("b", expr.Int(b))
+}
+
+func (biquadBuilder *implBiquadBuilder) Enable(enable expr.Expr) BiquadBuilder {
+	return biquadBuilder.withOption("enable", enable)
 }

@@ -17,6 +17,8 @@ type PermsBuilder interface {
 	ModeExpr(mode expr.Expr) PermsBuilder
 	// Seed set the seed for the random mode (from -1 to UINT32_MAX) (default -1).
 	Seed(seed int64) PermsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PermsBuilder
 }
 
 // Perms creates a new PermsBuilder to configure the "perms" filter.
@@ -58,4 +60,8 @@ func (permsBuilder *implPermsBuilder) ModeExpr(mode expr.Expr) PermsBuilder {
 
 func (permsBuilder *implPermsBuilder) Seed(seed int64) PermsBuilder {
 	return permsBuilder.withOption("seed", expr.Int64(seed))
+}
+
+func (permsBuilder *implPermsBuilder) Enable(enable expr.Expr) PermsBuilder {
+	return permsBuilder.withOption("enable", enable)
 }

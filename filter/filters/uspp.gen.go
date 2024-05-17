@@ -19,6 +19,8 @@ type UsppBuilder interface {
 	UseBframeQp(useBframeQp bool) UsppBuilder
 	// Codec Codec name (default "snow").
 	Codec(codec string) UsppBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) UsppBuilder
 }
 
 // Uspp creates a new UsppBuilder to configure the "uspp" filter.
@@ -64,4 +66,8 @@ func (usppBuilder *implUsppBuilder) UseBframeQp(useBframeQp bool) UsppBuilder {
 
 func (usppBuilder *implUsppBuilder) Codec(codec string) UsppBuilder {
 	return usppBuilder.withOption("codec", expr.String(codec))
+}
+
+func (usppBuilder *implUsppBuilder) Enable(enable expr.Expr) UsppBuilder {
+	return usppBuilder.withOption("enable", enable)
 }

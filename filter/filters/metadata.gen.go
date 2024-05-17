@@ -20,11 +20,13 @@ type MetadataBuilder interface {
 	// Function function for comparing values (from 0 to 6) (default same_str).
 	Function(function int) MetadataBuilder
 	// Expr set expression for expr function.
-	Expr(expression string) MetadataBuilder
+	Expr(expression expr.Expr) MetadataBuilder
 	// File set file where to print metadata information.
 	File(file string) MetadataBuilder
 	// Direct reduce buffering when printing to user-set file or pipe (default false).
 	Direct(direct bool) MetadataBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MetadataBuilder
 }
 
 // Metadata creates a new MetadataBuilder to configure the "metadata" filter.
@@ -72,8 +74,8 @@ func (metadataBuilder *implMetadataBuilder) Function(function int) MetadataBuild
 	return metadataBuilder.withOption("function", expr.Int(function))
 }
 
-func (metadataBuilder *implMetadataBuilder) Expr(expression string) MetadataBuilder {
-	return metadataBuilder.withOption("expr", expr.String(expression))
+func (metadataBuilder *implMetadataBuilder) Expr(expression expr.Expr) MetadataBuilder {
+	return metadataBuilder.withOption("expr", expression)
 }
 
 func (metadataBuilder *implMetadataBuilder) File(file string) MetadataBuilder {
@@ -82,4 +84,8 @@ func (metadataBuilder *implMetadataBuilder) File(file string) MetadataBuilder {
 
 func (metadataBuilder *implMetadataBuilder) Direct(direct bool) MetadataBuilder {
 	return metadataBuilder.withOption("direct", expr.Bool(direct))
+}
+
+func (metadataBuilder *implMetadataBuilder) Enable(enable expr.Expr) MetadataBuilder {
+	return metadataBuilder.withOption("enable", enable)
 }

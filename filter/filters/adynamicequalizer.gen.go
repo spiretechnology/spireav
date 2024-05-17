@@ -69,6 +69,8 @@ type AdynamicequalizerBuilder interface {
 	AutoExpr(auto expr.Expr) AdynamicequalizerBuilder
 	// Precision set processing precision (from 0 to 2) (default auto).
 	Precision(precision int) AdynamicequalizerBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdynamicequalizerBuilder
 }
 
 // Adynamicequalizer creates a new AdynamicequalizerBuilder to configure the "adynamicequalizer" filter.
@@ -214,4 +216,8 @@ func (adynamicequalizerBuilder *implAdynamicequalizerBuilder) AutoExpr(auto expr
 
 func (adynamicequalizerBuilder *implAdynamicequalizerBuilder) Precision(precision int) AdynamicequalizerBuilder {
 	return adynamicequalizerBuilder.withOption("precision", expr.Int(precision))
+}
+
+func (adynamicequalizerBuilder *implAdynamicequalizerBuilder) Enable(enable expr.Expr) AdynamicequalizerBuilder {
+	return adynamicequalizerBuilder.withOption("enable", enable)
 }

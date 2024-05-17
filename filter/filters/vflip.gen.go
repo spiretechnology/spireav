@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#vflip
 type VflipBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VflipBuilder
 }
 
 // Vflip creates a new VflipBuilder to configure the "vflip" filter.
@@ -40,4 +42,8 @@ func (vflipBuilder *implVflipBuilder) withOption(key string, value expr.Expr) Vf
 	bCopy := *vflipBuilder
 	bCopy.f = vflipBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (vflipBuilder *implVflipBuilder) Enable(enable expr.Expr) VflipBuilder {
+	return vflipBuilder.withOption("enable", enable)
 }

@@ -35,6 +35,8 @@ type AdeclickBuilder interface {
 	Method(method int) AdeclickBuilder
 	// M set overlap method (from 0 to 1) (default add).
 	M(m int) AdeclickBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdeclickBuilder
 }
 
 // Adeclick creates a new AdeclickBuilder to configure the "adeclick" filter.
@@ -112,4 +114,8 @@ func (adeclickBuilder *implAdeclickBuilder) Method(method int) AdeclickBuilder {
 
 func (adeclickBuilder *implAdeclickBuilder) M(m int) AdeclickBuilder {
 	return adeclickBuilder.withOption("m", expr.Int(m))
+}
+
+func (adeclickBuilder *implAdeclickBuilder) Enable(enable expr.Expr) AdeclickBuilder {
+	return adeclickBuilder.withOption("enable", enable)
 }

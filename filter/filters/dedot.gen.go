@@ -12,7 +12,7 @@ import (
 type DedotBuilder interface {
 	filter.Filter
 	// M set filtering mode (default dotcrawl+rainbows).
-	M(m string) DedotBuilder
+	M(m ...string) DedotBuilder
 	// Lt set spatial luma threshold (from 0 to 1) (default 0.079).
 	Lt(lt float32) DedotBuilder
 	// Tl set tolerance for temporal luma (from 0 to 1) (default 0.079).
@@ -21,6 +21,8 @@ type DedotBuilder interface {
 	Tc(tc float32) DedotBuilder
 	// Ct set temporal chroma threshold (from 0 to 1) (default 0.019).
 	Ct(ct float32) DedotBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DedotBuilder
 }
 
 // Dedot creates a new DedotBuilder to configure the "dedot" filter.
@@ -52,8 +54,8 @@ func (dedotBuilder *implDedotBuilder) withOption(key string, value expr.Expr) De
 	return &bCopy
 }
 
-func (dedotBuilder *implDedotBuilder) M(m string) DedotBuilder {
-	return dedotBuilder.withOption("m", expr.String(m))
+func (dedotBuilder *implDedotBuilder) M(m ...string) DedotBuilder {
+	return dedotBuilder.withOption("m", expr.Flags(m))
 }
 
 func (dedotBuilder *implDedotBuilder) Lt(lt float32) DedotBuilder {
@@ -70,4 +72,8 @@ func (dedotBuilder *implDedotBuilder) Tc(tc float32) DedotBuilder {
 
 func (dedotBuilder *implDedotBuilder) Ct(ct float32) DedotBuilder {
 	return dedotBuilder.withOption("ct", expr.Float(ct))
+}
+
+func (dedotBuilder *implDedotBuilder) Enable(enable expr.Expr) DedotBuilder {
+	return dedotBuilder.withOption("enable", enable)
 }

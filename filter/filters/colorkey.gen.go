@@ -23,6 +23,8 @@ type ColorkeyBuilder interface {
 	Blend(blend float32) ColorkeyBuilder
 	// BlendExpr set the colorkey key blend value (from 0 to 1) (default 0).
 	BlendExpr(blend expr.Expr) ColorkeyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorkeyBuilder
 }
 
 // Colorkey creates a new ColorkeyBuilder to configure the "colorkey" filter.
@@ -76,4 +78,8 @@ func (colorkeyBuilder *implColorkeyBuilder) Blend(blend float32) ColorkeyBuilder
 
 func (colorkeyBuilder *implColorkeyBuilder) BlendExpr(blend expr.Expr) ColorkeyBuilder {
 	return colorkeyBuilder.withOption("blend", blend)
+}
+
+func (colorkeyBuilder *implColorkeyBuilder) Enable(enable expr.Expr) ColorkeyBuilder {
+	return colorkeyBuilder.withOption("enable", enable)
 }

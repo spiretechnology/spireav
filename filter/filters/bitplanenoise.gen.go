@@ -15,6 +15,8 @@ type BitplanenoiseBuilder interface {
 	Bitplane(bitplane int) BitplanenoiseBuilder
 	// Filter show noisy pixels (default false).
 	Filter(filter bool) BitplanenoiseBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BitplanenoiseBuilder
 }
 
 // Bitplanenoise creates a new BitplanenoiseBuilder to configure the "bitplanenoise" filter.
@@ -52,4 +54,8 @@ func (bitplanenoiseBuilder *implBitplanenoiseBuilder) Bitplane(bitplane int) Bit
 
 func (bitplanenoiseBuilder *implBitplanenoiseBuilder) Filter(filter bool) BitplanenoiseBuilder {
 	return bitplanenoiseBuilder.withOption("filter", expr.Bool(filter))
+}
+
+func (bitplanenoiseBuilder *implBitplanenoiseBuilder) Enable(enable expr.Expr) BitplanenoiseBuilder {
+	return bitplanenoiseBuilder.withOption("enable", enable)
 }

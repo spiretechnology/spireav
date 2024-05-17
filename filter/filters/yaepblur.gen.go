@@ -35,6 +35,8 @@ type YaepblurBuilder interface {
 	S(s int) YaepblurBuilder
 	// SExpr set blur strength (from 1 to INT_MAX) (default 128).
 	SExpr(s expr.Expr) YaepblurBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) YaepblurBuilder
 }
 
 // Yaepblur creates a new YaepblurBuilder to configure the "yaepblur" filter.
@@ -112,4 +114,8 @@ func (yaepblurBuilder *implYaepblurBuilder) S(s int) YaepblurBuilder {
 
 func (yaepblurBuilder *implYaepblurBuilder) SExpr(s expr.Expr) YaepblurBuilder {
 	return yaepblurBuilder.withOption("s", s)
+}
+
+func (yaepblurBuilder *implYaepblurBuilder) Enable(enable expr.Expr) YaepblurBuilder {
+	return yaepblurBuilder.withOption("enable", enable)
 }

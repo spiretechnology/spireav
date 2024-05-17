@@ -39,6 +39,8 @@ type PixscopeBuilder interface {
 	Wy(wy float32) PixscopeBuilder
 	// WyExpr set window y offset (from -1 to 1) (default -1).
 	WyExpr(wy expr.Expr) PixscopeBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PixscopeBuilder
 }
 
 // Pixscope creates a new PixscopeBuilder to configure the "pixscope" filter.
@@ -124,4 +126,8 @@ func (pixscopeBuilder *implPixscopeBuilder) Wy(wy float32) PixscopeBuilder {
 
 func (pixscopeBuilder *implPixscopeBuilder) WyExpr(wy expr.Expr) PixscopeBuilder {
 	return pixscopeBuilder.withOption("wy", wy)
+}
+
+func (pixscopeBuilder *implPixscopeBuilder) Enable(enable expr.Expr) PixscopeBuilder {
+	return pixscopeBuilder.withOption("enable", enable)
 }

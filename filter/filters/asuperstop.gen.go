@@ -27,6 +27,8 @@ type AsuperstopBuilder interface {
 	Level(level float64) AsuperstopBuilder
 	// LevelExpr set input level (from 0 to 2) (default 1).
 	LevelExpr(level expr.Expr) AsuperstopBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AsuperstopBuilder
 }
 
 // Asuperstop creates a new AsuperstopBuilder to configure the "asuperstop" filter.
@@ -88,4 +90,8 @@ func (asuperstopBuilder *implAsuperstopBuilder) Level(level float64) AsuperstopB
 
 func (asuperstopBuilder *implAsuperstopBuilder) LevelExpr(level expr.Expr) AsuperstopBuilder {
 	return asuperstopBuilder.withOption("level", level)
+}
+
+func (asuperstopBuilder *implAsuperstopBuilder) Enable(enable expr.Expr) AsuperstopBuilder {
+	return asuperstopBuilder.withOption("enable", enable)
 }

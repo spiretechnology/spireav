@@ -1,6 +1,9 @@
 package output
 
-import "strconv"
+import (
+	"runtime"
+	"strconv"
+)
 
 func WithFormat(format string) Option {
 	return WithOptions("-f", format)
@@ -21,9 +24,13 @@ func WithFormatMOV() Option {
 }
 
 func withDefaultMP4Options() Option {
+	codec := "h264"
+	if runtime.GOOS == "darwin" {
+		codec = "h264_videotoolbox"
+	}
 	return WithOptions(
 		"-movflags", "use_metadata_tags",
-		"-vcodec", "h264",
+		"-vcodec", codec,
 		"-pix_fmt", "yuv420p",
 		"-movflags", "+faststart",
 		"-tune", "fastdecode",

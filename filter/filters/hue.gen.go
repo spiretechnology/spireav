@@ -12,21 +12,19 @@ import (
 type HueBuilder interface {
 	filter.Filter
 	// HueDegrees set the hue angle degrees expression.
-	HueDegrees(h string) HueBuilder
-	// HueDegreesExpr set the hue angle degrees expression.
-	HueDegreesExpr(h expr.Expr) HueBuilder
+	HueDegrees(h expr.Expr) HueBuilder
 	// Saturation set the saturation expression (default "1").
-	Saturation(s string) HueBuilder
+	Saturation(s int) HueBuilder
 	// SaturationExpr set the saturation expression (default "1").
 	SaturationExpr(s expr.Expr) HueBuilder
 	// HueRadians set the hue angle radians expression.
-	HueRadians(H string) HueBuilder
-	// HueRadiansExpr set the hue angle radians expression.
-	HueRadiansExpr(H expr.Expr) HueBuilder
+	HueRadians(H expr.Expr) HueBuilder
 	// Brightness set the brightness expression (default "0").
-	Brightness(b string) HueBuilder
+	Brightness(b int) HueBuilder
 	// BrightnessExpr set the brightness expression (default "0").
 	BrightnessExpr(b expr.Expr) HueBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HueBuilder
 }
 
 // Hue creates a new HueBuilder to configure the "hue" filter.
@@ -58,34 +56,30 @@ func (hueBuilder *implHueBuilder) withOption(key string, value expr.Expr) HueBui
 	return &bCopy
 }
 
-func (hueBuilder *implHueBuilder) HueDegrees(h string) HueBuilder {
-	return hueBuilder.withOption("h", expr.String(h))
-}
-
-func (hueBuilder *implHueBuilder) HueDegreesExpr(h expr.Expr) HueBuilder {
+func (hueBuilder *implHueBuilder) HueDegrees(h expr.Expr) HueBuilder {
 	return hueBuilder.withOption("h", h)
 }
 
-func (hueBuilder *implHueBuilder) Saturation(s string) HueBuilder {
-	return hueBuilder.withOption("s", expr.String(s))
+func (hueBuilder *implHueBuilder) Saturation(s int) HueBuilder {
+	return hueBuilder.withOption("s", expr.Int(s))
 }
 
 func (hueBuilder *implHueBuilder) SaturationExpr(s expr.Expr) HueBuilder {
 	return hueBuilder.withOption("s", s)
 }
 
-func (hueBuilder *implHueBuilder) HueRadians(H string) HueBuilder {
-	return hueBuilder.withOption("H", expr.String(H))
-}
-
-func (hueBuilder *implHueBuilder) HueRadiansExpr(H expr.Expr) HueBuilder {
+func (hueBuilder *implHueBuilder) HueRadians(H expr.Expr) HueBuilder {
 	return hueBuilder.withOption("H", H)
 }
 
-func (hueBuilder *implHueBuilder) Brightness(b string) HueBuilder {
-	return hueBuilder.withOption("b", expr.String(b))
+func (hueBuilder *implHueBuilder) Brightness(b int) HueBuilder {
+	return hueBuilder.withOption("b", expr.Int(b))
 }
 
 func (hueBuilder *implHueBuilder) BrightnessExpr(b expr.Expr) HueBuilder {
 	return hueBuilder.withOption("b", b)
+}
+
+func (hueBuilder *implHueBuilder) Enable(enable expr.Expr) HueBuilder {
+	return hueBuilder.withOption("enable", enable)
 }

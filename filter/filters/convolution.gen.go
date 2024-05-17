@@ -75,6 +75,8 @@ type ConvolutionBuilder interface {
 	With3mode(val3mode int) ConvolutionBuilder
 	// With3modeExpr set matrix mode for 4th plane (from 0 to 2) (default square).
 	With3modeExpr(val3mode expr.Expr) ConvolutionBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ConvolutionBuilder
 }
 
 // Convolution creates a new ConvolutionBuilder to configure the "convolution" filter.
@@ -232,4 +234,8 @@ func (convolutionBuilder *implConvolutionBuilder) With3mode(val3mode int) Convol
 
 func (convolutionBuilder *implConvolutionBuilder) With3modeExpr(val3mode expr.Expr) ConvolutionBuilder {
 	return convolutionBuilder.withOption("3mode", val3mode)
+}
+
+func (convolutionBuilder *implConvolutionBuilder) Enable(enable expr.Expr) ConvolutionBuilder {
+	return convolutionBuilder.withOption("enable", enable)
 }

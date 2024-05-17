@@ -71,6 +71,8 @@ type BandrejectBuilder interface {
 	Blocksize(blocksize int) BandrejectBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) BandrejectBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BandrejectBuilder
 }
 
 // Bandreject creates a new BandrejectBuilder to configure the "bandreject" filter.
@@ -220,4 +222,8 @@ func (bandrejectBuilder *implBandrejectBuilder) Blocksize(blocksize int) Bandrej
 
 func (bandrejectBuilder *implBandrejectBuilder) B(b int) BandrejectBuilder {
 	return bandrejectBuilder.withOption("b", expr.Int(b))
+}
+
+func (bandrejectBuilder *implBandrejectBuilder) Enable(enable expr.Expr) BandrejectBuilder {
+	return bandrejectBuilder.withOption("enable", enable)
 }

@@ -121,8 +121,7 @@ func (c Color) String() string {
 type Duration time.Duration
 
 func (d Duration) String() string {
-	// TODO: fix this
-	return time.Duration(d).String()
+	return fmt.Sprintf("%0.3f", time.Duration(d).Seconds())
 }
 
 // PixFmt is a pixel format literal in an expression.
@@ -155,4 +154,11 @@ func (d Dictionary) String() string {
 		parts = append(parts, fmt.Sprintf("%s=%s", key, value))
 	}
 	return strings.Join(parts, "\\:")
+}
+
+// Flags is a list of flags in an expression.
+type Flags []string
+
+func (f Flags) String() string {
+	return strings.Join(f, "+")
 }

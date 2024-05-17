@@ -20,7 +20,7 @@ type FramerateBuilder interface {
 	// Scene scene change level (from 0 to 100) (default 8.2).
 	Scene(scene float64) FramerateBuilder
 	// Flags set flags (default scene_change_detect+scd).
-	Flags(flags string) FramerateBuilder
+	Flags(flags ...string) FramerateBuilder
 }
 
 // Framerate creates a new FramerateBuilder to configure the "framerate" filter.
@@ -68,6 +68,6 @@ func (framerateBuilder *implFramerateBuilder) Scene(scene float64) FramerateBuil
 	return framerateBuilder.withOption("scene", expr.Double(scene))
 }
 
-func (framerateBuilder *implFramerateBuilder) Flags(flags string) FramerateBuilder {
-	return framerateBuilder.withOption("flags", expr.String(flags))
+func (framerateBuilder *implFramerateBuilder) Flags(flags ...string) FramerateBuilder {
+	return framerateBuilder.withOption("flags", expr.Flags(flags))
 }

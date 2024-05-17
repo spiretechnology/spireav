@@ -12,9 +12,9 @@ import (
 type SettbBuilder interface {
 	filter.Filter
 	// Expr set expression determining the output timebase (default "intb").
-	Expr(expression string) SettbBuilder
+	Expr(expression expr.Expr) SettbBuilder
 	// Tb set expression determining the output timebase (default "intb").
-	Tb(tb string) SettbBuilder
+	Tb(tb expr.Expr) SettbBuilder
 }
 
 // Settb creates a new SettbBuilder to configure the "settb" filter.
@@ -46,10 +46,10 @@ func (settbBuilder *implSettbBuilder) withOption(key string, value expr.Expr) Se
 	return &bCopy
 }
 
-func (settbBuilder *implSettbBuilder) Expr(expression string) SettbBuilder {
-	return settbBuilder.withOption("expr", expr.String(expression))
+func (settbBuilder *implSettbBuilder) Expr(expression expr.Expr) SettbBuilder {
+	return settbBuilder.withOption("expr", expression)
 }
 
-func (settbBuilder *implSettbBuilder) Tb(tb string) SettbBuilder {
-	return settbBuilder.withOption("tb", expr.String(tb))
+func (settbBuilder *implSettbBuilder) Tb(tb expr.Expr) SettbBuilder {
+	return settbBuilder.withOption("tb", tb)
 }

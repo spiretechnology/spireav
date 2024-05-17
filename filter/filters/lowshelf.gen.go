@@ -83,6 +83,8 @@ type LowshelfBuilder interface {
 	Blocksize(blocksize int) LowshelfBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) LowshelfBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LowshelfBuilder
 }
 
 // Lowshelf creates a new LowshelfBuilder to configure the "lowshelf" filter.
@@ -256,4 +258,8 @@ func (lowshelfBuilder *implLowshelfBuilder) Blocksize(blocksize int) LowshelfBui
 
 func (lowshelfBuilder *implLowshelfBuilder) B(b int) LowshelfBuilder {
 	return lowshelfBuilder.withOption("b", expr.Int(b))
+}
+
+func (lowshelfBuilder *implLowshelfBuilder) Enable(enable expr.Expr) LowshelfBuilder {
+	return lowshelfBuilder.withOption("enable", enable)
 }

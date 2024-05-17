@@ -27,6 +27,8 @@ type InflateBuilder interface {
 	Threshold3(threshold3 int) InflateBuilder
 	// Threshold3Expr set threshold for 4th plane (from 0 to 65535) (default 65535).
 	Threshold3Expr(threshold3 expr.Expr) InflateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) InflateBuilder
 }
 
 // Inflate creates a new InflateBuilder to configure the "inflate" filter.
@@ -88,4 +90,8 @@ func (inflateBuilder *implInflateBuilder) Threshold3(threshold3 int) InflateBuil
 
 func (inflateBuilder *implInflateBuilder) Threshold3Expr(threshold3 expr.Expr) InflateBuilder {
 	return inflateBuilder.withOption("threshold3", threshold3)
+}
+
+func (inflateBuilder *implInflateBuilder) Enable(enable expr.Expr) InflateBuilder {
+	return inflateBuilder.withOption("enable", enable)
 }

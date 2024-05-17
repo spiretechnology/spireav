@@ -23,6 +23,8 @@ type AnequalizerBuilder interface {
 	Fscale(fscale int) AnequalizerBuilder
 	// Colors set channels curves colors (default "red|green|blue|yellow|orange|lime|pink|magenta|brown").
 	Colors(colors string) AnequalizerBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AnequalizerBuilder
 }
 
 // Anequalizer creates a new AnequalizerBuilder to configure the "anequalizer" filter.
@@ -76,4 +78,8 @@ func (anequalizerBuilder *implAnequalizerBuilder) Fscale(fscale int) Anequalizer
 
 func (anequalizerBuilder *implAnequalizerBuilder) Colors(colors string) AnequalizerBuilder {
 	return anequalizerBuilder.withOption("colors", expr.String(colors))
+}
+
+func (anequalizerBuilder *implAnequalizerBuilder) Enable(enable expr.Expr) AnequalizerBuilder {
+	return anequalizerBuilder.withOption("enable", enable)
 }

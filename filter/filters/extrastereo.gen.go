@@ -19,6 +19,8 @@ type ExtrastereoBuilder interface {
 	C(c bool) ExtrastereoBuilder
 	// CExpr enable clipping (default true).
 	CExpr(c expr.Expr) ExtrastereoBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ExtrastereoBuilder
 }
 
 // Extrastereo creates a new ExtrastereoBuilder to configure the "extrastereo" filter.
@@ -64,4 +66,8 @@ func (extrastereoBuilder *implExtrastereoBuilder) C(c bool) ExtrastereoBuilder {
 
 func (extrastereoBuilder *implExtrastereoBuilder) CExpr(c expr.Expr) ExtrastereoBuilder {
 	return extrastereoBuilder.withOption("c", c)
+}
+
+func (extrastereoBuilder *implExtrastereoBuilder) Enable(enable expr.Expr) ExtrastereoBuilder {
+	return extrastereoBuilder.withOption("enable", enable)
 }

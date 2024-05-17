@@ -39,6 +39,8 @@ type DeblockBuilder interface {
 	Planes(planes int) DeblockBuilder
 	// PlanesExpr set planes to filter (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) DeblockBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DeblockBuilder
 }
 
 // Deblock creates a new DeblockBuilder to configure the "deblock" filter.
@@ -124,4 +126,8 @@ func (deblockBuilder *implDeblockBuilder) Planes(planes int) DeblockBuilder {
 
 func (deblockBuilder *implDeblockBuilder) PlanesExpr(planes expr.Expr) DeblockBuilder {
 	return deblockBuilder.withOption("planes", planes)
+}
+
+func (deblockBuilder *implDeblockBuilder) Enable(enable expr.Expr) DeblockBuilder {
+	return deblockBuilder.withOption("enable", enable)
 }

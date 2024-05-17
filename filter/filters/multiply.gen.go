@@ -20,9 +20,11 @@ type MultiplyBuilder interface {
 	// OffsetExpr set offset (from -1 to 1) (default 0.5).
 	OffsetExpr(offset expr.Expr) MultiplyBuilder
 	// Planes set planes (default F).
-	Planes(planes string) MultiplyBuilder
+	Planes(planes ...string) MultiplyBuilder
 	// PlanesExpr set planes (default F).
 	PlanesExpr(planes expr.Expr) MultiplyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MultiplyBuilder
 }
 
 // Multiply creates a new MultiplyBuilder to configure the "multiply" filter.
@@ -70,10 +72,14 @@ func (multiplyBuilder *implMultiplyBuilder) OffsetExpr(offset expr.Expr) Multipl
 	return multiplyBuilder.withOption("offset", offset)
 }
 
-func (multiplyBuilder *implMultiplyBuilder) Planes(planes string) MultiplyBuilder {
-	return multiplyBuilder.withOption("planes", expr.String(planes))
+func (multiplyBuilder *implMultiplyBuilder) Planes(planes ...string) MultiplyBuilder {
+	return multiplyBuilder.withOption("planes", expr.Flags(planes))
 }
 
 func (multiplyBuilder *implMultiplyBuilder) PlanesExpr(planes expr.Expr) MultiplyBuilder {
 	return multiplyBuilder.withOption("planes", planes)
+}
+
+func (multiplyBuilder *implMultiplyBuilder) Enable(enable expr.Expr) MultiplyBuilder {
+	return multiplyBuilder.withOption("enable", enable)
 }

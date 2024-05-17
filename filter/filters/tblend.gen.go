@@ -32,25 +32,15 @@ type TblendBuilder interface {
 	// AllModeExpr set blend mode for all components (from -1 to 39) (default -1).
 	AllModeExpr(allMode expr.Expr) TblendBuilder
 	// C0Expr set color component #0 expression.
-	C0Expr(c0Expr string) TblendBuilder
-	// C0ExprExpr set color component #0 expression.
-	C0ExprExpr(c0Expr expr.Expr) TblendBuilder
+	C0Expr(c0Expr expr.Expr) TblendBuilder
 	// C1Expr set color component #1 expression.
-	C1Expr(c1Expr string) TblendBuilder
-	// C1ExprExpr set color component #1 expression.
-	C1ExprExpr(c1Expr expr.Expr) TblendBuilder
+	C1Expr(c1Expr expr.Expr) TblendBuilder
 	// C2Expr set color component #2 expression.
-	C2Expr(c2Expr string) TblendBuilder
-	// C2ExprExpr set color component #2 expression.
-	C2ExprExpr(c2Expr expr.Expr) TblendBuilder
+	C2Expr(c2Expr expr.Expr) TblendBuilder
 	// C3Expr set color component #3 expression.
-	C3Expr(c3Expr string) TblendBuilder
-	// C3ExprExpr set color component #3 expression.
-	C3ExprExpr(c3Expr expr.Expr) TblendBuilder
+	C3Expr(c3Expr expr.Expr) TblendBuilder
 	// AllExpr set expression for all color components.
-	AllExpr(allExpr string) TblendBuilder
-	// AllExprExpr set expression for all color components.
-	AllExprExpr(allExpr expr.Expr) TblendBuilder
+	AllExpr(allExpr expr.Expr) TblendBuilder
 	// C0Opacity set color component #0 opacity (from 0 to 1) (default 1).
 	C0Opacity(c0Opacity float64) TblendBuilder
 	// C0OpacityExpr set color component #0 opacity (from 0 to 1) (default 1).
@@ -71,6 +61,8 @@ type TblendBuilder interface {
 	AllOpacity(allOpacity float64) TblendBuilder
 	// AllOpacityExpr set opacity for all color components (from 0 to 1) (default 1).
 	AllOpacityExpr(allOpacity expr.Expr) TblendBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) TblendBuilder
 }
 
 // Tblend creates a new TblendBuilder to configure the "tblend" filter.
@@ -142,43 +134,23 @@ func (tblendBuilder *implTblendBuilder) AllModeExpr(allMode expr.Expr) TblendBui
 	return tblendBuilder.withOption("all_mode", allMode)
 }
 
-func (tblendBuilder *implTblendBuilder) C0Expr(c0Expr string) TblendBuilder {
-	return tblendBuilder.withOption("c0_expr", expr.String(c0Expr))
-}
-
-func (tblendBuilder *implTblendBuilder) C0ExprExpr(c0Expr expr.Expr) TblendBuilder {
+func (tblendBuilder *implTblendBuilder) C0Expr(c0Expr expr.Expr) TblendBuilder {
 	return tblendBuilder.withOption("c0_expr", c0Expr)
 }
 
-func (tblendBuilder *implTblendBuilder) C1Expr(c1Expr string) TblendBuilder {
-	return tblendBuilder.withOption("c1_expr", expr.String(c1Expr))
-}
-
-func (tblendBuilder *implTblendBuilder) C1ExprExpr(c1Expr expr.Expr) TblendBuilder {
+func (tblendBuilder *implTblendBuilder) C1Expr(c1Expr expr.Expr) TblendBuilder {
 	return tblendBuilder.withOption("c1_expr", c1Expr)
 }
 
-func (tblendBuilder *implTblendBuilder) C2Expr(c2Expr string) TblendBuilder {
-	return tblendBuilder.withOption("c2_expr", expr.String(c2Expr))
-}
-
-func (tblendBuilder *implTblendBuilder) C2ExprExpr(c2Expr expr.Expr) TblendBuilder {
+func (tblendBuilder *implTblendBuilder) C2Expr(c2Expr expr.Expr) TblendBuilder {
 	return tblendBuilder.withOption("c2_expr", c2Expr)
 }
 
-func (tblendBuilder *implTblendBuilder) C3Expr(c3Expr string) TblendBuilder {
-	return tblendBuilder.withOption("c3_expr", expr.String(c3Expr))
-}
-
-func (tblendBuilder *implTblendBuilder) C3ExprExpr(c3Expr expr.Expr) TblendBuilder {
+func (tblendBuilder *implTblendBuilder) C3Expr(c3Expr expr.Expr) TblendBuilder {
 	return tblendBuilder.withOption("c3_expr", c3Expr)
 }
 
-func (tblendBuilder *implTblendBuilder) AllExpr(allExpr string) TblendBuilder {
-	return tblendBuilder.withOption("all_expr", expr.String(allExpr))
-}
-
-func (tblendBuilder *implTblendBuilder) AllExprExpr(allExpr expr.Expr) TblendBuilder {
+func (tblendBuilder *implTblendBuilder) AllExpr(allExpr expr.Expr) TblendBuilder {
 	return tblendBuilder.withOption("all_expr", allExpr)
 }
 
@@ -220,4 +192,8 @@ func (tblendBuilder *implTblendBuilder) AllOpacity(allOpacity float64) TblendBui
 
 func (tblendBuilder *implTblendBuilder) AllOpacityExpr(allOpacity expr.Expr) TblendBuilder {
 	return tblendBuilder.withOption("all_opacity", allOpacity)
+}
+
+func (tblendBuilder *implTblendBuilder) Enable(enable expr.Expr) TblendBuilder {
+	return tblendBuilder.withOption("enable", enable)
 }

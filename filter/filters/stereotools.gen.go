@@ -91,6 +91,8 @@ type StereotoolsBuilder interface {
 	BmodeOut(bmodeOut int) StereotoolsBuilder
 	// BmodeOutExpr set balance out mode (from 0 to 2) (default balance).
 	BmodeOutExpr(bmodeOut expr.Expr) StereotoolsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) StereotoolsBuilder
 }
 
 // Stereotools creates a new StereotoolsBuilder to configure the "stereotools" filter.
@@ -280,4 +282,8 @@ func (stereotoolsBuilder *implStereotoolsBuilder) BmodeOut(bmodeOut int) Stereot
 
 func (stereotoolsBuilder *implStereotoolsBuilder) BmodeOutExpr(bmodeOut expr.Expr) StereotoolsBuilder {
 	return stereotoolsBuilder.withOption("bmode_out", bmodeOut)
+}
+
+func (stereotoolsBuilder *implStereotoolsBuilder) Enable(enable expr.Expr) StereotoolsBuilder {
+	return stereotoolsBuilder.withOption("enable", enable)
 }

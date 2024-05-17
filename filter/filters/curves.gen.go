@@ -63,6 +63,8 @@ type CurvesBuilder interface {
 	Interp(interp int) CurvesBuilder
 	// InterpExpr specify the kind of interpolation (from 0 to 1) (default natural).
 	InterpExpr(interp expr.Expr) CurvesBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CurvesBuilder
 }
 
 // Curves creates a new CurvesBuilder to configure the "curves" filter.
@@ -196,4 +198,8 @@ func (curvesBuilder *implCurvesBuilder) Interp(interp int) CurvesBuilder {
 
 func (curvesBuilder *implCurvesBuilder) InterpExpr(interp expr.Expr) CurvesBuilder {
 	return curvesBuilder.withOption("interp", interp)
+}
+
+func (curvesBuilder *implCurvesBuilder) Enable(enable expr.Expr) CurvesBuilder {
+	return curvesBuilder.withOption("enable", enable)
 }

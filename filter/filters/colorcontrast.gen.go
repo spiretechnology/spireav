@@ -39,6 +39,8 @@ type ColorcontrastBuilder interface {
 	Pl(pl float32) ColorcontrastBuilder
 	// PlExpr set the amount of preserving lightness (from 0 to 1) (default 0).
 	PlExpr(pl expr.Expr) ColorcontrastBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorcontrastBuilder
 }
 
 // Colorcontrast creates a new ColorcontrastBuilder to configure the "colorcontrast" filter.
@@ -124,4 +126,8 @@ func (colorcontrastBuilder *implColorcontrastBuilder) Pl(pl float32) Colorcontra
 
 func (colorcontrastBuilder *implColorcontrastBuilder) PlExpr(pl expr.Expr) ColorcontrastBuilder {
 	return colorcontrastBuilder.withOption("pl", pl)
+}
+
+func (colorcontrastBuilder *implColorcontrastBuilder) Enable(enable expr.Expr) ColorcontrastBuilder {
+	return colorcontrastBuilder.withOption("enable", enable)
 }

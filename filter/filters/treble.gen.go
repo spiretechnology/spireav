@@ -83,6 +83,8 @@ type TrebleBuilder interface {
 	Blocksize(blocksize int) TrebleBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) TrebleBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) TrebleBuilder
 }
 
 // Treble creates a new TrebleBuilder to configure the "treble" filter.
@@ -256,4 +258,8 @@ func (trebleBuilder *implTrebleBuilder) Blocksize(blocksize int) TrebleBuilder {
 
 func (trebleBuilder *implTrebleBuilder) B(b int) TrebleBuilder {
 	return trebleBuilder.withOption("b", expr.Int(b))
+}
+
+func (trebleBuilder *implTrebleBuilder) Enable(enable expr.Expr) TrebleBuilder {
+	return trebleBuilder.withOption("enable", enable)
 }

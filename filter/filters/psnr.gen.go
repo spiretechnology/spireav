@@ -27,6 +27,8 @@ type PsnrBuilder interface {
 	Repeatlast(repeatlast bool) PsnrBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) PsnrBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PsnrBuilder
 }
 
 // Psnr creates a new PsnrBuilder to configure the "psnr" filter.
@@ -88,4 +90,8 @@ func (psnrBuilder *implPsnrBuilder) Repeatlast(repeatlast bool) PsnrBuilder {
 
 func (psnrBuilder *implPsnrBuilder) TsSyncMode(tsSyncMode int) PsnrBuilder {
 	return psnrBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (psnrBuilder *implPsnrBuilder) Enable(enable expr.Expr) PsnrBuilder {
+	return psnrBuilder.withOption("enable", enable)
 }

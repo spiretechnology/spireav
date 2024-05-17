@@ -15,6 +15,8 @@ type MaskedmaxBuilder interface {
 	Planes(planes int) MaskedmaxBuilder
 	// PlanesExpr set planes (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) MaskedmaxBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MaskedmaxBuilder
 }
 
 // Maskedmax creates a new MaskedmaxBuilder to configure the "maskedmax" filter.
@@ -52,4 +54,8 @@ func (maskedmaxBuilder *implMaskedmaxBuilder) Planes(planes int) MaskedmaxBuilde
 
 func (maskedmaxBuilder *implMaskedmaxBuilder) PlanesExpr(planes expr.Expr) MaskedmaxBuilder {
 	return maskedmaxBuilder.withOption("planes", planes)
+}
+
+func (maskedmaxBuilder *implMaskedmaxBuilder) Enable(enable expr.Expr) MaskedmaxBuilder {
+	return maskedmaxBuilder.withOption("enable", enable)
 }

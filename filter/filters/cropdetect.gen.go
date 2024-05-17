@@ -33,6 +33,8 @@ type CropdetectBuilder interface {
 	Low(low float32) CropdetectBuilder
 	// MvThreshold motion vector threshold when estimating video window size (from 0 to 100) (default 8).
 	MvThreshold(mvThreshold int) CropdetectBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) CropdetectBuilder
 }
 
 // Cropdetect creates a new CropdetectBuilder to configure the "cropdetect" filter.
@@ -106,4 +108,8 @@ func (cropdetectBuilder *implCropdetectBuilder) Low(low float32) CropdetectBuild
 
 func (cropdetectBuilder *implCropdetectBuilder) MvThreshold(mvThreshold int) CropdetectBuilder {
 	return cropdetectBuilder.withOption("mv_threshold", expr.Int(mvThreshold))
+}
+
+func (cropdetectBuilder *implCropdetectBuilder) Enable(enable expr.Expr) CropdetectBuilder {
+	return cropdetectBuilder.withOption("enable", enable)
 }

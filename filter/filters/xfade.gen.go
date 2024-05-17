@@ -20,7 +20,7 @@ type XfadeBuilder interface {
 	// Offset set cross fade start relative to first input stream (default 0).
 	Offset(offset time.Duration) XfadeBuilder
 	// Expr set expression for custom transition.
-	Expr(expression string) XfadeBuilder
+	Expr(expression expr.Expr) XfadeBuilder
 }
 
 // Xfade creates a new XfadeBuilder to configure the "xfade" filter.
@@ -64,6 +64,6 @@ func (xfadeBuilder *implXfadeBuilder) Offset(offset time.Duration) XfadeBuilder 
 	return xfadeBuilder.withOption("offset", expr.Duration(offset))
 }
 
-func (xfadeBuilder *implXfadeBuilder) Expr(expression string) XfadeBuilder {
-	return xfadeBuilder.withOption("expr", expr.String(expression))
+func (xfadeBuilder *implXfadeBuilder) Expr(expression expr.Expr) XfadeBuilder {
+	return xfadeBuilder.withOption("expr", expression)
 }

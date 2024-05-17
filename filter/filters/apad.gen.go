@@ -23,6 +23,8 @@ type ApadBuilder interface {
 	PadDur(padDur time.Duration) ApadBuilder
 	// WholeDur set minimum target duration in the audio stream (default -0.000001).
 	WholeDur(wholeDur time.Duration) ApadBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ApadBuilder
 }
 
 // Apad creates a new ApadBuilder to configure the "apad" filter.
@@ -72,4 +74,8 @@ func (apadBuilder *implApadBuilder) PadDur(padDur time.Duration) ApadBuilder {
 
 func (apadBuilder *implApadBuilder) WholeDur(wholeDur time.Duration) ApadBuilder {
 	return apadBuilder.withOption("whole_dur", expr.Duration(wholeDur))
+}
+
+func (apadBuilder *implApadBuilder) Enable(enable expr.Expr) ApadBuilder {
+	return apadBuilder.withOption("enable", enable)
 }

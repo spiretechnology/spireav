@@ -15,6 +15,8 @@ type MaskedminBuilder interface {
 	Planes(planes int) MaskedminBuilder
 	// PlanesExpr set planes (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) MaskedminBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MaskedminBuilder
 }
 
 // Maskedmin creates a new MaskedminBuilder to configure the "maskedmin" filter.
@@ -52,4 +54,8 @@ func (maskedminBuilder *implMaskedminBuilder) Planes(planes int) MaskedminBuilde
 
 func (maskedminBuilder *implMaskedminBuilder) PlanesExpr(planes expr.Expr) MaskedminBuilder {
 	return maskedminBuilder.withOption("planes", planes)
+}
+
+func (maskedminBuilder *implMaskedminBuilder) Enable(enable expr.Expr) MaskedminBuilder {
+	return maskedminBuilder.withOption("enable", enable)
 }

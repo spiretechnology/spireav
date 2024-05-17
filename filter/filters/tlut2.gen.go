@@ -12,21 +12,15 @@ import (
 type Tlut2Builder interface {
 	filter.Filter
 	// C0 set component #0 expression (default "x").
-	C0(c0 string) Tlut2Builder
-	// C0Expr set component #0 expression (default "x").
-	C0Expr(c0 expr.Expr) Tlut2Builder
+	C0(c0 expr.Expr) Tlut2Builder
 	// C1 set component #1 expression (default "x").
-	C1(c1 string) Tlut2Builder
-	// C1Expr set component #1 expression (default "x").
-	C1Expr(c1 expr.Expr) Tlut2Builder
+	C1(c1 expr.Expr) Tlut2Builder
 	// C2 set component #2 expression (default "x").
-	C2(c2 string) Tlut2Builder
-	// C2Expr set component #2 expression (default "x").
-	C2Expr(c2 expr.Expr) Tlut2Builder
+	C2(c2 expr.Expr) Tlut2Builder
 	// C3 set component #3 expression (default "x").
-	C3(c3 string) Tlut2Builder
-	// C3Expr set component #3 expression (default "x").
-	C3Expr(c3 expr.Expr) Tlut2Builder
+	C3(c3 expr.Expr) Tlut2Builder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Tlut2Builder
 }
 
 // Tlut2 creates a new Tlut2Builder to configure the "tlut2" filter.
@@ -58,34 +52,22 @@ func (tlut2Builder *implTlut2Builder) withOption(key string, value expr.Expr) Tl
 	return &bCopy
 }
 
-func (tlut2Builder *implTlut2Builder) C0(c0 string) Tlut2Builder {
-	return tlut2Builder.withOption("c0", expr.String(c0))
-}
-
-func (tlut2Builder *implTlut2Builder) C0Expr(c0 expr.Expr) Tlut2Builder {
+func (tlut2Builder *implTlut2Builder) C0(c0 expr.Expr) Tlut2Builder {
 	return tlut2Builder.withOption("c0", c0)
 }
 
-func (tlut2Builder *implTlut2Builder) C1(c1 string) Tlut2Builder {
-	return tlut2Builder.withOption("c1", expr.String(c1))
-}
-
-func (tlut2Builder *implTlut2Builder) C1Expr(c1 expr.Expr) Tlut2Builder {
+func (tlut2Builder *implTlut2Builder) C1(c1 expr.Expr) Tlut2Builder {
 	return tlut2Builder.withOption("c1", c1)
 }
 
-func (tlut2Builder *implTlut2Builder) C2(c2 string) Tlut2Builder {
-	return tlut2Builder.withOption("c2", expr.String(c2))
-}
-
-func (tlut2Builder *implTlut2Builder) C2Expr(c2 expr.Expr) Tlut2Builder {
+func (tlut2Builder *implTlut2Builder) C2(c2 expr.Expr) Tlut2Builder {
 	return tlut2Builder.withOption("c2", c2)
 }
 
-func (tlut2Builder *implTlut2Builder) C3(c3 string) Tlut2Builder {
-	return tlut2Builder.withOption("c3", expr.String(c3))
+func (tlut2Builder *implTlut2Builder) C3(c3 expr.Expr) Tlut2Builder {
+	return tlut2Builder.withOption("c3", c3)
 }
 
-func (tlut2Builder *implTlut2Builder) C3Expr(c3 expr.Expr) Tlut2Builder {
-	return tlut2Builder.withOption("c3", c3)
+func (tlut2Builder *implTlut2Builder) Enable(enable expr.Expr) Tlut2Builder {
+	return tlut2Builder.withOption("enable", enable)
 }

@@ -33,6 +33,8 @@ type Bm3dBuilder interface {
 	Ref(ref bool) Bm3dBuilder
 	// Planes set planes to filter (from 0 to 15) (default 7).
 	Planes(planes int) Bm3dBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Bm3dBuilder
 }
 
 // Bm3d creates a new Bm3dBuilder to configure the "bm3d" filter.
@@ -106,4 +108,8 @@ func (bm3dBuilder *implBm3dBuilder) Ref(ref bool) Bm3dBuilder {
 
 func (bm3dBuilder *implBm3dBuilder) Planes(planes int) Bm3dBuilder {
 	return bm3dBuilder.withOption("planes", expr.Int(planes))
+}
+
+func (bm3dBuilder *implBm3dBuilder) Enable(enable expr.Expr) Bm3dBuilder {
+	return bm3dBuilder.withOption("enable", enable)
 }

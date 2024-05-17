@@ -43,6 +43,8 @@ type DespillBuilder interface {
 	Alpha(alpha bool) DespillBuilder
 	// AlphaExpr change alpha component (default false).
 	AlphaExpr(alpha expr.Expr) DespillBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DespillBuilder
 }
 
 // Despill creates a new DespillBuilder to configure the "despill" filter.
@@ -136,4 +138,8 @@ func (despillBuilder *implDespillBuilder) Alpha(alpha bool) DespillBuilder {
 
 func (despillBuilder *implDespillBuilder) AlphaExpr(alpha expr.Expr) DespillBuilder {
 	return despillBuilder.withOption("alpha", alpha)
+}
+
+func (despillBuilder *implDespillBuilder) Enable(enable expr.Expr) DespillBuilder {
+	return despillBuilder.withOption("enable", enable)
 }

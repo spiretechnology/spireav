@@ -47,6 +47,8 @@ type RgbashiftBuilder interface {
 	Edge(edge int) RgbashiftBuilder
 	// EdgeExpr set edge operation (from 0 to 1) (default smear).
 	EdgeExpr(edge expr.Expr) RgbashiftBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) RgbashiftBuilder
 }
 
 // Rgbashift creates a new RgbashiftBuilder to configure the "rgbashift" filter.
@@ -148,4 +150,8 @@ func (rgbashiftBuilder *implRgbashiftBuilder) Edge(edge int) RgbashiftBuilder {
 
 func (rgbashiftBuilder *implRgbashiftBuilder) EdgeExpr(edge expr.Expr) RgbashiftBuilder {
 	return rgbashiftBuilder.withOption("edge", edge)
+}
+
+func (rgbashiftBuilder *implRgbashiftBuilder) Enable(enable expr.Expr) RgbashiftBuilder {
+	return rgbashiftBuilder.withOption("enable", enable)
 }

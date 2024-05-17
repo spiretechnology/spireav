@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#swapuv
 type SwapuvBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SwapuvBuilder
 }
 
 // Swapuv creates a new SwapuvBuilder to configure the "swapuv" filter.
@@ -40,4 +42,8 @@ func (swapuvBuilder *implSwapuvBuilder) withOption(key string, value expr.Expr) 
 	bCopy := *swapuvBuilder
 	bCopy.f = swapuvBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (swapuvBuilder *implSwapuvBuilder) Enable(enable expr.Expr) SwapuvBuilder {
+	return swapuvBuilder.withOption("enable", enable)
 }

@@ -23,6 +23,8 @@ type HysteresisBuilder interface {
 	Repeatlast(repeatlast bool) HysteresisBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) HysteresisBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HysteresisBuilder
 }
 
 // Hysteresis creates a new HysteresisBuilder to configure the "hysteresis" filter.
@@ -76,4 +78,8 @@ func (hysteresisBuilder *implHysteresisBuilder) Repeatlast(repeatlast bool) Hyst
 
 func (hysteresisBuilder *implHysteresisBuilder) TsSyncMode(tsSyncMode int) HysteresisBuilder {
 	return hysteresisBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (hysteresisBuilder *implHysteresisBuilder) Enable(enable expr.Expr) HysteresisBuilder {
+	return hysteresisBuilder.withOption("enable", enable)
 }

@@ -21,6 +21,8 @@ type SppBuilder interface {
 	Mode(mode int) SppBuilder
 	// UseBframeQp use B-frames' QP (default false).
 	UseBframeQp(useBframeQp bool) SppBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SppBuilder
 }
 
 // Spp creates a new SppBuilder to configure the "spp" filter.
@@ -70,4 +72,8 @@ func (sppBuilder *implSppBuilder) Mode(mode int) SppBuilder {
 
 func (sppBuilder *implSppBuilder) UseBframeQp(useBframeQp bool) SppBuilder {
 	return sppBuilder.withOption("use_bframe_qp", expr.Bool(useBframeQp))
+}
+
+func (sppBuilder *implSppBuilder) Enable(enable expr.Expr) SppBuilder {
+	return sppBuilder.withOption("enable", enable)
 }

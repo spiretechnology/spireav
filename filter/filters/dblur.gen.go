@@ -23,6 +23,8 @@ type DblurBuilder interface {
 	Planes(planes int) DblurBuilder
 	// PlanesExpr set planes to filter (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) DblurBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DblurBuilder
 }
 
 // Dblur creates a new DblurBuilder to configure the "dblur" filter.
@@ -76,4 +78,8 @@ func (dblurBuilder *implDblurBuilder) Planes(planes int) DblurBuilder {
 
 func (dblurBuilder *implDblurBuilder) PlanesExpr(planes expr.Expr) DblurBuilder {
 	return dblurBuilder.withOption("planes", planes)
+}
+
+func (dblurBuilder *implDblurBuilder) Enable(enable expr.Expr) DblurBuilder {
+	return dblurBuilder.withOption("enable", enable)
 }

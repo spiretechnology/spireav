@@ -15,6 +15,8 @@ type AdecorrelateBuilder interface {
 	Stages(stages int) AdecorrelateBuilder
 	// Seed set random seed (from -1 to UINT32_MAX) (default -1).
 	Seed(seed int64) AdecorrelateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AdecorrelateBuilder
 }
 
 // Adecorrelate creates a new AdecorrelateBuilder to configure the "adecorrelate" filter.
@@ -52,4 +54,8 @@ func (adecorrelateBuilder *implAdecorrelateBuilder) Stages(stages int) Adecorrel
 
 func (adecorrelateBuilder *implAdecorrelateBuilder) Seed(seed int64) AdecorrelateBuilder {
 	return adecorrelateBuilder.withOption("seed", expr.Int64(seed))
+}
+
+func (adecorrelateBuilder *implAdecorrelateBuilder) Enable(enable expr.Expr) AdecorrelateBuilder {
+	return adecorrelateBuilder.withOption("enable", enable)
 }

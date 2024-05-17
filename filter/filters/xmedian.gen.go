@@ -29,6 +29,8 @@ type XmedianBuilder interface {
 	Repeatlast(repeatlast bool) XmedianBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) XmedianBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) XmedianBuilder
 }
 
 // Xmedian creates a new XmedianBuilder to configure the "xmedian" filter.
@@ -94,4 +96,8 @@ func (xmedianBuilder *implXmedianBuilder) Repeatlast(repeatlast bool) XmedianBui
 
 func (xmedianBuilder *implXmedianBuilder) TsSyncMode(tsSyncMode int) XmedianBuilder {
 	return xmedianBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (xmedianBuilder *implXmedianBuilder) Enable(enable expr.Expr) XmedianBuilder {
+	return xmedianBuilder.withOption("enable", enable)
 }

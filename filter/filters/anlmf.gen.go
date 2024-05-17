@@ -31,6 +31,8 @@ type AnlmfBuilder interface {
 	OutModeExpr(outMode expr.Expr) AnlmfBuilder
 	// Precision set processing precision (from 0 to 2) (default auto).
 	Precision(precision int) AnlmfBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AnlmfBuilder
 }
 
 // Anlmf creates a new AnlmfBuilder to configure the "anlmf" filter.
@@ -100,4 +102,8 @@ func (anlmfBuilder *implAnlmfBuilder) OutModeExpr(outMode expr.Expr) AnlmfBuilde
 
 func (anlmfBuilder *implAnlmfBuilder) Precision(precision int) AnlmfBuilder {
 	return anlmfBuilder.withOption("precision", expr.Int(precision))
+}
+
+func (anlmfBuilder *implAnlmfBuilder) Enable(enable expr.Expr) AnlmfBuilder {
+	return anlmfBuilder.withOption("enable", enable)
 }

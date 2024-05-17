@@ -27,6 +27,8 @@ type VignetteBuilder interface {
 	Dither(dither bool) VignetteBuilder
 	// Aspect set aspect ratio (from 0 to DBL_MAX) (default 1/1).
 	Aspect(aspect expr.Rational) VignetteBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) VignetteBuilder
 }
 
 // Vignette creates a new VignetteBuilder to configure the "vignette" filter.
@@ -88,4 +90,8 @@ func (vignetteBuilder *implVignetteBuilder) Dither(dither bool) VignetteBuilder 
 
 func (vignetteBuilder *implVignetteBuilder) Aspect(aspect expr.Rational) VignetteBuilder {
 	return vignetteBuilder.withOption("aspect", aspect)
+}
+
+func (vignetteBuilder *implVignetteBuilder) Enable(enable expr.Expr) VignetteBuilder {
+	return vignetteBuilder.withOption("enable", enable)
 }

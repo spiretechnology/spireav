@@ -27,6 +27,8 @@ type AsetnsamplesBuilder interface {
 	P(p bool) AsetnsamplesBuilder
 	// PExpr pad last frame with zeros (default true).
 	PExpr(p expr.Expr) AsetnsamplesBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AsetnsamplesBuilder
 }
 
 // Asetnsamples creates a new AsetnsamplesBuilder to configure the "asetnsamples" filter.
@@ -88,4 +90,8 @@ func (asetnsamplesBuilder *implAsetnsamplesBuilder) P(p bool) AsetnsamplesBuilde
 
 func (asetnsamplesBuilder *implAsetnsamplesBuilder) PExpr(p expr.Expr) AsetnsamplesBuilder {
 	return asetnsamplesBuilder.withOption("p", p)
+}
+
+func (asetnsamplesBuilder *implAsetnsamplesBuilder) Enable(enable expr.Expr) AsetnsamplesBuilder {
+	return asetnsamplesBuilder.withOption("enable", enable)
 }

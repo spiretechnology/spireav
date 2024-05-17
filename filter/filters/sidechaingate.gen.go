@@ -59,6 +59,8 @@ type SidechaingateBuilder interface {
 	LevelSc(levelSc float64) SidechaingateBuilder
 	// LevelScExpr set sidechain gain (from 0.015625 to 64) (default 1).
 	LevelScExpr(levelSc expr.Expr) SidechaingateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SidechaingateBuilder
 }
 
 // Sidechaingate creates a new SidechaingateBuilder to configure the "sidechaingate" filter.
@@ -184,4 +186,8 @@ func (sidechaingateBuilder *implSidechaingateBuilder) LevelSc(levelSc float64) S
 
 func (sidechaingateBuilder *implSidechaingateBuilder) LevelScExpr(levelSc expr.Expr) SidechaingateBuilder {
 	return sidechaingateBuilder.withOption("level_sc", levelSc)
+}
+
+func (sidechaingateBuilder *implSidechaingateBuilder) Enable(enable expr.Expr) SidechaingateBuilder {
+	return sidechaingateBuilder.withOption("enable", enable)
 }

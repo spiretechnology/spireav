@@ -23,6 +23,8 @@ type ScharrBuilder interface {
 	Delta(delta float32) ScharrBuilder
 	// DeltaExpr set delta (from -65535 to 65535) (default 0).
 	DeltaExpr(delta expr.Expr) ScharrBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ScharrBuilder
 }
 
 // Scharr creates a new ScharrBuilder to configure the "scharr" filter.
@@ -76,4 +78,8 @@ func (scharrBuilder *implScharrBuilder) Delta(delta float32) ScharrBuilder {
 
 func (scharrBuilder *implScharrBuilder) DeltaExpr(delta expr.Expr) ScharrBuilder {
 	return scharrBuilder.withOption("delta", delta)
+}
+
+func (scharrBuilder *implScharrBuilder) Enable(enable expr.Expr) ScharrBuilder {
+	return scharrBuilder.withOption("enable", enable)
 }

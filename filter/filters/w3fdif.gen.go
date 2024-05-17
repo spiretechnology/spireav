@@ -27,6 +27,8 @@ type W3fdifBuilder interface {
 	Deint(deint int) W3fdifBuilder
 	// DeintExpr specify which frames to deinterlace (from 0 to 1) (default all).
 	DeintExpr(deint expr.Expr) W3fdifBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) W3fdifBuilder
 }
 
 // W3fdif creates a new W3fdifBuilder to configure the "w3fdif" filter.
@@ -88,4 +90,8 @@ func (w3fdifBuilder *implW3fdifBuilder) Deint(deint int) W3fdifBuilder {
 
 func (w3fdifBuilder *implW3fdifBuilder) DeintExpr(deint expr.Expr) W3fdifBuilder {
 	return w3fdifBuilder.withOption("deint", deint)
+}
+
+func (w3fdifBuilder *implW3fdifBuilder) Enable(enable expr.Expr) W3fdifBuilder {
+	return w3fdifBuilder.withOption("enable", enable)
 }

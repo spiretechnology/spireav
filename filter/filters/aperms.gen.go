@@ -17,6 +17,8 @@ type ApermsBuilder interface {
 	ModeExpr(mode expr.Expr) ApermsBuilder
 	// Seed set the seed for the random mode (from -1 to UINT32_MAX) (default -1).
 	Seed(seed int64) ApermsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ApermsBuilder
 }
 
 // Aperms creates a new ApermsBuilder to configure the "aperms" filter.
@@ -58,4 +60,8 @@ func (apermsBuilder *implApermsBuilder) ModeExpr(mode expr.Expr) ApermsBuilder {
 
 func (apermsBuilder *implApermsBuilder) Seed(seed int64) ApermsBuilder {
 	return apermsBuilder.withOption("seed", expr.Int64(seed))
+}
+
+func (apermsBuilder *implApermsBuilder) Enable(enable expr.Expr) ApermsBuilder {
+	return apermsBuilder.withOption("enable", enable)
 }

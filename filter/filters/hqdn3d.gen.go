@@ -27,6 +27,8 @@ type Hqdn3dBuilder interface {
 	ChromaTmp(chromaTmp float64) Hqdn3dBuilder
 	// ChromaTmpExpr temporal chroma strength (from 0 to DBL_MAX) (default 0).
 	ChromaTmpExpr(chromaTmp expr.Expr) Hqdn3dBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Hqdn3dBuilder
 }
 
 // Hqdn3d creates a new Hqdn3dBuilder to configure the "hqdn3d" filter.
@@ -88,4 +90,8 @@ func (hqdn3dBuilder *implHqdn3dBuilder) ChromaTmp(chromaTmp float64) Hqdn3dBuild
 
 func (hqdn3dBuilder *implHqdn3dBuilder) ChromaTmpExpr(chromaTmp expr.Expr) Hqdn3dBuilder {
 	return hqdn3dBuilder.withOption("chroma_tmp", chromaTmp)
+}
+
+func (hqdn3dBuilder *implHqdn3dBuilder) Enable(enable expr.Expr) Hqdn3dBuilder {
+	return hqdn3dBuilder.withOption("enable", enable)
 }

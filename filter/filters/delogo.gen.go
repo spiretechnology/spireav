@@ -21,6 +21,8 @@ type DelogoBuilder interface {
 	H(h string) DelogoBuilder
 	// Show show delogo area (default false).
 	Show(show bool) DelogoBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DelogoBuilder
 }
 
 // Delogo creates a new DelogoBuilder to configure the "delogo" filter.
@@ -70,4 +72,8 @@ func (delogoBuilder *implDelogoBuilder) H(h string) DelogoBuilder {
 
 func (delogoBuilder *implDelogoBuilder) Show(show bool) DelogoBuilder {
 	return delogoBuilder.withOption("show", expr.Bool(show))
+}
+
+func (delogoBuilder *implDelogoBuilder) Enable(enable expr.Expr) DelogoBuilder {
+	return delogoBuilder.withOption("enable", enable)
 }

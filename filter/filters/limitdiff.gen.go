@@ -25,6 +25,8 @@ type LimitdiffBuilder interface {
 	Planes(planes int) LimitdiffBuilder
 	// PlanesExpr set the planes to filter (from 0 to 15) (default 15).
 	PlanesExpr(planes expr.Expr) LimitdiffBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LimitdiffBuilder
 }
 
 // Limitdiff creates a new LimitdiffBuilder to configure the "limitdiff" filter.
@@ -82,4 +84,8 @@ func (limitdiffBuilder *implLimitdiffBuilder) Planes(planes int) LimitdiffBuilde
 
 func (limitdiffBuilder *implLimitdiffBuilder) PlanesExpr(planes expr.Expr) LimitdiffBuilder {
 	return limitdiffBuilder.withOption("planes", planes)
+}
+
+func (limitdiffBuilder *implLimitdiffBuilder) Enable(enable expr.Expr) LimitdiffBuilder {
+	return limitdiffBuilder.withOption("enable", enable)
 }

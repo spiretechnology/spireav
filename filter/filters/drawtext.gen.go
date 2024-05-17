@@ -21,8 +21,8 @@ type DrawtextBuilder interface {
 	Textfile(textfile string) DrawtextBuilder
 	// Fontcolor set foreground color (default "black").
 	Fontcolor(fontcolor expr.Color) DrawtextBuilder
-	// FontcolorExpr set foreground color (default "black").
-	FontcolorExpr(fontcolor expr.Expr) DrawtextBuilder
+	// FontcolorExpr set foreground color expression (default "").
+	FontcolorExpr(fontcolorExpr expr.Expr) DrawtextBuilder
 	// Boxcolor set box color (default "white").
 	Boxcolor(boxcolor expr.Color) DrawtextBuilder
 	// BoxcolorExpr set box color (default "white").
@@ -52,15 +52,15 @@ type DrawtextBuilder interface {
 	// FontsizeExpr set font size.
 	FontsizeExpr(fontsize expr.Expr) DrawtextBuilder
 	// TextAlign set text alignment (default 0).
-	TextAlign(textAlign string) DrawtextBuilder
+	TextAlign(textAlign ...string) DrawtextBuilder
 	// TextAlignExpr set text alignment (default 0).
 	TextAlignExpr(textAlign expr.Expr) DrawtextBuilder
 	// X set x expression (default "0").
-	X(x string) DrawtextBuilder
+	X(x int) DrawtextBuilder
 	// XExpr set x expression (default "0").
 	XExpr(x expr.Expr) DrawtextBuilder
 	// Y set y expression (default "0").
-	Y(y string) DrawtextBuilder
+	Y(y int) DrawtextBuilder
 	// YExpr set y expression (default "0").
 	YExpr(y expr.Expr) DrawtextBuilder
 	// Boxw set box width (from 0 to INT_MAX) (default 0).
@@ -120,7 +120,9 @@ type DrawtextBuilder interface {
 	// TextSource the source of text.
 	TextSource(textSource string) DrawtextBuilder
 	// FtLoadFlags set font loading flags for libfreetype (default 0).
-	FtLoadFlags(ftLoadFlags string) DrawtextBuilder
+	FtLoadFlags(ftLoadFlags ...string) DrawtextBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DrawtextBuilder
 }
 
 // Drawtext creates a new DrawtextBuilder to configure the "drawtext" filter.
@@ -172,8 +174,8 @@ func (drawtextBuilder *implDrawtextBuilder) Fontcolor(fontcolor expr.Color) Draw
 	return drawtextBuilder.withOption("fontcolor", fontcolor)
 }
 
-func (drawtextBuilder *implDrawtextBuilder) FontcolorExpr(fontcolor expr.Expr) DrawtextBuilder {
-	return drawtextBuilder.withOption("fontcolor", fontcolor)
+func (drawtextBuilder *implDrawtextBuilder) FontcolorExpr(fontcolorExpr expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("fontcolor_expr", fontcolorExpr)
 }
 
 func (drawtextBuilder *implDrawtextBuilder) Boxcolor(boxcolor expr.Color) DrawtextBuilder {
@@ -232,24 +234,24 @@ func (drawtextBuilder *implDrawtextBuilder) FontsizeExpr(fontsize expr.Expr) Dra
 	return drawtextBuilder.withOption("fontsize", fontsize)
 }
 
-func (drawtextBuilder *implDrawtextBuilder) TextAlign(textAlign string) DrawtextBuilder {
-	return drawtextBuilder.withOption("text_align", expr.String(textAlign))
+func (drawtextBuilder *implDrawtextBuilder) TextAlign(textAlign ...string) DrawtextBuilder {
+	return drawtextBuilder.withOption("text_align", expr.Flags(textAlign))
 }
 
 func (drawtextBuilder *implDrawtextBuilder) TextAlignExpr(textAlign expr.Expr) DrawtextBuilder {
 	return drawtextBuilder.withOption("text_align", textAlign)
 }
 
-func (drawtextBuilder *implDrawtextBuilder) X(x string) DrawtextBuilder {
-	return drawtextBuilder.withOption("x", expr.String(x))
+func (drawtextBuilder *implDrawtextBuilder) X(x int) DrawtextBuilder {
+	return drawtextBuilder.withOption("x", expr.Int(x))
 }
 
 func (drawtextBuilder *implDrawtextBuilder) XExpr(x expr.Expr) DrawtextBuilder {
 	return drawtextBuilder.withOption("x", x)
 }
 
-func (drawtextBuilder *implDrawtextBuilder) Y(y string) DrawtextBuilder {
-	return drawtextBuilder.withOption("y", expr.String(y))
+func (drawtextBuilder *implDrawtextBuilder) Y(y int) DrawtextBuilder {
+	return drawtextBuilder.withOption("y", expr.Int(y))
 }
 
 func (drawtextBuilder *implDrawtextBuilder) YExpr(y expr.Expr) DrawtextBuilder {
@@ -368,6 +370,10 @@ func (drawtextBuilder *implDrawtextBuilder) TextSource(textSource string) Drawte
 	return drawtextBuilder.withOption("text_source", expr.String(textSource))
 }
 
-func (drawtextBuilder *implDrawtextBuilder) FtLoadFlags(ftLoadFlags string) DrawtextBuilder {
-	return drawtextBuilder.withOption("ft_load_flags", expr.String(ftLoadFlags))
+func (drawtextBuilder *implDrawtextBuilder) FtLoadFlags(ftLoadFlags ...string) DrawtextBuilder {
+	return drawtextBuilder.withOption("ft_load_flags", expr.Flags(ftLoadFlags))
+}
+
+func (drawtextBuilder *implDrawtextBuilder) Enable(enable expr.Expr) DrawtextBuilder {
+	return drawtextBuilder.withOption("enable", enable)
 }

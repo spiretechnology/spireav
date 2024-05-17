@@ -111,6 +111,8 @@ type AfftdnBuilder interface {
 	Gs(gs int) AfftdnBuilder
 	// GsExpr set gain smooth radius (from 0 to 50) (default 0).
 	GsExpr(gs expr.Expr) AfftdnBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AfftdnBuilder
 }
 
 // Afftdn creates a new AfftdnBuilder to configure the "afftdn" filter.
@@ -340,4 +342,8 @@ func (afftdnBuilder *implAfftdnBuilder) Gs(gs int) AfftdnBuilder {
 
 func (afftdnBuilder *implAfftdnBuilder) GsExpr(gs expr.Expr) AfftdnBuilder {
 	return afftdnBuilder.withOption("gs", gs)
+}
+
+func (afftdnBuilder *implAfftdnBuilder) Enable(enable expr.Expr) AfftdnBuilder {
+	return afftdnBuilder.withOption("enable", enable)
 }

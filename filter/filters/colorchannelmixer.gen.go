@@ -83,6 +83,8 @@ type ColorchannelmixerBuilder interface {
 	Pa(pa float64) ColorchannelmixerBuilder
 	// PaExpr set the preserve color amount (from 0 to 1) (default 0).
 	PaExpr(pa expr.Expr) ColorchannelmixerBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ColorchannelmixerBuilder
 }
 
 // Colorchannelmixer creates a new ColorchannelmixerBuilder to configure the "colorchannelmixer" filter.
@@ -256,4 +258,8 @@ func (colorchannelmixerBuilder *implColorchannelmixerBuilder) Pa(pa float64) Col
 
 func (colorchannelmixerBuilder *implColorchannelmixerBuilder) PaExpr(pa expr.Expr) ColorchannelmixerBuilder {
 	return colorchannelmixerBuilder.withOption("pa", pa)
+}
+
+func (colorchannelmixerBuilder *implColorchannelmixerBuilder) Enable(enable expr.Expr) ColorchannelmixerBuilder {
+	return colorchannelmixerBuilder.withOption("enable", enable)
 }

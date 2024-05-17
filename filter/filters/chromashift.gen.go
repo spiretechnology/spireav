@@ -31,6 +31,8 @@ type ChromashiftBuilder interface {
 	Edge(edge int) ChromashiftBuilder
 	// EdgeExpr set edge operation (from 0 to 1) (default smear).
 	EdgeExpr(edge expr.Expr) ChromashiftBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ChromashiftBuilder
 }
 
 // Chromashift creates a new ChromashiftBuilder to configure the "chromashift" filter.
@@ -100,4 +102,8 @@ func (chromashiftBuilder *implChromashiftBuilder) Edge(edge int) ChromashiftBuil
 
 func (chromashiftBuilder *implChromashiftBuilder) EdgeExpr(edge expr.Expr) ChromashiftBuilder {
 	return chromashiftBuilder.withOption("edge", edge)
+}
+
+func (chromashiftBuilder *implChromashiftBuilder) Enable(enable expr.Expr) ChromashiftBuilder {
+	return chromashiftBuilder.withOption("enable", enable)
 }

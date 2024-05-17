@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#latency
 type LatencyBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) LatencyBuilder
 }
 
 // Latency creates a new LatencyBuilder to configure the "latency" filter.
@@ -40,4 +42,8 @@ func (latencyBuilder *implLatencyBuilder) withOption(key string, value expr.Expr
 	bCopy := *latencyBuilder
 	bCopy.f = latencyBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (latencyBuilder *implLatencyBuilder) Enable(enable expr.Expr) LatencyBuilder {
+	return latencyBuilder.withOption("enable", enable)
 }

@@ -55,6 +55,8 @@ type AfirBuilder interface {
 	Precision(precision int) AfirBuilder
 	// Irload set IR loading type (from 0 to 1) (default init).
 	Irload(irload int) AfirBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AfirBuilder
 }
 
 // Afir creates a new AfirBuilder to configure the "afir" filter.
@@ -172,4 +174,8 @@ func (afirBuilder *implAfirBuilder) Precision(precision int) AfirBuilder {
 
 func (afirBuilder *implAfirBuilder) Irload(irload int) AfirBuilder {
 	return afirBuilder.withOption("irload", expr.Int(irload))
+}
+
+func (afirBuilder *implAfirBuilder) Enable(enable expr.Expr) AfirBuilder {
+	return afirBuilder.withOption("enable", enable)
 }

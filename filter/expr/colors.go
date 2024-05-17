@@ -141,4 +141,6 @@ const (
 	ColorWhiteSmoke           = Color("0xF5F5F5")
 	ColorYellow               = Color("0xFFFF00")
 	ColorYellowGreen          = Color("0x9ACD32")
+
+	ColorTransparent = Color("0x00000000")
 )

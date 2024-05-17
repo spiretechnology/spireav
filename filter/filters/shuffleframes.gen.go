@@ -13,6 +13,8 @@ type ShuffleframesBuilder interface {
 	filter.Filter
 	// Mapping set destination indexes of input frames (default "0").
 	Mapping(mapping string) ShuffleframesBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ShuffleframesBuilder
 }
 
 // Shuffleframes creates a new ShuffleframesBuilder to configure the "shuffleframes" filter.
@@ -46,4 +48,8 @@ func (shuffleframesBuilder *implShuffleframesBuilder) withOption(key string, val
 
 func (shuffleframesBuilder *implShuffleframesBuilder) Mapping(mapping string) ShuffleframesBuilder {
 	return shuffleframesBuilder.withOption("mapping", expr.String(mapping))
+}
+
+func (shuffleframesBuilder *implShuffleframesBuilder) Enable(enable expr.Expr) ShuffleframesBuilder {
+	return shuffleframesBuilder.withOption("enable", enable)
 }

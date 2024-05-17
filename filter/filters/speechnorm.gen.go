@@ -91,6 +91,8 @@ type SpeechnormBuilder interface {
 	M(m float64) SpeechnormBuilder
 	// MExpr set the RMS value (from 0 to 1) (default 0).
 	MExpr(m expr.Expr) SpeechnormBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) SpeechnormBuilder
 }
 
 // Speechnorm creates a new SpeechnormBuilder to configure the "speechnorm" filter.
@@ -280,4 +282,8 @@ func (speechnormBuilder *implSpeechnormBuilder) M(m float64) SpeechnormBuilder {
 
 func (speechnormBuilder *implSpeechnormBuilder) MExpr(m expr.Expr) SpeechnormBuilder {
 	return speechnormBuilder.withOption("m", m)
+}
+
+func (speechnormBuilder *implSpeechnormBuilder) Enable(enable expr.Expr) SpeechnormBuilder {
+	return speechnormBuilder.withOption("enable", enable)
 }

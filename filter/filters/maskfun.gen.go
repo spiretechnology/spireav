@@ -31,6 +31,8 @@ type MaskfunBuilder interface {
 	Sum(sum int) MaskfunBuilder
 	// SumExpr set sum value (from 0 to 65535) (default 10).
 	SumExpr(sum expr.Expr) MaskfunBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MaskfunBuilder
 }
 
 // Maskfun creates a new MaskfunBuilder to configure the "maskfun" filter.
@@ -100,4 +102,8 @@ func (maskfunBuilder *implMaskfunBuilder) Sum(sum int) MaskfunBuilder {
 
 func (maskfunBuilder *implMaskfunBuilder) SumExpr(sum expr.Expr) MaskfunBuilder {
 	return maskfunBuilder.withOption("sum", sum)
+}
+
+func (maskfunBuilder *implMaskfunBuilder) Enable(enable expr.Expr) MaskfunBuilder {
+	return maskfunBuilder.withOption("enable", enable)
 }

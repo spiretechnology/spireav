@@ -19,6 +19,8 @@ type DeesserBuilder interface {
 	F(f float64) DeesserBuilder
 	// S set output mode (from 0 to 2) (default o).
 	S(s int) DeesserBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DeesserBuilder
 }
 
 // Deesser creates a new DeesserBuilder to configure the "deesser" filter.
@@ -64,4 +66,8 @@ func (deesserBuilder *implDeesserBuilder) F(f float64) DeesserBuilder {
 
 func (deesserBuilder *implDeesserBuilder) S(s int) DeesserBuilder {
 	return deesserBuilder.withOption("s", expr.Int(s))
+}
+
+func (deesserBuilder *implDeesserBuilder) Enable(enable expr.Expr) DeesserBuilder {
+	return deesserBuilder.withOption("enable", enable)
 }

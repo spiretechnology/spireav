@@ -15,6 +15,8 @@ type BboxBuilder interface {
 	MinVal(minVal int) BboxBuilder
 	// MinValExpr set minimum luminance value for bounding box (from 0 to 65535) (default 16).
 	MinValExpr(minVal expr.Expr) BboxBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) BboxBuilder
 }
 
 // Bbox creates a new BboxBuilder to configure the "bbox" filter.
@@ -52,4 +54,8 @@ func (bboxBuilder *implBboxBuilder) MinVal(minVal int) BboxBuilder {
 
 func (bboxBuilder *implBboxBuilder) MinValExpr(minVal expr.Expr) BboxBuilder {
 	return bboxBuilder.withOption("min_val", minVal)
+}
+
+func (bboxBuilder *implBboxBuilder) Enable(enable expr.Expr) BboxBuilder {
+	return bboxBuilder.withOption("enable", enable)
 }

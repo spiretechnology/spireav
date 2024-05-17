@@ -31,6 +31,8 @@ type MorphoBuilder interface {
 	Repeatlast(repeatlast bool) MorphoBuilder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) MorphoBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) MorphoBuilder
 }
 
 // Morpho creates a new MorphoBuilder to configure the "morpho" filter.
@@ -100,4 +102,8 @@ func (morphoBuilder *implMorphoBuilder) Repeatlast(repeatlast bool) MorphoBuilde
 
 func (morphoBuilder *implMorphoBuilder) TsSyncMode(tsSyncMode int) MorphoBuilder {
 	return morphoBuilder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (morphoBuilder *implMorphoBuilder) Enable(enable expr.Expr) MorphoBuilder {
+	return morphoBuilder.withOption("enable", enable)
 }

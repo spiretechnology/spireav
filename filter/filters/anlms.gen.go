@@ -31,6 +31,8 @@ type AnlmsBuilder interface {
 	OutModeExpr(outMode expr.Expr) AnlmsBuilder
 	// Precision set processing precision (from 0 to 2) (default auto).
 	Precision(precision int) AnlmsBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AnlmsBuilder
 }
 
 // Anlms creates a new AnlmsBuilder to configure the "anlms" filter.
@@ -100,4 +102,8 @@ func (anlmsBuilder *implAnlmsBuilder) OutModeExpr(outMode expr.Expr) AnlmsBuilde
 
 func (anlmsBuilder *implAnlmsBuilder) Precision(precision int) AnlmsBuilder {
 	return anlmsBuilder.withOption("precision", expr.Int(precision))
+}
+
+func (anlmsBuilder *implAnlmsBuilder) Enable(enable expr.Expr) AnlmsBuilder {
+	return anlmsBuilder.withOption("enable", enable)
 }

@@ -13,6 +13,8 @@ type EntropyBuilder interface {
 	filter.Filter
 	// Mode set kind of histogram entropy measurement (from 0 to 1) (default normal).
 	Mode(mode int) EntropyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) EntropyBuilder
 }
 
 // Entropy creates a new EntropyBuilder to configure the "entropy" filter.
@@ -46,4 +48,8 @@ func (entropyBuilder *implEntropyBuilder) withOption(key string, value expr.Expr
 
 func (entropyBuilder *implEntropyBuilder) Mode(mode int) EntropyBuilder {
 	return entropyBuilder.withOption("mode", expr.Int(mode))
+}
+
+func (entropyBuilder *implEntropyBuilder) Enable(enable expr.Expr) EntropyBuilder {
+	return entropyBuilder.withOption("enable", enable)
 }

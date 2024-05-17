@@ -27,6 +27,8 @@ type AsuperpassBuilder interface {
 	Level(level float64) AsuperpassBuilder
 	// LevelExpr set input level (from 0 to 2) (default 1).
 	LevelExpr(level expr.Expr) AsuperpassBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AsuperpassBuilder
 }
 
 // Asuperpass creates a new AsuperpassBuilder to configure the "asuperpass" filter.
@@ -88,4 +90,8 @@ func (asuperpassBuilder *implAsuperpassBuilder) Level(level float64) AsuperpassB
 
 func (asuperpassBuilder *implAsuperpassBuilder) LevelExpr(level expr.Expr) AsuperpassBuilder {
 	return asuperpassBuilder.withOption("level", level)
+}
+
+func (asuperpassBuilder *implAsuperpassBuilder) Enable(enable expr.Expr) AsuperpassBuilder {
+	return asuperpassBuilder.withOption("enable", enable)
 }

@@ -23,6 +23,8 @@ type AfreqshiftBuilder interface {
 	Order(order int) AfreqshiftBuilder
 	// OrderExpr set filter order (from 1 to 16) (default 8).
 	OrderExpr(order expr.Expr) AfreqshiftBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AfreqshiftBuilder
 }
 
 // Afreqshift creates a new AfreqshiftBuilder to configure the "afreqshift" filter.
@@ -76,4 +78,8 @@ func (afreqshiftBuilder *implAfreqshiftBuilder) Order(order int) AfreqshiftBuild
 
 func (afreqshiftBuilder *implAfreqshiftBuilder) OrderExpr(order expr.Expr) AfreqshiftBuilder {
 	return afreqshiftBuilder.withOption("order", order)
+}
+
+func (afreqshiftBuilder *implAfreqshiftBuilder) Enable(enable expr.Expr) AfreqshiftBuilder {
+	return afreqshiftBuilder.withOption("enable", enable)
 }

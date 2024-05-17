@@ -15,6 +15,8 @@ type TremoloBuilder interface {
 	F(f float64) TremoloBuilder
 	// D set depth as percentage (from 0 to 1) (default 0.5).
 	D(d float64) TremoloBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) TremoloBuilder
 }
 
 // Tremolo creates a new TremoloBuilder to configure the "tremolo" filter.
@@ -52,4 +54,8 @@ func (tremoloBuilder *implTremoloBuilder) F(f float64) TremoloBuilder {
 
 func (tremoloBuilder *implTremoloBuilder) D(d float64) TremoloBuilder {
 	return tremoloBuilder.withOption("d", expr.Double(d))
+}
+
+func (tremoloBuilder *implTremoloBuilder) Enable(enable expr.Expr) TremoloBuilder {
+	return tremoloBuilder.withOption("enable", enable)
 }

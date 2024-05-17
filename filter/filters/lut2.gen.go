@@ -12,21 +12,13 @@ import (
 type Lut2Builder interface {
 	filter.Filter
 	// C0 set component #0 expression (default "x").
-	C0(c0 string) Lut2Builder
-	// C0Expr set component #0 expression (default "x").
-	C0Expr(c0 expr.Expr) Lut2Builder
+	C0(c0 expr.Expr) Lut2Builder
 	// C1 set component #1 expression (default "x").
-	C1(c1 string) Lut2Builder
-	// C1Expr set component #1 expression (default "x").
-	C1Expr(c1 expr.Expr) Lut2Builder
+	C1(c1 expr.Expr) Lut2Builder
 	// C2 set component #2 expression (default "x").
-	C2(c2 string) Lut2Builder
-	// C2Expr set component #2 expression (default "x").
-	C2Expr(c2 expr.Expr) Lut2Builder
+	C2(c2 expr.Expr) Lut2Builder
 	// C3 set component #3 expression (default "x").
-	C3(c3 string) Lut2Builder
-	// C3Expr set component #3 expression (default "x").
-	C3Expr(c3 expr.Expr) Lut2Builder
+	C3(c3 expr.Expr) Lut2Builder
 	// D set output depth (from 0 to 16) (default 0).
 	D(d int) Lut2Builder
 	// EofAction Action to take when encountering EOF from secondary input  (from 0 to 2) (default repeat).
@@ -37,6 +29,8 @@ type Lut2Builder interface {
 	Repeatlast(repeatlast bool) Lut2Builder
 	// TsSyncMode How strictly to sync streams based on secondary input timestamps (from 0 to 1) (default default).
 	TsSyncMode(tsSyncMode int) Lut2Builder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) Lut2Builder
 }
 
 // Lut2 creates a new Lut2Builder to configure the "lut2" filter.
@@ -68,35 +62,19 @@ func (lut2Builder *implLut2Builder) withOption(key string, value expr.Expr) Lut2
 	return &bCopy
 }
 
-func (lut2Builder *implLut2Builder) C0(c0 string) Lut2Builder {
-	return lut2Builder.withOption("c0", expr.String(c0))
-}
-
-func (lut2Builder *implLut2Builder) C0Expr(c0 expr.Expr) Lut2Builder {
+func (lut2Builder *implLut2Builder) C0(c0 expr.Expr) Lut2Builder {
 	return lut2Builder.withOption("c0", c0)
 }
 
-func (lut2Builder *implLut2Builder) C1(c1 string) Lut2Builder {
-	return lut2Builder.withOption("c1", expr.String(c1))
-}
-
-func (lut2Builder *implLut2Builder) C1Expr(c1 expr.Expr) Lut2Builder {
+func (lut2Builder *implLut2Builder) C1(c1 expr.Expr) Lut2Builder {
 	return lut2Builder.withOption("c1", c1)
 }
 
-func (lut2Builder *implLut2Builder) C2(c2 string) Lut2Builder {
-	return lut2Builder.withOption("c2", expr.String(c2))
-}
-
-func (lut2Builder *implLut2Builder) C2Expr(c2 expr.Expr) Lut2Builder {
+func (lut2Builder *implLut2Builder) C2(c2 expr.Expr) Lut2Builder {
 	return lut2Builder.withOption("c2", c2)
 }
 
-func (lut2Builder *implLut2Builder) C3(c3 string) Lut2Builder {
-	return lut2Builder.withOption("c3", expr.String(c3))
-}
-
-func (lut2Builder *implLut2Builder) C3Expr(c3 expr.Expr) Lut2Builder {
+func (lut2Builder *implLut2Builder) C3(c3 expr.Expr) Lut2Builder {
 	return lut2Builder.withOption("c3", c3)
 }
 
@@ -118,4 +96,8 @@ func (lut2Builder *implLut2Builder) Repeatlast(repeatlast bool) Lut2Builder {
 
 func (lut2Builder *implLut2Builder) TsSyncMode(tsSyncMode int) Lut2Builder {
 	return lut2Builder.withOption("ts_sync_mode", expr.Int(tsSyncMode))
+}
+
+func (lut2Builder *implLut2Builder) Enable(enable expr.Expr) Lut2Builder {
+	return lut2Builder.withOption("enable", enable)
 }

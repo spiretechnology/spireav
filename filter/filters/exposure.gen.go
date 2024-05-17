@@ -19,6 +19,8 @@ type ExposureBuilder interface {
 	Black(black float32) ExposureBuilder
 	// BlackExpr set the black level correction (from -1 to 1) (default 0).
 	BlackExpr(black expr.Expr) ExposureBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ExposureBuilder
 }
 
 // Exposure creates a new ExposureBuilder to configure the "exposure" filter.
@@ -64,4 +66,8 @@ func (exposureBuilder *implExposureBuilder) Black(black float32) ExposureBuilder
 
 func (exposureBuilder *implExposureBuilder) BlackExpr(black expr.Expr) ExposureBuilder {
 	return exposureBuilder.withOption("black", black)
+}
+
+func (exposureBuilder *implExposureBuilder) Enable(enable expr.Expr) ExposureBuilder {
+	return exposureBuilder.withOption("enable", enable)
 }

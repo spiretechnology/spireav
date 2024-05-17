@@ -37,6 +37,8 @@ type AfwtdnBuilder interface {
 	Softness(softness float64) AfwtdnBuilder
 	// SoftnessExpr set thresholding softness (from 0 to 10) (default 1).
 	SoftnessExpr(softness expr.Expr) AfwtdnBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) AfwtdnBuilder
 }
 
 // Afwtdn creates a new AfwtdnBuilder to configure the "afwtdn" filter.
@@ -118,4 +120,8 @@ func (afwtdnBuilder *implAfwtdnBuilder) Softness(softness float64) AfwtdnBuilder
 
 func (afwtdnBuilder *implAfwtdnBuilder) SoftnessExpr(softness expr.Expr) AfwtdnBuilder {
 	return afwtdnBuilder.withOption("softness", softness)
+}
+
+func (afwtdnBuilder *implAfwtdnBuilder) Enable(enable expr.Expr) AfwtdnBuilder {
+	return afwtdnBuilder.withOption("enable", enable)
 }

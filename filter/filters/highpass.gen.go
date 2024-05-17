@@ -75,6 +75,8 @@ type HighpassBuilder interface {
 	Blocksize(blocksize int) HighpassBuilder
 	// B set the block size (from 0 to 32768) (default 0).
 	B(b int) HighpassBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) HighpassBuilder
 }
 
 // Highpass creates a new HighpassBuilder to configure the "highpass" filter.
@@ -232,4 +234,8 @@ func (highpassBuilder *implHighpassBuilder) Blocksize(blocksize int) HighpassBui
 
 func (highpassBuilder *implHighpassBuilder) B(b int) HighpassBuilder {
 	return highpassBuilder.withOption("b", expr.Int(b))
+}
+
+func (highpassBuilder *implHighpassBuilder) Enable(enable expr.Expr) HighpassBuilder {
+	return highpassBuilder.withOption("enable", enable)
 }

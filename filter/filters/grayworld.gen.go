@@ -11,6 +11,8 @@ import (
 // Documentation: https://ffmpeg.org/ffmpeg-filters.html#grayworld
 type GrayworldBuilder interface {
 	filter.Filter
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) GrayworldBuilder
 }
 
 // Grayworld creates a new GrayworldBuilder to configure the "grayworld" filter.
@@ -40,4 +42,8 @@ func (grayworldBuilder *implGrayworldBuilder) withOption(key string, value expr.
 	bCopy := *grayworldBuilder
 	bCopy.f = grayworldBuilder.f.With(key, value)
 	return &bCopy
+}
+
+func (grayworldBuilder *implGrayworldBuilder) Enable(enable expr.Expr) GrayworldBuilder {
+	return grayworldBuilder.withOption("enable", enable)
 }

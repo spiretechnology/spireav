@@ -17,6 +17,8 @@ type YadifBuilder interface {
 	Parity(parity int) YadifBuilder
 	// Deint specify which frames to deinterlace (from 0 to 1) (default all).
 	Deint(deint int) YadifBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) YadifBuilder
 }
 
 // Yadif creates a new YadifBuilder to configure the "yadif" filter.
@@ -58,4 +60,8 @@ func (yadifBuilder *implYadifBuilder) Parity(parity int) YadifBuilder {
 
 func (yadifBuilder *implYadifBuilder) Deint(deint int) YadifBuilder {
 	return yadifBuilder.withOption("deint", expr.Int(deint))
+}
+
+func (yadifBuilder *implYadifBuilder) Enable(enable expr.Expr) YadifBuilder {
+	return yadifBuilder.withOption("enable", enable)
 }

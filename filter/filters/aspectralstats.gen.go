@@ -18,7 +18,7 @@ type AspectralstatsBuilder interface {
 	// Overlap set window overlap (from 0 to 1) (default 0.5).
 	Overlap(overlap float32) AspectralstatsBuilder
 	// Measure select the parameters which are measured (default all+mean+variance+centroid+spread+skewness+kurtosis+entropy+flatness+crest+flux+slope+decrease+rolloff).
-	Measure(measure string) AspectralstatsBuilder
+	Measure(measure ...string) AspectralstatsBuilder
 }
 
 // Aspectralstats creates a new AspectralstatsBuilder to configure the "aspectralstats" filter.
@@ -62,6 +62,6 @@ func (aspectralstatsBuilder *implAspectralstatsBuilder) Overlap(overlap float32)
 	return aspectralstatsBuilder.withOption("overlap", expr.Float(overlap))
 }
 
-func (aspectralstatsBuilder *implAspectralstatsBuilder) Measure(measure string) AspectralstatsBuilder {
-	return aspectralstatsBuilder.withOption("measure", expr.String(measure))
+func (aspectralstatsBuilder *implAspectralstatsBuilder) Measure(measure ...string) AspectralstatsBuilder {
+	return aspectralstatsBuilder.withOption("measure", expr.Flags(measure))
 }

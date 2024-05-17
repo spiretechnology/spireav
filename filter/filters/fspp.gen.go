@@ -19,6 +19,8 @@ type FsppBuilder interface {
 	Strength(strength int) FsppBuilder
 	// UseBframeQp use B-frames' QP (default false).
 	UseBframeQp(useBframeQp bool) FsppBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FsppBuilder
 }
 
 // Fspp creates a new FsppBuilder to configure the "fspp" filter.
@@ -64,4 +66,8 @@ func (fsppBuilder *implFsppBuilder) Strength(strength int) FsppBuilder {
 
 func (fsppBuilder *implFsppBuilder) UseBframeQp(useBframeQp bool) FsppBuilder {
 	return fsppBuilder.withOption("use_bframe_qp", expr.Bool(useBframeQp))
+}
+
+func (fsppBuilder *implFsppBuilder) Enable(enable expr.Expr) FsppBuilder {
+	return fsppBuilder.withOption("enable", enable)
 }

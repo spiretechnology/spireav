@@ -27,6 +27,8 @@ type DeflateBuilder interface {
 	Threshold3(threshold3 int) DeflateBuilder
 	// Threshold3Expr set threshold for 4th plane (from 0 to 65535) (default 65535).
 	Threshold3Expr(threshold3 expr.Expr) DeflateBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) DeflateBuilder
 }
 
 // Deflate creates a new DeflateBuilder to configure the "deflate" filter.
@@ -88,4 +90,8 @@ func (deflateBuilder *implDeflateBuilder) Threshold3(threshold3 int) DeflateBuil
 
 func (deflateBuilder *implDeflateBuilder) Threshold3Expr(threshold3 expr.Expr) DeflateBuilder {
 	return deflateBuilder.withOption("threshold3", threshold3)
+}
+
+func (deflateBuilder *implDeflateBuilder) Enable(enable expr.Expr) DeflateBuilder {
+	return deflateBuilder.withOption("enable", enable)
 }

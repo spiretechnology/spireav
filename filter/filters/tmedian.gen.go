@@ -21,6 +21,8 @@ type TmedianBuilder interface {
 	Percentile(percentile float32) TmedianBuilder
 	// PercentileExpr set percentile (from 0 to 1) (default 0.5).
 	PercentileExpr(percentile expr.Expr) TmedianBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) TmedianBuilder
 }
 
 // Tmedian creates a new TmedianBuilder to configure the "tmedian" filter.
@@ -70,4 +72,8 @@ func (tmedianBuilder *implTmedianBuilder) Percentile(percentile float32) Tmedian
 
 func (tmedianBuilder *implTmedianBuilder) PercentileExpr(percentile expr.Expr) TmedianBuilder {
 	return tmedianBuilder.withOption("percentile", percentile)
+}
+
+func (tmedianBuilder *implTmedianBuilder) Enable(enable expr.Expr) TmedianBuilder {
+	return tmedianBuilder.withOption("enable", enable)
 }

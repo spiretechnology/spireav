@@ -15,6 +15,8 @@ type PremultiplyBuilder interface {
 	Planes(planes int) PremultiplyBuilder
 	// Inplace enable inplace mode (default false).
 	Inplace(inplace bool) PremultiplyBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) PremultiplyBuilder
 }
 
 // Premultiply creates a new PremultiplyBuilder to configure the "premultiply" filter.
@@ -52,4 +54,8 @@ func (premultiplyBuilder *implPremultiplyBuilder) Planes(planes int) Premultiply
 
 func (premultiplyBuilder *implPremultiplyBuilder) Inplace(inplace bool) PremultiplyBuilder {
 	return premultiplyBuilder.withOption("inplace", expr.Bool(inplace))
+}
+
+func (premultiplyBuilder *implPremultiplyBuilder) Enable(enable expr.Expr) PremultiplyBuilder {
+	return premultiplyBuilder.withOption("enable", enable)
 }

@@ -35,6 +35,8 @@ type FillbordersBuilder interface {
 	Color(color expr.Color) FillbordersBuilder
 	// ColorExpr set the color for the fixed/fade mode (default "black").
 	ColorExpr(color expr.Expr) FillbordersBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FillbordersBuilder
 }
 
 // Fillborders creates a new FillbordersBuilder to configure the "fillborders" filter.
@@ -112,4 +114,8 @@ func (fillbordersBuilder *implFillbordersBuilder) Color(color expr.Color) Fillbo
 
 func (fillbordersBuilder *implFillbordersBuilder) ColorExpr(color expr.Expr) FillbordersBuilder {
 	return fillbordersBuilder.withOption("color", color)
+}
+
+func (fillbordersBuilder *implFillbordersBuilder) Enable(enable expr.Expr) FillbordersBuilder {
+	return fillbordersBuilder.withOption("enable", enable)
 }

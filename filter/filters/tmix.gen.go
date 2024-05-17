@@ -22,9 +22,11 @@ type TmixBuilder interface {
 	// ScaleExpr set scale (from 0 to 32767) (default 0).
 	ScaleExpr(scale expr.Expr) TmixBuilder
 	// Planes set what planes to filter (default F).
-	Planes(planes string) TmixBuilder
+	Planes(planes ...string) TmixBuilder
 	// PlanesExpr set what planes to filter (default F).
 	PlanesExpr(planes expr.Expr) TmixBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) TmixBuilder
 }
 
 // Tmix creates a new TmixBuilder to configure the "tmix" filter.
@@ -76,10 +78,14 @@ func (tmixBuilder *implTmixBuilder) ScaleExpr(scale expr.Expr) TmixBuilder {
 	return tmixBuilder.withOption("scale", scale)
 }
 
-func (tmixBuilder *implTmixBuilder) Planes(planes string) TmixBuilder {
-	return tmixBuilder.withOption("planes", expr.String(planes))
+func (tmixBuilder *implTmixBuilder) Planes(planes ...string) TmixBuilder {
+	return tmixBuilder.withOption("planes", expr.Flags(planes))
 }
 
 func (tmixBuilder *implTmixBuilder) PlanesExpr(planes expr.Expr) TmixBuilder {
 	return tmixBuilder.withOption("planes", planes)
+}
+
+func (tmixBuilder *implTmixBuilder) Enable(enable expr.Expr) TmixBuilder {
+	return tmixBuilder.withOption("enable", enable)
 }

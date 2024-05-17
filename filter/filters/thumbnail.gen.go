@@ -15,6 +15,8 @@ type ThumbnailBuilder interface {
 	N(n int) ThumbnailBuilder
 	// Log force stats logging level (from INT_MIN to INT_MAX) (default info).
 	Log(log int) ThumbnailBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) ThumbnailBuilder
 }
 
 // Thumbnail creates a new ThumbnailBuilder to configure the "thumbnail" filter.
@@ -52,4 +54,8 @@ func (thumbnailBuilder *implThumbnailBuilder) N(n int) ThumbnailBuilder {
 
 func (thumbnailBuilder *implThumbnailBuilder) Log(log int) ThumbnailBuilder {
 	return thumbnailBuilder.withOption("log", expr.Int(log))
+}
+
+func (thumbnailBuilder *implThumbnailBuilder) Enable(enable expr.Expr) ThumbnailBuilder {
+	return thumbnailBuilder.withOption("enable", enable)
 }

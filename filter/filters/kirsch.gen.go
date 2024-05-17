@@ -23,6 +23,8 @@ type KirschBuilder interface {
 	Delta(delta float32) KirschBuilder
 	// DeltaExpr set delta (from -65535 to 65535) (default 0).
 	DeltaExpr(delta expr.Expr) KirschBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) KirschBuilder
 }
 
 // Kirsch creates a new KirschBuilder to configure the "kirsch" filter.
@@ -76,4 +78,8 @@ func (kirschBuilder *implKirschBuilder) Delta(delta float32) KirschBuilder {
 
 func (kirschBuilder *implKirschBuilder) DeltaExpr(delta expr.Expr) KirschBuilder {
 	return kirschBuilder.withOption("delta", delta)
+}
+
+func (kirschBuilder *implKirschBuilder) Enable(enable expr.Expr) KirschBuilder {
+	return kirschBuilder.withOption("enable", enable)
 }

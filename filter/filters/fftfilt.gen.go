@@ -18,13 +18,17 @@ type FftfiltBuilder interface {
 	// DcV adjust gain in V plane (from 0 to 1000) (default 0).
 	DcV(dcV int) FftfiltBuilder
 	// WeightY set luminance expression in Y plane (default "1").
-	WeightY(weightY string) FftfiltBuilder
+	WeightY(weightY int) FftfiltBuilder
+	// WeightYExpr set luminance expression in Y plane (default "1").
+	WeightYExpr(weightY expr.Expr) FftfiltBuilder
 	// WeightU set chrominance expression in U plane.
-	WeightU(weightU string) FftfiltBuilder
+	WeightU(weightU expr.Expr) FftfiltBuilder
 	// WeightV set chrominance expression in V plane.
-	WeightV(weightV string) FftfiltBuilder
+	WeightV(weightV expr.Expr) FftfiltBuilder
 	// Eval specify when to evaluate expressions (from 0 to 1) (default init).
 	Eval(eval int) FftfiltBuilder
+	// Enable expression to enable or disable the filter.
+	Enable(enable expr.Expr) FftfiltBuilder
 }
 
 // Fftfilt creates a new FftfiltBuilder to configure the "fftfilt" filter.
@@ -68,18 +72,26 @@ func (fftfiltBuilder *implFftfiltBuilder) DcV(dcV int) FftfiltBuilder {
 	return fftfiltBuilder.withOption("dc_V", expr.Int(dcV))
 }
 
-func (fftfiltBuilder *implFftfiltBuilder) WeightY(weightY string) FftfiltBuilder {
-	return fftfiltBuilder.withOption("weight_Y", expr.String(weightY))
+func (fftfiltBuilder *implFftfiltBuilder) WeightY(weightY int) FftfiltBuilder {
+	return fftfiltBuilder.withOption("weight_Y", expr.Int(weightY))
 }
 
-func (fftfiltBuilder *implFftfiltBuilder) WeightU(weightU string) FftfiltBuilder {
-	return fftfiltBuilder.withOption("weight_U", expr.String(weightU))
+func (fftfiltBuilder *implFftfiltBuilder) WeightYExpr(weightY expr.Expr) FftfiltBuilder {
+	return fftfiltBuilder.withOption("weight_Y", weightY)
 }
 
-func (fftfiltBuilder *implFftfiltBuilder) WeightV(weightV string) FftfiltBuilder {
-	return fftfiltBuilder.withOption("weight_V", expr.String(weightV))
+func (fftfiltBuilder *implFftfiltBuilder) WeightU(weightU expr.Expr) FftfiltBuilder {
+	return fftfiltBuilder.withOption("weight_U", weightU)
+}
+
+func (fftfiltBuilder *implFftfiltBuilder) WeightV(weightV expr.Expr) FftfiltBuilder {
+	return fftfiltBuilder.withOption("weight_V", weightV)
 }
 
 func (fftfiltBuilder *implFftfiltBuilder) Eval(eval int) FftfiltBuilder {
 	return fftfiltBuilder.withOption("eval", expr.Int(eval))
+}
+
+func (fftfiltBuilder *implFftfiltBuilder) Enable(enable expr.Expr) FftfiltBuilder {
+	return fftfiltBuilder.withOption("enable", enable)
 }
